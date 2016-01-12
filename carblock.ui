@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>540</width>
-    <height>120</height>
+    <width>622</width>
+    <height>220</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,88 +18,129 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>540</width>
-    <height>120</height>
+    <width>590</width>
+    <height>170</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>540</width>
-    <height>120</height>
+    <width>16777215</width>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(194, 194, 194);</string>
+   <string notr="true">background-color: rgb(254, 247, 74);</string>
   </property>
-  <widget class="QLabel" name="lblPhoto">
+  <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>19</x>
-     <y>20</y>
-     <width>111</width>
-     <height>80</height>
+     <x>20</x>
+     <y>30</y>
+     <width>580</width>
+     <height>160</height>
     </rect>
    </property>
-   <property name="autoFillBackground">
-    <bool>false</bool>
+   <property name="minimumSize">
+    <size>
+     <width>580</width>
+     <height>160</height>
+    </size>
    </property>
-   <property name="text">
-    <string/>
+   <property name="maximumSize">
+    <size>
+     <width>580</width>
+     <height>170</height>
+    </size>
    </property>
-   <property name="scaledContents">
-    <bool>true</bool>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
-  </widget>
-  <widget class="QLabel" name="lblName">
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>20</y>
-     <width>121</width>
-     <height>21</height>
-    </rect>
+   <property name="styleSheet">
+    <string notr="true">QGroupBox {
+    border: 1px solid gray;
+    border-radius: 9px;
+    margin-top: 0.5em;
+	
+	background-color: rgb(78, 78, 210);
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 9 6px 0 6px;
+}
+
+</string>
    </property>
-   <property name="autoFillBackground">
-    <bool>false</bool>
+   <property name="title">
+    <string>GroupBox</string>
    </property>
-   <property name="text">
-    <string>Nazwa</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="lblModel">
-   <property name="geometry">
-    <rect>
-     <x>320</x>
-     <y>20</y>
-     <width>161</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="autoFillBackground">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Model</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="lblStatus">
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>60</y>
-     <width>121</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="autoFillBackground">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Status</string>
-   </property>
+   <widget class="QLabel" name="lblStatus">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>80</y>
+      <width>211</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>18</pointsize>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>Status</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblNameModel">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>40</y>
+      <width>251</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>Nazwa</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblPhoto">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>40</y>
+      <width>140</width>
+      <height>90</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

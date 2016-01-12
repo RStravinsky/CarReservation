@@ -6,10 +6,10 @@ CarBlock::CarBlock(QString name, QString model, QString status, QString photoPat
     ui(new Ui::CarBlock)
 {
     ui->setupUi(this);
-    ui->lblName->setText(name);
-    ui->lblModel->setText(model);
+    ui->lblNameModel->setText(name + QString(" ") + model);
     ui->lblStatus->setText(status);
     ui->lblPhoto->setPixmap(QPixmap::fromImage(QImage(photoPath)));
+    ui->groupBox->setTitle(name + QString(" ") + model);
 }
 
 CarBlock::~CarBlock()

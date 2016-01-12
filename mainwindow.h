@@ -3,7 +3,11 @@
 
 #include <QMainWindow>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QGridLayout>
+#include <QListWidgetItem>
+#include <QScrollArea>
+
 #include "carblock.h"
 
 namespace Ui {
@@ -21,7 +25,11 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QVBoxLayout *layout;
+    QVBoxLayout *scrollLayout;
+    QHBoxLayout *mainLayout;
+    QWidget *scrollWidget;
+    QScrollArea *scrollArea;
+
 };
 
 #endif // MAINWINDOW_H

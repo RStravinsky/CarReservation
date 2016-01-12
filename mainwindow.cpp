@@ -7,32 +7,33 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    layout = new QVBoxLayout;
-
-    CarBlock *c1 = new CarBlock("VW", "GOLF", "zarezerwowany");
+    CarBlock *c1 = new CarBlock("VW", "Golf", "zajęty");
     CarBlock *c2 = new CarBlock("Toyota", "Corolla", "wolny");
     CarBlock *c3 = new CarBlock("Mitsubishi", "Outlander", "zarezerwowany");
     CarBlock *c4 = new CarBlock("Ferrari", "F50", "zarezerwowany");
-    CarBlock *c5 = new CarBlock("Lotus", "Eclipse", "zarezerwowany");
-    CarBlock *c6 = new CarBlock("Morda", "Mordak", "zarezerwowany");
+    CarBlock *c5 = new CarBlock("Lotus", "Eclipse", "zajęty");
+    CarBlock *c6 = new CarBlock("Ford", "Mondeo", "wolny");
 
-    layout->addWidget(c1, 0 , 0);
-    layout->addWidget(c2, 1 , 0);
-    layout->addWidget(c3, 2 , 0);
-    layout->addWidget(c4, 3 , 0);
-    layout->addWidget(c5, 4 , 0);
+    scrollLayout = new QVBoxLayout(ui->centralWidget);
+    scrollLayout->addWidget(c1);
+    scrollLayout->addWidget(c2);
+    scrollLayout->addWidget(c3);
+    scrollLayout->addWidget(c4);
+    scrollLayout->addWidget(c5);
+    scrollLayout->addWidget(c6);
 
-    layout->addWidget(c6, 5 , 0);
-//    layout->addWidget(c2, 6 , 0);
-//    layout->addWidget(c3, 7 , 0);
-//    layout->addWidget(c4, 8 , 0);
-//    layout->addWidget(c5, 9 , 0);
+    scrollWidget = new QWidget(ui->centralWidget);
+    scrollWidget->setLayout(scrollLayout);
 
-    ui->scrollArea->setLayout(layout);
+    scrollArea = new QScrollArea(ui->centralWidget);
+    scrollArea ->setGeometry(0,0,700,300);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setWidget(scrollWidget);
 
 }
 
 MainWindow::~MainWindow()
 {
+
     delete ui;
 }
