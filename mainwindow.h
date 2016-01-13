@@ -7,6 +7,7 @@
 #include <QGridLayout>
 #include <QListWidgetItem>
 #include <QScrollArea>
+#include <QSql>
 
 #include "carblock.h"
 
@@ -29,6 +30,7 @@ private:
     QHBoxLayout *mainLayout;
     QWidget *scrollWidget;
     QScrollArea *scrollArea;
+    QSqlDatabase sqlDatabase;
 
 };
 
