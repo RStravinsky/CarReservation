@@ -12,5 +12,8 @@
         <file>images/delete.png</file>
         <file>images/info.png</file>
         <file>images/add.png</file>
+        <file>images/car_rent.ico</file>
+        <file>images/car_rent.png</file>
+        <file>images/icon.ico</file>
     </qresource>
 </RCC>

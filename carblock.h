@@ -2,6 +2,7 @@
 #define CARBLOCK_H
 
 #include <QWidget>
+#include <QDate>
 
 namespace Ui {
 class CarBlock;
@@ -17,11 +18,9 @@ public:
         Rented,
     };
 
-    explicit CarBlock(QString name, QString model, QString licensePlate, Status status, QString photoPath = ":/images/images/car.png", QWidget *parent = 0);
+    explicit CarBlock(QString name, QString model, QString licensePlate, QString status, QDate inspectionDate, QDate insuranceDate, int mileage, QString notes, Status status1 = CarBlock::Free, QString photoPath = ":/images/images/car.png",QWidget *parent = 0);
     ~CarBlock();
-
     void setStatus(Status);
-
 
 private:
     Ui::CarBlock *ui;
