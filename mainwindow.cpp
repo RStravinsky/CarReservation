@@ -7,12 +7,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    CarBlock *c1 = new CarBlock("VW", "Golf", "zajęty");
-    CarBlock *c2 = new CarBlock("Toyota", "Corolla", "wolny");
-    CarBlock *c3 = new CarBlock("Mitsubishi", "Outlander", "zarezerwowany");
-    CarBlock *c4 = new CarBlock("Ferrari", "F50", "zarezerwowany");
-    CarBlock *c5 = new CarBlock("Lotus", "Eclipse", "zajęty");
-    CarBlock *c6 = new CarBlock("Ford", "Mondeo", "wolny");
+    CarBlock *c1 = new CarBlock("VW", "Golf", "LU 3456H", "zajęty");
+    CarBlock *c2 = new CarBlock("Toyota", "Corolla", "LUB 4353R", "wolny");
+    CarBlock *c3 = new CarBlock("Mitsubishi", "Outlander", "LUB 9084W", "zarezerwowany");
+    CarBlock *c4 = new CarBlock("Ferrari", "F50", "LUB 7893A", "zarezerwowany");
+    CarBlock *c5 = new CarBlock("Lotus", "Eclipse", "LUB 3380B", "zajęty");
+    CarBlock *c6 = new CarBlock("Ford", "Mondeo", "LU 0456J", "wolny");
 
     scrollLayout = new QVBoxLayout(ui->centralWidget);
     scrollLayout->addWidget(c1);
@@ -26,7 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
     scrollWidget->setLayout(scrollLayout);
 
     scrollArea = new QScrollArea(ui->centralWidget);
-    scrollArea ->setGeometry(0,0,700,300);
+    scrollArea ->setGeometry(100,100,640,500);
+    scrollArea->setStyleSheet("background-color: #464646;");
     scrollArea->setWidgetResizable(true);
     scrollArea->setWidget(scrollWidget);
 

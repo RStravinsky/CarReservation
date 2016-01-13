@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>622</width>
-    <height>220</height>
+    <width>600</width>
+    <height>200</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,8 +18,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>590</width>
-    <height>170</height>
+    <width>600</width>
+    <height>200</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -32,13 +32,13 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(254, 247, 74);</string>
+   <string notr="true">background-color: rgb(70, 70, 70);</string>
   </property>
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>30</y>
+     <x>10</x>
+     <y>20</y>
      <width>580</width>
      <height>160</height>
     </rect>
@@ -57,22 +57,25 @@
    </property>
    <property name="font">
     <font>
+     <family>Calibri Light</family>
      <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="styleSheet">
     <string notr="true">QGroupBox {
-    border: 1px solid gray;
-    border-radius: 9px;
+    border: 2px solid gray;
     margin-top: 0.5em;
+	color: rgb(255, 255, 255);
 	
-	background-color: rgb(78, 78, 210);
+	background-color: rgb(70, 70, 70);
 }
 
 QGroupBox::title {
     subcontrol-origin: margin;
-    left: 10px;
-    padding: 9 6px 0 6px;
+    left: 35px;
+    padding: 0 6px 0 6px;
 }
 
 </string>
@@ -83,62 +86,109 @@ QGroupBox::title {
    <widget class="QLabel" name="lblStatus">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>80</y>
-      <width>211</width>
+      <x>280</x>
+      <y>30</y>
+      <width>161</width>
       <height>31</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>18</pointsize>
+      <family>Calibri Light</family>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
      </font>
     </property>
     <property name="autoFillBackground">
      <bool>false</bool>
     </property>
-    <property name="text">
-     <string>Status</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lblNameModel">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>40</y>
-      <width>251</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>16</pointsize>
-     </font>
-    </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>Nazwa</string>
+     <string>Aktualny status</string>
     </property>
    </widget>
    <widget class="QLabel" name="lblPhoto">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>40</y>
-      <width>140</width>
-      <height>90</height>
+      <x>10</x>
+      <y>30</y>
+      <width>151</width>
+      <height>91</height>
      </rect>
     </property>
     <property name="autoFillBackground">
      <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    border: 2px solid gray;
+	color: rgb(255, 255, 255);
+	
+	background-color: rgb(70, 70, 70);
+}</string>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="scaledContents">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblLicensePlate">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>130</y>
+      <width>131</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Calibri Light</family>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>Nr rejestracyjny</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblStat">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>30</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Calibri Light</family>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>Status:</string>
     </property>
    </widget>
   </widget>

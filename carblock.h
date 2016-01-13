@@ -12,7 +12,7 @@ class CarBlock : public QWidget
     Q_OBJECT
 
 public:
-    explicit CarBlock(QString name, QString model, QString status, QString photoPath = ":/images/images/car.png", QWidget *parent = 0);
+    explicit CarBlock(QString name, QString model, QString licensePlate, QString status, QString photoPath = ":/images/images/car.png", QWidget *parent = 0);
     ~CarBlock();
 
 private:
