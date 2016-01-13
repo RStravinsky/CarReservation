@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     login = "root";
-    password = "asia";
+    password = "passw"; //change password here
 
     if (connectToDatabase(login, password)) ui->statusBar->showMessage("Połączono z użytkownikiem: " + login);
     else ui->statusBar->showMessage("Połączono z użytkownikiem: " + login);
