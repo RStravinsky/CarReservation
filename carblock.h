@@ -12,8 +12,16 @@ class CarBlock : public QWidget
     Q_OBJECT
 
 public:
-    explicit CarBlock(QString name, QString model, QString licensePlate, QString status, QString photoPath = ":/images/images/car.png", QWidget *parent = 0);
+    enum Status {
+        Free,
+        Rented,
+    };
+
+    explicit CarBlock(QString name, QString model, QString licensePlate, Status status, QString photoPath = ":/images/images/car.png", QWidget *parent = 0);
     ~CarBlock();
+
+    void setStatus(Status);
+
 
 private:
     Ui::CarBlock *ui;

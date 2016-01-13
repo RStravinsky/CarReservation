@@ -1,5 +1,16 @@
 <RCC>
     <qresource prefix="/images">
         <file>images/car.png</file>
+        <file>images/free.png</file>
+        <file>images/rented.png</file>
+        <file>images/reserved.png</file>
+        <file>images/corolla.jpg</file>
+        <file>images/lancer.jpg</file>
+        <file>images/person.png</file>
+        <file>images/plate.png</file>
+        <file>images/speed.png</file>
+        <file>images/delete.png</file>
+        <file>images/info.png</file>
+        <file>images/add.png</file>
     </qresource>
 </RCC>
