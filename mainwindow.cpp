@@ -10,7 +10,6 @@ MainWindow::MainWindow(QWidget *parent) :
     password = "Serwis4q@";
 
 
-
     if (connectToDatabase(login, password)) ui->statusBar->showMessage("Połączono z użytkownikiem: " + login);
     else ui->statusBar->showMessage("Połączono z użytkownikiem: " + login);
 
@@ -40,12 +39,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->scrollArea->setWidgetResizable(true);
     ui->scrollArea->setWidget(scrollWidget);
-
 }
 
 MainWindow::~MainWindow()
 {
-
     delete ui;
 }
 
