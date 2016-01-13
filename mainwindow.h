@@ -3,10 +3,8 @@
 
 #include <QMainWindow>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGridLayout>
 #include <QListWidgetItem>
-#include <QScrollArea>
+#include <vector>
 
 #include "carblock.h"
 
@@ -26,10 +24,8 @@ public:
 private:
     Ui::MainWindow *ui;
     QVBoxLayout *scrollLayout;
-    QHBoxLayout *mainLayout;
     QWidget *scrollWidget;
-    QScrollArea *scrollArea;
-
+    std::vector<CarBlock*> carBlockVector;
 };
 
 #endif // MAINWINDOW_H
