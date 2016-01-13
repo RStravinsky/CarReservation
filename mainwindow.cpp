@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     orderTable = new QSqlQueryModel(this);
     orderTable->setQuery("SELECT * FROM order;");
 
-    for(int i = 0; i < model->rowCount(); ++i) {
+    for(int i = 0; i < carTable->rowCount(); ++i) {
         carBlockVector.emplace_back(std::move(new CarBlock(carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
                                                            carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toString(),
                                                            carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toDate(),
