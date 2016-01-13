@@ -3,11 +3,9 @@
 
 #include <QMainWindow>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGridLayout>
 #include <QListWidgetItem>
-#include <QScrollArea>
-#include <QSql>
+#include <QtSql>
+#include <vector>
 
 #include "carblock.h"
 
@@ -27,11 +25,18 @@ public:
 private:
     Ui::MainWindow *ui;
     QVBoxLayout *scrollLayout;
-    QHBoxLayout *mainLayout;
     QWidget *scrollWidget;
-    QScrollArea *scrollArea;
     QSqlDatabase sqlDatabase;
+    QSqlQueryModel * carTable;
+    QSqlQueryModel * orderTable;
+    std::vector<CarBlock*> carBlockVector;
+    QString login;
+    QString password;
 
+
+
+    bool connectToDatabase(QString &login, QString &password);
+    void closeDatabase();
 };
 
 #endif // MAINWINDOW_H

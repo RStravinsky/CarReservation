@@ -86,8 +86,8 @@ QGroupBox::title {
    <widget class="QLabel" name="lblStatus">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>30</y>
+      <x>310</x>
+      <y>60</y>
       <width>161</width>
       <height>31</height>
      </rect>
@@ -164,12 +164,12 @@ QGroupBox::title {
      <string>Nr rejestracyjny</string>
     </property>
    </widget>
-   <widget class="QLabel" name="lblStat">
+   <widget class="QLabel" name="lblStatT">
     <property name="geometry">
      <rect>
       <x>200</x>
-      <y>30</y>
-      <width>81</width>
+      <y>60</y>
+      <width>111</width>
       <height>31</height>
      </rect>
     </property>
@@ -188,7 +188,115 @@ QGroupBox::title {
      <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>Status:</string>
+     <string>Dostępność:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblReservT">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>90</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Calibri Light</family>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>Rezerwacja:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblReservation">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>90</y>
+      <width>251</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Calibri Light</family>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>Aktualna rezerwacja</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblMileT">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>30</y>
+      <width>111</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Calibri Light</family>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>Przebieg:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblMileage">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>30</y>
+      <width>171</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Calibri Light</family>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>Aktualny przebieg</string>
     </property>
    </widget>
   </widget>

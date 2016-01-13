@@ -6,30 +6,40 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    login = "root";
+    password = "Serwis4q@";
 
-    CarBlock *c1 = new CarBlock("VW", "Golf", "LU 3456H", "zajęty");
-    CarBlock *c2 = new CarBlock("Toyota", "Corolla", "LUB 4353R", "wolny");
-    CarBlock *c3 = new CarBlock("Mitsubishi", "Outlander", "LUB 9084W", "zarezerwowany");
-    CarBlock *c4 = new CarBlock("Ferrari", "F50", "LUB 7893A", "zarezerwowany");
-    CarBlock *c5 = new CarBlock("Lotus", "Eclipse", "LUB 3380B", "zajęty");
-    CarBlock *c6 = new CarBlock("Ford", "Mondeo", "LU 0456J", "wolny");
 
-    scrollLayout = new QVBoxLayout(ui->centralWidget);
-    scrollLayout->addWidget(c1);
-    scrollLayout->addWidget(c2);
-    scrollLayout->addWidget(c3);
-    scrollLayout->addWidget(c4);
-    scrollLayout->addWidget(c5);
-    scrollLayout->addWidget(c6);
+
+    if (connectToDatabase(login, password)) ui->statusBar->showMessage("Połączono z użytkownikiem: " + login);
+    else ui->statusBar->showMessage("Połączono z użytkownikiem: " + login);
+
+    carTable = new QSqlQueryModel(this);
+    carTable->setQuery("SELECT * FROM car;");
+
+    orderTable = new QSqlQueryModel(this);
+    orderTable->setQuery("SELECT * FROM order;");
+
+    for(int i = 0; i < model->rowCount(); ++i) {
+        carBlockVector.emplace_back(std::move(new CarBlock(carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
+                                                           carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toString(),
+                                                           carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toDate(),
+                                                           carTable->data(carTable->index(i,7)).toInt(), carTable->data(carTable->index(i,8)).toString()
+                                                           )
+
+                                              ));
+      // to do
+    }
+
+    scrollLayout = new QVBoxLayout(ui->scrollArea);
+    for(auto pos=carBlockVector.begin();pos!=carBlockVector.end();++pos)
+        scrollLayout->addWidget(*pos);
 
     scrollWidget = new QWidget(ui->centralWidget);
     scrollWidget->setLayout(scrollLayout);
 
-    scrollArea = new QScrollArea(ui->centralWidget);
-    scrollArea ->setGeometry(100,100,640,500);
-    scrollArea->setStyleSheet("background-color: #464646;");
-    scrollArea->setWidgetResizable(true);
-    scrollArea->setWidget(scrollWidget);
+    ui->scrollArea->setWidgetResizable(true);
+    ui->scrollArea->setWidget(scrollWidget);
 
 }
 
@@ -39,3 +49,25 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+bool MainWindow::connectToDatabase(QString &login, QString &password)
+{
+    sqlDatabase = QSqlDatabase::addDatabase("QMYSQL");
+    sqlDatabase.setHostName("192.168.1.7");
+    sqlDatabase.setDatabaseName("sigmacars");
+    if(login.isEmpty() && password.isEmpty()) {
+        sqlDatabase.setUserName("root");
+        sqlDatabase.setPassword("Serwis4q@");
+    }
+    else {
+        sqlDatabase.setUserName(login);
+        sqlDatabase.setPassword(password);
+    }
+
+    if (!sqlDatabase.open()) return false;
+    else return true;
+}
+
+void MainWindow::closeDatabase(){
+    sqlDatabase.close();
+    QSqlDatabase::removeDatabase("sigmacars");
+}
