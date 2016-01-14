@@ -15,5 +15,7 @@
         <file>images/car_rent.ico</file>
         <file>images/car_rent.png</file>
         <file>images/icon.ico</file>
+        <file>images/beginTime.png</file>
+        <file>images/endTime.png</file>
     </qresource>
 </RCC>

@@ -15,13 +15,19 @@ RC_ICON = icon.ico
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    carblock.cpp
+    carblock.cpp \
+    bookingdialog.cpp \
+    bookingblock.cpp
 
 HEADERS  += mainwindow.h \
-    carblock.h
+    carblock.h \
+    bookingdialog.h \
+    bookingblock.h
 
 FORMS    += mainwindow.ui \
-    carblock.ui
+    carblock.ui \
+    bookingdialog.ui \
+    bookingblock.ui
 
 RESOURCES += \
     resources.qrc

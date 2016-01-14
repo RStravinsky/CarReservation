@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QDate>
+#include <bookingdialog.h>
+#include <memory>
 
 namespace Ui {
 class CarBlock;
@@ -22,8 +24,12 @@ public:
     ~CarBlock();
     void setStatus(Status);
 
+private slots:
+    void on_btnReserve_clicked();
+
 private:
     Ui::CarBlock *ui;
+    BookingDialog * bookingDialog{nullptr};
 };
 
 #endif // CARBLOCK_H

@@ -42,8 +42,6 @@ MainWindow::MainWindow(QWidget *parent) :
     for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos)
         scrollLayout->addWidget(*pos);
     ui->scrollArea->setWidget(scrollWidget);
-
-
 }
 
 MainWindow::~MainWindow()

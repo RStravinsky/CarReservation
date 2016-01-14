@@ -25,3 +25,10 @@ void CarBlock::setStatus(Status status)
     if(status == Status::Rented)
         ui->lblStatus->setPixmap(QPixmap(":/images/images/rented.png"));
 }
+
+void CarBlock::on_btnReserve_clicked()
+{
+    bookingDialog = new BookingDialog;
+    if(bookingDialog->exec() == BookingDialog::Rejected)
+        delete bookingDialog;
+}
