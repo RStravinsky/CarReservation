@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include <QListWidgetItem>
 #include <QtSql>
+#include <QSqlQueryModel>
 #include <vector>
 
 #include "carblock.h"

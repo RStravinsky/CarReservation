@@ -297,8 +297,12 @@ background: rgb(255,105,0);
      <height>41</height>
     </rect>
    </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
    <property name="styleSheet">
-    <string notr="true">border: none;</string>
+    <string notr="true">border: none;
+background-color: rgba(255, 255, 255, 0);</string>
    </property>
    <property name="text">
     <string/>
@@ -314,7 +318,7 @@ background: rgb(255,105,0);
     </size>
    </property>
   </widget>
-  <widget class="QPushButton" name="btnDetail">
+  <widget class="QPushButton" name="btnDetails">
    <property name="geometry">
     <rect>
      <x>40</x>
@@ -324,7 +328,8 @@ background: rgb(255,105,0);
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">border:none</string>
+    <string notr="true">border:none;
+background-color: rgba(255, 255, 255, 0);</string>
    </property>
    <property name="text">
     <string notr="true"/>

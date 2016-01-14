@@ -1,7 +1,7 @@
 #include "carblock.h"
 #include "ui_carblock.h"
 
-CarBlock::CarBlock(QString name, QString model, QString licensePlate, QString status, QDate inspectionDate, QDate insuranceDate, int mileage, QString notes, Status status1, QString photoPath, QWidget *parent) :
+CarBlock::CarBlock(QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, QString notes, Status status, QString photoPath, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CarBlock)
 {
@@ -10,7 +10,8 @@ CarBlock::CarBlock(QString name, QString model, QString licensePlate, QString st
     ui->lblLicensePlate->setText(licensePlate);
     ui->lblPhoto->setPixmap(QPixmap(photoPath));
     ui->lblCarName->setText(name + QString(" ") + model);
-    setStatus(status1);
+    ui->lblMileage->setText(QString::number(mileage) + " km");
+    setStatus(status);
 }
 
 CarBlock::~CarBlock()
