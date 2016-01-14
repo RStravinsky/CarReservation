@@ -29,7 +29,7 @@ private:
     QWidget *scrollWidget;
     QSqlDatabase sqlDatabase;
     QSqlQueryModel * carTable;
-    QSqlQueryModel * orderTable;
+    QSqlQueryModel * bookingTable;
     std::vector<CarBlock*> carBlockVector;
     QString login;
     QString password;

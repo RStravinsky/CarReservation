@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     login = "root";
-    password = "embedded"; //change password here
+    password = "Serwis4q@"; //change password here
 
     if (connectToDatabase(login, password)) {
         ui->statusBar->showMessage("Połączono z użytkownikiem: " + login);
@@ -15,13 +15,16 @@ MainWindow::MainWindow(QWidget *parent) :
         carTable = new QSqlQueryModel(this);
         carTable->setQuery("SELECT * FROM car;");
 
-        orderTable = new QSqlQueryModel(this);
-        orderTable->setQuery("SELECT * FROM reservation;");
+        bookingTable = new QSqlQueryModel(this);
+        bookingTable->setQuery("SELECT * FROM booking;");
 
         qDebug() << carTable->rowCount();
 
+        CarBlock * lastCarBlock{nullptr};
+
         for(int i = 0; i < carTable->rowCount(); ++i) {
-            carBlockVector.emplace_back(std::move(new CarBlock(carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
+            carBlockVector.emplace_back(std::move(new CarBlock(carTable->data(carTable->index(i,0)).toInt(),
+                                                               carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
                                                                carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
                                                                carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
                                                                carTable->data(carTable->index(i,7)).toString(), static_cast<CarBlock::Status>(carTable->data(carTable->index(i,8)).toInt()),
@@ -29,7 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
                                                                )
 
                                                   ));
-          // to do
+          lastCarBlock = carBlockVector.back();
+          lastCarBlock->setBookingTable(bookingTable);
         }
     }
     else ui->statusBar->showMessage("Nie można połączyć z bazą danych");

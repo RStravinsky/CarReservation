@@ -6,6 +6,7 @@
 #include <bookingdialog.h>
 #include <memory>
 #include <QDebug>
+#include <QtSql>
 
 namespace Ui {
 class CarBlock;
@@ -21,9 +22,10 @@ public:
         Rented,
     };
 
-    explicit CarBlock(QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, QString notes, Status status = CarBlock::Free, QString photoPath = ":/images/images/car.png",QWidget *parent = 0);
+    explicit CarBlock(int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, QString notes, Status status = CarBlock::Free, QString photoPath = ":/images/images/car.png",QWidget *parent = 0);
     ~CarBlock();
     void setStatus(Status);
+    void setBookingTable(QSqlQueryModel * bookTable) {bookingTable = bookTable;}
 
 private slots:
     void on_btnReserve_clicked();
@@ -31,6 +33,8 @@ private slots:
 private:
     Ui::CarBlock *ui;
     BookingDialog * bookingDialog{nullptr};
+    int idCar;
+    QSqlQueryModel * bookingTable{nullptr};
 };
 
 #endif // CARBLOCK_H
