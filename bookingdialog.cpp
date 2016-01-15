@@ -22,7 +22,6 @@ BookingDialog::BookingDialog(QWidget *parent) :
         scrollLayout->addWidget(*pos);
     ui->scrollArea->setWidget(scrollWidget);
     ui->scrollArea->setWidgetResizable(true);
-
 }
 
 BookingDialog::~BookingDialog()

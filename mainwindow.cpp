@@ -11,14 +11,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if (connectToDatabase(login, password)) {
         ui->statusBar->showMessage("Połączono z użytkownikiem: " + login);
-
         carTable = new QSqlQueryModel(this);
         carTable->setQuery("SELECT * FROM car;");
-
         orderTable = new QSqlQueryModel(this);
         orderTable->setQuery("SELECT * FROM reservation;");
-
-        qDebug() << carTable->rowCount();
 
         for(int i = 0; i < carTable->rowCount(); ++i) {
             carBlockVector.emplace_back(std::move(new CarBlock(carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
@@ -29,24 +25,15 @@ MainWindow::MainWindow(QWidget *parent) :
                                                                )
 
                                                   ));
-          // to do
         }
+
+        scrollWidget = new QWidget(ui->scrollArea);
+        scrollLayout = new QVBoxLayout(scrollWidget);
+        for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos)
+            scrollLayout->addWidget(*pos);
+        ui->scrollArea->setWidget(scrollWidget);
     }
     else ui->statusBar->showMessage("Nie można połączyć z bazą danych");
-
-    // DO TESTU BEZ BAZY DANYCH
-//    carBlockVector.emplace_back(std::move(new CarBlock("VW", "Golf", "LU 3456H", QDate::currentDate(),QDate::currentDate(),100000,"VW Golf notes", CarBlock::Free,":/images/images/corolla.jpg")));
-//    carBlockVector.emplace_back(std::move(new CarBlock("Toyota", "Corolla", "LUB 4353R","free",QDate::currentDate(),QDate::currentDate(),100000,"notes", CarBlock::Rented,":/images/images/lancer.jpg")));
-//    carBlockVector.emplace_back(std::move(new CarBlock("Mitsubishi", "Outlander", "LUB 9084W","free",QDate::currentDate(),QDate::currentDate(),100000,"notes", CarBlock::Free)));
-//    carBlockVector.emplace_back(std::move(new CarBlock("Ferrari", "F50", "LUB 7893A", "free",QDate::currentDate(),QDate::currentDate(),100000,"notes",CarBlock::Rented)));
-//    carBlockVector.emplace_back(std::move(new CarBlock("Lotus", "Elise", "LUB 3380B", "free",QDate::currentDate(),QDate::currentDate(),100000,"notes",CarBlock::Rented)));
-//    carBlockVector.emplace_back(std::move(new CarBlock("Ford", "Mondeo", "LU 0456J", "free",QDate::currentDate(),QDate::currentDate(),100000,"notes",CarBlock::Free)));
-
-    scrollWidget = new QWidget(ui->scrollArea);
-    scrollLayout = new QVBoxLayout(scrollWidget);
-    for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos)
-        scrollLayout->addWidget(*pos);
-    ui->scrollArea->setWidget(scrollWidget);
 }
 
 MainWindow::~MainWindow()
