@@ -3,11 +3,8 @@
 
 #include <QMainWindow>
 #include <QVBoxLayout>
-#include <QListWidgetItem>
-#include <QtSql>
-#include <QSqlQueryModel>
+#include <QtSql/QSqlQueryModel>
 #include <vector>
-
 #include "carblock.h"
 
 namespace Ui {
@@ -22,14 +19,16 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void updateView();
 
 private:
     Ui::MainWindow *ui;
-    QVBoxLayout *scrollLayout;
-    QWidget *scrollWidget;
+    QVBoxLayout *scrollLayout{nullptr};
+    QWidget *scrollWidget{nullptr};
     QSqlDatabase sqlDatabase;
-    QSqlQueryModel * carTable;
-    QSqlQueryModel * orderTable;
+    QSqlQueryModel * carTable{nullptr};
+    QSqlQueryModel * bookingTable{nullptr};
     std::vector<CarBlock*> carBlockVector;
     QString login;
     QString password;

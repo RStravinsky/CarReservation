@@ -6,6 +6,9 @@
 #include <QVBoxLayout>
 #include <vector>
 #include <bookingblock.h>
+#include <QtSql>
+#include <QTextCharFormat>
+#include <QDebug>
 
 namespace Ui {
 class BookingDialog;
@@ -16,7 +19,7 @@ class BookingDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit BookingDialog(QWidget *parent = 0);
+    explicit BookingDialog(QSqlQueryModel *bookTable, int id, QWidget *parent = 0);
     ~BookingDialog();
 
 private slots:
@@ -28,7 +31,10 @@ private:
     QWidget *scrollWidget;
     std::vector<BookingBlock*> bookingBlockVector;
     QDate choosenDate;
+    int idCar;
+    QSqlQueryModel * bookingTable;
 
+    void fillCalendar();
     void setCalendarColor(QCalendarWidget *&calendarWidget,QColor color);
 };
 
