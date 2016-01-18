@@ -15,5 +15,10 @@
         <file>images/icon.ico</file>
         <file>images/beginTime.png</file>
         <file>images/endTime.png</file>
+        <file>images/insurance.png</file>
+        <file>images/inspection.png</file>
+        <file>images/savetodb.png</file>
+        <file>images/warnings.png</file>
+        <file>images/comments.png</file>
     </qresource>
 </RCC>

@@ -9,6 +9,7 @@
 #include <QtSql>
 #include <QTextCharFormat>
 #include <QDebug>
+#include <QMessageBox>
 
 namespace Ui {
 class BookingDialog;
@@ -39,7 +40,6 @@ private:
     QSqlQueryModel * carTable {nullptr};
     QSqlQueryModel * carReservations {nullptr};
     int idCar;
-
 
     void fillCalendar();
     void loadBookingBlock(int idx);

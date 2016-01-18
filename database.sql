@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `booking`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `booking` (
-  `idBooking` int(11) NOT NULL,
+  `idBooking` int(11) NOT NULL AUTO_INCREMENT,
   `Name` varchar(45) NOT NULL,
   `Surename` varchar(45) NOT NULL,
   `Begin` datetime NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE `booking` (
   PRIMARY KEY (`idBooking`),
   KEY `fk_Order_Car_idx` (`idCar`),
   CONSTRAINT `fk_Order_Car` FOREIGN KEY (`idCar`) REFERENCES `car` (`idCar`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,7 +43,7 @@ CREATE TABLE `booking` (
 
 LOCK TABLES `booking` WRITE;
 /*!40000 ALTER TABLE `booking` DISABLE KEYS */;
-INSERT INTO `booking` VALUES (1,'Emil','Wiśniewski','2016-01-12 13:31:25','2016-01-15 14:00:00',6),(2,'Rafał','Strawiński','2016-01-13 11:37:21','2016-01-16 15:10:11',2);
+INSERT INTO `booking` VALUES (1,'Emil','Wiśniewski','2016-01-12 13:31:25','2016-01-15 14:00:00',6),(2,'Rafał','Strawiński','2016-01-13 11:37:21','2016-01-16 15:10:11',2),(3,'Jan','Kowalski','2016-01-13 09:00:00','2016-01-13 10:00:00',2);
 /*!40000 ALTER TABLE `booking` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -66,7 +66,7 @@ CREATE TABLE `car` (
   `Status` tinyint(1) NOT NULL DEFAULT '0',
   `PhotoPath` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`idCar`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -88,4 +88,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-01-15 15:00:24
+-- Dump completed on 2016-01-18 12:22:33

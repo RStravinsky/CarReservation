@@ -7,6 +7,8 @@
 #include <memory>
 #include <QDebug>
 #include <QtSql>
+#include <QMessageBox>
+#include <QFileDialog>
 
 namespace Ui {
 class CarBlock;
@@ -22,14 +24,24 @@ public:
         Rented,
     };
 
-    explicit CarBlock(int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, QString notes, Status status = CarBlock::Free, QString photoPath = ":/images/images/car.png",QWidget *parent = 0);
+    explicit CarBlock(int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, QString notes, Status status = CarBlock::Free, QString photoPath = ":/images/images/car.png",bool toAdd = false, QWidget *parent = 0);
     ~CarBlock();
     void setStatus(Status);
     void setBookingTable(QSqlQueryModel * bookTable) {bookingTable = bookTable;}
     void setCarTable(QSqlQueryModel * cTable) {carTable = cTable;}
+    void setAdminPermissions(bool isAdmin);
 
 private slots:
     void on_btnReserve_clicked();
+    void on_btnAddInsurance_clicked();
+    void on_btnAddInspection_clicked();
+    void on_btnRemove_clicked();
+    void on_btnViewNotes_clicked();
+    void on_btnAddImage_clicked();
+
+signals:
+    void carDeleted();
+    void carAdded();
 
 private:
     Ui::CarBlock *ui;
@@ -37,6 +49,10 @@ private:
     QSqlQueryModel * bookingTable{nullptr};
     QSqlQueryModel * carTable{nullptr};
     int idCar;
+    QString carNotes;
+    bool isAddBlock;
+    QString addedCarImagePath;
+
 };
 
 #endif // CARBLOCK_H

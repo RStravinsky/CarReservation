@@ -136,9 +136,14 @@ bool BookingDialog::isDateFree()
     end.setDate(choosenDate);
     end.setTime(ui->timeEditEnd->time());
 
-    for(int i = 0; i < bookedDates->rowCount(); ++i) {
-        // HERE LAST
+    if(end <= begin) {
+        QMessageBox::warning(this, "Uwaga!", "Końcowy czas rezerwacji musi być większy od początkowego.");
+        return false;
+    }
 
+    for(int i = 0; i < bookedDates->rowCount(); ++i) {
+
+    // TO DO
     }
 }
 
