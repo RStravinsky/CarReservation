@@ -19,11 +19,15 @@ class BookingDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit BookingDialog(QSqlQueryModel *bookTable, int id, QWidget *parent = 0);
+    explicit BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, int id, QWidget *parent = 0);
     ~BookingDialog();
 
 private slots:
     void dateClicked(QDate date);
+
+    void on_calendarWidget_clicked(const QDate &date);
+
+    void on_btnReserve_clicked();
 
 private:
     Ui::BookingDialog *ui;
@@ -31,11 +35,17 @@ private:
     QWidget *scrollWidget;
     std::vector<BookingBlock*> bookingBlockVector;
     QDate choosenDate;
+    QSqlQueryModel * bookingTable {nullptr};
+    QSqlQueryModel * carTable {nullptr};
+    QSqlQueryModel * carReservations {nullptr};
     int idCar;
-    QSqlQueryModel * bookingTable;
 
 
     void fillCalendar();
+    void loadBookingBlock(int idx);
+    void clearScrollArea();
+    bool isDateFree();
+
     void setCalendarColor(QCalendarWidget *&calendarWidget,QColor color);
 };
 

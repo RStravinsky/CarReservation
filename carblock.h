@@ -26,6 +26,7 @@ public:
     ~CarBlock();
     void setStatus(Status);
     void setBookingTable(QSqlQueryModel * bookTable) {bookingTable = bookTable;}
+    void setCarTable(QSqlQueryModel * cTable) {carTable = cTable;}
 
 private slots:
     void on_btnReserve_clicked();
@@ -33,8 +34,9 @@ private slots:
 private:
     Ui::CarBlock *ui;
     BookingDialog * bookingDialog{nullptr};
-    int idCar;
     QSqlQueryModel * bookingTable{nullptr};
+    QSqlQueryModel * carTable{nullptr};
+    int idCar;
 };
 
 #endif // CARBLOCK_H

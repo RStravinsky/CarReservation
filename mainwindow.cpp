@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     login = "root";
-    password = "Serwis4q@"; //change password here
+    password = "asia"; //change password here
 
     if (connectToDatabase(login, password)) {
         ui->statusBar->showMessage("Połączono z użytkownikiem: " + login);
@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
                                                   ));
           lastCarBlock = carBlockVector.back();
           lastCarBlock->setBookingTable(bookingTable);
+          lastCarBlock->setCarTable(carTable);
         }
     }
     else ui->statusBar->showMessage("Nie można połączyć z bazą danych");

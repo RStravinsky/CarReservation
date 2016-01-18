@@ -23,7 +23,11 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Rezerwacja</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/images/images/icon.ico</normaloff>:/images/images/icon.ico</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QDialog{

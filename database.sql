@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `sigmacars` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `sigmacars`;
--- MySQL dump 10.13  Distrib 5.6.27, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.6.17, for Win32 (x86)
 --
--- Host: localhost    Database: sigmacars
+-- Host: 192.168.1.7    Database: sigmacars
 -- ------------------------------------------------------
--- Server version	5.6.27-0ubuntu1
+-- Server version	5.6.23-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -25,16 +25,16 @@ DROP TABLE IF EXISTS `booking`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `booking` (
-  `idReservation` int(11) NOT NULL AUTO_INCREMENT,
+  `idBooking` int(11) NOT NULL,
   `Name` varchar(45) NOT NULL,
   `Surename` varchar(45) NOT NULL,
   `Begin` datetime NOT NULL,
   `End` datetime NOT NULL,
   `idCar` int(11) NOT NULL,
-  PRIMARY KEY (`idReservation`),
+  PRIMARY KEY (`idBooking`),
   KEY `fk_Order_Car_idx` (`idCar`),
   CONSTRAINT `fk_Order_Car` FOREIGN KEY (`idCar`) REFERENCES `car` (`idCar`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -88,4 +88,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-01-15  0:27:38
+-- Dump completed on 2016-01-15 15:00:24

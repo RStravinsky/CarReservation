@@ -14,8 +14,9 @@ class BookingBlock : public QWidget
     Q_OBJECT
 
 public:
-    explicit BookingBlock(QString name,QString status, QTime begin, QTime end, QWidget *parent = 0);
+    explicit BookingBlock(QString name, QString timeBegin, QString timeEnd, bool isTimeVisible = true, QWidget *parent = 0);
     ~BookingBlock();
+    QString getName();
 
 private:
     Ui::BookingBlock *ui;
