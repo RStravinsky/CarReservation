@@ -2,15 +2,11 @@
 #include "ui_carblock.h"
 
 
-CarBlock::CarBlock(int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, QString notes, Status status, QString photoPath, bool toAdd, QWidget *parent) :
+CarBlock::CarBlock(int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, Status status, QString photoPath, bool toAdd, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CarBlock),
     idCar(id)
 {
-    Q_UNUSED(inspectionDate);
-    Q_UNUSED(insuranceDate);
-    Q_UNUSED(notes);
-
     ui->setupUi(this);
 
     isAddBlock = toAdd;
@@ -32,7 +28,6 @@ CarBlock::CarBlock(int id, QString name, QString model, QString licensePlate, QD
     ui->lblMileage->setText(QString::number(mileage) + " km");
     ui->dateEditInspection->setDate(inspectionDate);
     ui->dateEditInsurance->setDate(insuranceDate);
-    carNotes = notes;
     setStatus(status);
 }
 
@@ -117,7 +112,7 @@ void CarBlock::on_btnRemove_clicked()
         qry.prepare("DELETE FROM car WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
         if( !qry.exec() )
-            QMessageBox::warning(this,"Informacja","Usuwanie nie powidoła się./nERROR: "+qry.lastError().text()+"");
+            QMessageBox::warning(this,"Informacja","Usuwanie nie powiodła się./nERROR: "+qry.lastError().text()+"");
         else {
             QMessageBox::information(this,"Informacja","Usunieto!");
             emit carDeleted();
@@ -140,7 +135,7 @@ void CarBlock::on_btnRemove_clicked()
         qry.bindValue(":_Mileage", ui->lblMileage->text());
         qry.bindValue(":_PhotoPath",addedCarImagePath);
         if( !qry.exec() )
-            QMessageBox::warning(this,"Informacja","Dodawanie nie powidoła się./nERROR "+qry.lastError().text()+"");
+            QMessageBox::warning(this,"Informacja","Dodawanie nie powiodło się./nERROR "+qry.lastError().text()+"");
         else {
             QMessageBox::information(this,"Informacja","Dodano!");
             emit carAdded();
@@ -150,6 +145,9 @@ void CarBlock::on_btnRemove_clicked()
 
 void CarBlock::on_btnViewNotes_clicked()
 {
+    NotesDialog n(idCar);
+    n.exec();
+
 }
 
 void CarBlock::on_btnAddImage_clicked()

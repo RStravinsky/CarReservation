@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>370</height>
+    <width>840</width>
+    <height>380</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>700</width>
-    <height>370</height>
+    <width>840</width>
+    <height>380</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>700</width>
-    <height>370</height>
+    <width>840</width>
+    <height>380</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -62,10 +62,19 @@ background-color: white;
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>0</y>
+     <y>60</y>
      <width>421</width>
-     <height>370</height>
+     <height>311</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="contextMenuPolicy">
+    <enum>Qt::CustomContextMenu</enum>
    </property>
    <property name="verticalHeaderFormat">
     <enum>QCalendarWidget::NoVerticalHeader</enum>
@@ -80,10 +89,10 @@ background-color: white;
   <widget class="QScrollArea" name="scrollArea">
    <property name="geometry">
     <rect>
-     <x>420</x>
-     <y>75</y>
-     <width>281</width>
-     <height>241</height>
+     <x>430</x>
+     <y>60</y>
+     <width>401</width>
+     <height>311</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -106,40 +115,58 @@ background-color: white;
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>281</width>
-      <height>241</height>
+      <width>401</width>
+      <height>311</height>
      </rect>
     </property>
    </widget>
   </widget>
-  <widget class="QTimeEdit" name="timeEditBegin">
+  <widget class="QDateTimeEdit" name="dateTimeEditBegin">
    <property name="geometry">
     <rect>
-     <x>465</x>
-     <y>20</y>
-     <width>91</width>
+     <x>50</x>
+     <y>10</y>
+     <width>151</width>
      <height>30</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="showGroupSeparator" stdset="0">
     <bool>false</bool>
    </property>
+   <property name="calendarPopup">
+    <bool>true</bool>
+   </property>
   </widget>
-  <widget class="QTimeEdit" name="timeEditEnd">
+  <widget class="QDateTimeEdit" name="dateTimeEditEnd">
    <property name="geometry">
     <rect>
-     <x>600</x>
-     <y>20</y>
-     <width>90</width>
+     <x>260</x>
+     <y>10</y>
+     <width>151</width>
      <height>30</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="calendarPopup">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="lblBeginImage">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>20</y>
+     <x>10</x>
+     <y>10</y>
      <width>31</width>
      <height>31</height>
     </rect>
@@ -157,8 +184,8 @@ background-color: white;
   <widget class="QLabel" name="lblEndImage">
    <property name="geometry">
     <rect>
-     <x>565</x>
-     <y>20</y>
+     <x>220</x>
+     <y>10</y>
      <width>31</width>
      <height>31</height>
     </rect>
@@ -176,11 +203,17 @@ background-color: white;
   <widget class="QPushButton" name="btnReserve">
    <property name="geometry">
     <rect>
-     <x>600</x>
-     <y>330</y>
-     <width>90</width>
+     <x>650</x>
+     <y>10</y>
+     <width>181</width>
      <height>30</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton:hover {
@@ -204,6 +237,63 @@ background: rgb(255,105,0);
    </property>
    <property name="text">
     <string>Rezerwuj</string>
+   </property>
+  </widget>
+  <widget class="Line" name="line">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>40</y>
+     <width>841</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxBooking">
+   <property name="geometry">
+    <rect>
+     <x>430</x>
+     <y>10</y>
+     <width>101</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Rezerwacja</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBoxHistory">
+   <property name="geometry">
+    <rect>
+     <x>430</x>
+     <y>30</y>
+     <width>91</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="text">
+    <string>Historia</string>
    </property>
   </widget>
  </widget>

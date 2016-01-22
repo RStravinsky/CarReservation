@@ -114,6 +114,8 @@ color: white</string>
       <string>Rezerwacja samochodów</string>
      </property>
     </widget>
+    <zorder>label</zorder>
+    <zorder>scrollArea</zorder>
    </widget>
    <widget class="QScrollArea" name="scrollArea">
     <property name="geometry">
@@ -155,7 +157,7 @@ color: white</string>
      <x>0</x>
      <y>0</y>
      <width>840</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

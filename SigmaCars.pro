@@ -17,17 +17,26 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     carblock.cpp \
     bookingdialog.cpp \
-    bookingblock.cpp
+    bookingblock.cpp \
+    namedialog.cpp \
+    notesdialog.cpp \
+    noteblock.cpp
 
 HEADERS  += mainwindow.h \
     carblock.h \
     bookingdialog.h \
-    bookingblock.h
+    bookingblock.h \
+    namedialog.h \
+    notesdialog.h \
+    noteblock.h
 
 FORMS    += mainwindow.ui \
     carblock.ui \
     bookingdialog.ui \
-    bookingblock.ui
+    bookingblock.ui \
+    namedialog.ui \
+    notesdialog.ui \
+    noteblock.ui
 
 RESOURCES += \
     resources.qrc

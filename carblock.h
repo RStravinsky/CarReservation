@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QDate>
 #include <bookingdialog.h>
+#include <notesdialog.h>
 #include <memory>
 #include <QDebug>
 #include <QtSql>
@@ -24,7 +25,7 @@ public:
         Rented,
     };
 
-    explicit CarBlock(int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, QString notes, Status status = CarBlock::Free, QString photoPath = ":/images/images/car.png",bool toAdd = false, QWidget *parent = 0);
+    explicit CarBlock(int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, Status status = CarBlock::Free, QString photoPath = ":/images/images/car.png",bool toAdd = false, QWidget *parent = 0);
     ~CarBlock();
     void setStatus(Status);
     void setBookingTable(QSqlQueryModel * bookTable) {bookingTable = bookTable;}
