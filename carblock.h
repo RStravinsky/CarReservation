@@ -32,6 +32,9 @@ public:
     void setCarTable(QSqlQueryModel * cTable) {carTable = cTable;}
     void setAdminPermissions(bool isAdmin);
 
+public slots:
+    void showNotesDialog(int _idNotes, int _idCar);
+
 private slots:
     void on_btnReserve_clicked();
     void on_btnAddInsurance_clicked();
@@ -50,6 +53,7 @@ private:
     QSqlQueryModel * bookingTable{nullptr};
     QSqlQueryModel * carTable{nullptr};
     int idCar;
+    int idNotes;
     QString carNotes;
     bool isAddBlock;
     QString addedCarImagePath;

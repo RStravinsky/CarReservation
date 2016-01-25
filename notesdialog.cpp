@@ -35,15 +35,16 @@ void NotesDialog::updateView()
     noteBlockVector.clear();
 
     for(int i = 0; i < notesTable->rowCount(); ++i) {
-        noteBlockVector.emplace_back(std::move(new NoteBlock(notesTable->data(notesTable->index(i,5)).toInt(), notesTable->data(notesTable->index(i,0)).toInt(),
+        noteBlockVector.emplace_back(std::move(new NoteBlock(notesTable->data(notesTable->index(i,6)).toInt(), notesTable->data(notesTable->index(i,0)).toInt(),
                                                              notesTable->data(notesTable->index(i,1)).toString(), notesTable->data(notesTable->index(i,2)).toString(),
-                                                             notesTable->data(notesTable->index(i,3)).toString(), notesTable->data(notesTable->index(i,4)).toDateTime()
+                                                             notesTable->data(notesTable->index(i,3)).toString(), notesTable->data(notesTable->index(i,4)).toDateTime(),
+                                                             notesTable->data(notesTable->index(i,5)).toBool()
                                                             )));
 
        connect(noteBlockVector[i],SIGNAL(noteDeleted()),this,SLOT(updateView()));
 
     }
-    noteBlockVector.emplace_back(std::move(new NoteBlock(idCar,0, QString("Wpisz treść uwagi"), QString("Admin"), QString("Admin"), QDateTime::currentDateTime(), true)));
+    noteBlockVector.emplace_back(std::move(new NoteBlock(idCar,0, QString("Wpisz treść uwagi"), QString("Admin"), QString("Admin"), QDateTime::currentDateTime(), false, true)));
     connect(noteBlockVector.back(),SIGNAL(noteAdded()),this,SLOT(updateView()));
 
 

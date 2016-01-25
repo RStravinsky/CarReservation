@@ -28,6 +28,10 @@ public slots:
     void updateView();
     void setIcon();
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
+    void noteActionClicked(QAction *act);
+
+signals:
+    void trayMenuNoteClicked(int _idNotes, int _idCar);
 
 private:
     Ui::MainWindow *ui;
@@ -36,6 +40,7 @@ private:
     QSqlDatabase sqlDatabase;
     QSqlQueryModel * carTable{nullptr};
     QSqlQueryModel * bookingTable{nullptr};
+    QSqlQueryModel * notesTable{nullptr};
     std::vector<CarBlock*> carBlockVector;
     QString login;
     QString password;
@@ -51,6 +56,9 @@ private:
     QAction *quitAction;
     QAction *dcAction;
     QMenu *trayIconMenu;
+    QMenu * notesMenu;
+    int newMessagesNumber;
+    std::vector<QAction*> notesActionsVector;
 
     void createActions();
     void createTrayIcon();

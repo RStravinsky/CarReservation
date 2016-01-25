@@ -15,7 +15,7 @@ class NoteBlock : public QWidget
     Q_OBJECT
 
 public:
-    explicit NoteBlock(int idC, int idN, QString contents, QString name, QString surename, QDateTime dateTime, bool toAdd = false, QWidget *parent = 0);
+    explicit NoteBlock(int idC, int idN, QString contents, QString name, QString surename, QDateTime dateTime, bool isNoteRead, bool toAdd = false, QWidget *parent = 0);
     ~NoteBlock();
 
 private:
@@ -23,6 +23,7 @@ private:
     int idCar;
     int idNotes;
     bool isAdded;
+    bool isRead;
 
 signals:
     void noteDeleted();

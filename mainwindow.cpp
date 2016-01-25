@@ -9,7 +9,6 @@ MainWindow::MainWindow(QWidget *parent) :
     login = "root";
     password = "Serwis4q@"; //change password here
 
-    loadTrayIcon();
 
     if (connectToDatabase(login, password)) {
         ui->statusBar->showMessage("Połączono z użytkownikiem: " + login);
@@ -31,11 +30,18 @@ void MainWindow::updateView()
     delete scrollLayout;
     delete scrollWidget;
 
+
+    notesTable = new QSqlQueryModel(this);
+    notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC LIMIT 10;");
     carTable = new QSqlQueryModel(this);
     carTable->setQuery("SELECT * FROM car;");
     bookingTable = new QSqlQueryModel(this);
     bookingTable->setQuery("SELECT * FROM booking;");
     carBlockVector.clear();
+    notesActionsVector.clear();
+
+    loadTrayIcon();
+
 
     CarBlock * lastCarBlock{nullptr};
     for(int i = 0; i < carTable->rowCount(); ++i) {
@@ -50,7 +56,10 @@ void MainWindow::updateView()
        lastCarBlock = carBlockVector.back();
        lastCarBlock->setBookingTable(bookingTable);
        lastCarBlock->setAdminPermissions(true);
+       connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)));
+
        connect(carBlockVector[i],SIGNAL(carDeleted()),this,SLOT(updateView()));
+
 
     }
     carBlockVector.emplace_back(std::move(new CarBlock(0,QString("-----"),QString("-----"),QString("------"),
@@ -64,6 +73,8 @@ void MainWindow::updateView()
     for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos)
         scrollLayout->addWidget(*pos);
     ui->scrollArea->setWidget(scrollWidget);
+
+
 }
 
 bool MainWindow::connectToDatabase(QString &login, QString &password)
@@ -99,13 +110,13 @@ void MainWindow::setVisible(bool visible)
 
     if(visible) {
         dcAction = minimizeAction;
-        minimizeAction->setFont(QFont("Segou UI", 9, QFont::Bold));
-        restoreAction->setFont(QFont("Segou UI", 9));
+        minimizeAction->setFont(QFont("Calibri", 9, QFont::Bold));
+        restoreAction->setFont(QFont("Calibri", 9));
     }
     else {
         dcAction = restoreAction;
-        restoreAction->setFont(QFont("Segou UI", 9, QFont::Bold));
-        minimizeAction->setFont(QFont("Segou UI", 9));
+        restoreAction->setFont(QFont("Calibri", 9, QFont::Bold));
+        minimizeAction->setFont(QFont("Calibri", 9));
     }
 }
 
@@ -154,8 +165,13 @@ void MainWindow::createTrayIcon()
 {
     trayIconMenu = new QMenu(this);
     trayIconMenu->setStyleSheet("QMenu {"
-                                "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
-                                "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                                "background-color: orange;"
+                                //"background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+                                //"stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                                "}"
+
+                                "QMenu::icon {"
+                                "border: false;"
                                 "}"
 
                                 "QMenu::separator {"
@@ -165,7 +181,28 @@ void MainWindow::createTrayIcon()
                                 "margin-right: 2px;"
                                 "}"
                                 );
+    notesMenu = new QMenu(this);
+    notesMenu->setTitle(QString("Wiadomości (%1)").arg(newMessagesNumber));
+    notesMenu->setStyleSheet("QMenu {"
+                             "background-color: orange;"
+                             //"background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+                             //"stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                             "}"
 
+                            );
+
+    if(newMessagesNumber) {
+        notesMenu->setIcon(QIcon(":/images/images/new.png"));
+    }
+    else {
+        notesMenu->setIcon(QIcon(":/images/images/read.png"));
+    }
+
+    for(auto i : notesActionsVector)
+        notesMenu->addAction(i);
+
+    trayIconMenu->addMenu(notesMenu);
+    trayIconMenu->addSeparator();
     minimizeAction->setIcon(QIcon(":/images/images/minimize.png"));
     trayIconMenu->addAction(minimizeAction);
     restoreAction->setIcon(QIcon(":/images/images/restore.png"));
@@ -176,6 +213,9 @@ void MainWindow::createTrayIcon()
 
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
+
+    connect(notesMenu, SIGNAL(triggered(QAction*)), this, SLOT(noteActionClicked(QAction*)));
+
 }
 
 void MainWindow::loadTrayIcon()
@@ -207,23 +247,44 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
+void MainWindow::noteActionClicked(QAction * act)
+{
+    emit trayMenuNoteClicked(act->data().toString().split(",").at(0).toInt(), act->data().toString().split(",").at(1).toInt()); // pass idCar to open NotesDialog (slot showNotesDialog)
+}
+
 void MainWindow::createActions()
 {
-    QBrush wBrush;
-    wBrush.setColor(Qt::white);
-    QFont wFont;
-    wFont.setFamily("Calibri");
-    wFont.setPointSize(9);
 
-    minimizeAction = new QAction(tr("Mi&nimalizuj"), this);
+    QAction * lastAction{nullptr};
+    QString actionData;
+
+    newMessagesNumber = 0;
+
+
+    for(int i = 0; i < notesTable->rowCount(); ++i) {
+
+
+        notesActionsVector.emplace_back(std::move( new QAction(QString("&%1 %2").arg(notesTable->data(notesTable->index(i,2)).toString()).arg(notesTable->data(notesTable->index(i,3)).toString()), this) ));
+        lastAction = notesActionsVector.back();
+
+       lastAction->setFont(QFont("Calibri", 9, QFont::Bold));
+       ++newMessagesNumber;
+       actionData = notesTable->data(notesTable->index(i,0)).toString() + QString(",") + notesTable->data(notesTable->index(i,6)).toString();
+       lastAction->setData(actionData);
+
+
+    }
+
+
+    minimizeAction = new QAction(QString("Minimalizuj"), this);
     minimizeAction->setFont(QFont("Calibri", 9));
     connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
 
-    restoreAction = new QAction(tr("&Przywróć"), this);
+    restoreAction = new QAction(QString("Przywróć"), this);
     restoreAction->setFont(QFont("Calibri", 9));
     connect(restoreAction, SIGNAL(triggered()), this, SLOT(show()));
 
-    quitAction = new QAction(tr("&Zamknij"), this);
+    quitAction = new QAction(QString("Zamknij"), this);
     quitAction->setFont(QFont("Calibri", 9));
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 }

@@ -24,5 +24,7 @@
         <file>images/close.png</file>
         <file>images/minimize.png</file>
         <file>images/restore.png</file>
+        <file>images/new.png</file>
+        <file>images/read.png</file>
     </qresource>
 </RCC>

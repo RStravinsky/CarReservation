@@ -1,10 +1,11 @@
 #include "noteblock.h"
 #include "ui_noteblock.h"
 
-NoteBlock::NoteBlock(int idC, int idN, QString contents, QString name, QString surename, QDateTime dateTime, bool toAdd, QWidget *parent) :
+NoteBlock::NoteBlock(int idC, int idN, QString contents, QString name, QString surename, QDateTime dateTime, bool isNoteRead, bool toAdd, QWidget *parent) :
     idCar(idC),
     idNotes(idN),
     QWidget(parent),
+    isRead(isNoteRead),
     isAdded(toAdd),
     ui(new Ui::NoteBlock)
 {
@@ -15,6 +16,9 @@ NoteBlock::NoteBlock(int idC, int idN, QString contents, QString name, QString s
         ui->txtEditContents->setReadOnly(true);
         (name == "Admin" && surename == "Admin") ? ui->lblNameSurename->setText(QString(name)) : ui->lblNameSurename->setText(QString("%1 %2").arg(name).arg(surename));
         ui->lblDate->setText(dateTime.toString("dd-MM-yyyy hh:mm:ss"));
+
+        if(isRead) ui->lblIsRead->setPixmap(QPixmap(":/images/images/read.png"));
+        else ui->lblIsRead->setPixmap(QPixmap(":/images/images/new.png"));
     }
     else {
         ui->txtEditContents->setText(contents);

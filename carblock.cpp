@@ -29,6 +29,7 @@ CarBlock::CarBlock(int id, QString name, QString model, QString licensePlate, QD
     ui->dateEditInspection->setDate(inspectionDate);
     ui->dateEditInsurance->setDate(insuranceDate);
     setStatus(status);
+
 }
 
 CarBlock::~CarBlock()
@@ -69,6 +70,16 @@ void CarBlock::setAdminPermissions(bool isAdmin)
         ui->btnViewNotes->setVisible(true);
         ui->btnRemove->setVisible(true);
         ui->btnAddImage->setVisible(false);
+    }
+}
+
+void CarBlock::showNotesDialog(int _idNotes, int _idCar)
+{
+    Q_UNUSED(_idNotes);
+
+    if(_idCar == idCar) {
+    NotesDialog n(_idCar);
+    n.exec();
     }
 }
 
@@ -145,8 +156,8 @@ void CarBlock::on_btnRemove_clicked()
 
 void CarBlock::on_btnViewNotes_clicked()
 {
-    NotesDialog n(idCar);
-    n.exec();
+    idNotes = 0; // <- add idNotes initialization in class constructor
+    showNotesDialog(idNotes, idCar);
 
 }
 
