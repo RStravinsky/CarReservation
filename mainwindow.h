@@ -63,7 +63,6 @@ private:
     void createActions();
     void createTrayIcon();
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
-    void showMessage();
     void setPopupMessage();
     void loadTrayIcon();
 };

@@ -32,7 +32,7 @@ void MainWindow::updateView()
 
 
     notesTable = new QSqlQueryModel(this);
-    notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC LIMIT 10;");
+    notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC;");
     carTable = new QSqlQueryModel(this);
     carTable->setQuery("SELECT * FROM car;");
     bookingTable = new QSqlQueryModel(this);
@@ -198,8 +198,9 @@ void MainWindow::createTrayIcon()
         notesMenu->setIcon(QIcon(":/images/images/read.png"));
     }
 
-    for(auto i : notesActionsVector)
-        notesMenu->addAction(i);
+
+    for(int i = 0; i < 10; ++i)
+        notesMenu->addAction(notesActionsVector.at(i));
 
     trayIconMenu->addMenu(notesMenu);
     trayIconMenu->addSeparator();
@@ -295,13 +296,6 @@ void MainWindow::showTrayIcon()
    trayIcon->show();
 }
 
-void MainWindow::showMessage()
-{
-    QString title = "Wiadomość";
-    QString msg = "Treść przykładowej wiadomości";
-    QSystemTrayIcon::MessageIcon icon = QSystemTrayIcon::Information;
-    trayIcon->showMessage(title, msg, icon, 5000);
-}
 
 void MainWindow::setPopupMessage()
 {
