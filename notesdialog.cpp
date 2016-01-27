@@ -59,7 +59,6 @@ void NotesDialog::updateView()
     for(auto pos= noteBlockVector.begin();pos!=noteBlockVector.end();++pos)
         scrollLayout->addWidget(*pos);
     ui->scrollArea->setWidget(scrollWidget);
-
     ui->scrollArea->verticalScrollBar()->setValue(verticalPosition);
 
     emit noteWasRead();

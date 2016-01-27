@@ -108,16 +108,14 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
 {
     if(_idCar == idCar) {
         emit inProgress();
-        NotesDialog n(_idNotes,_idCar);
-        connect(&n, SIGNAL(noteWasRead()), this, SLOT(noteReadUpdate()));
-        if(n.exec()==NotesDialog::Rejected)
+        NotesDialog * n = new NotesDialog(_idNotes,_idCar);
+        if(n->exec() == NotesDialog::Rejected){
             emit progressFinished();
-    }
-}
+            emit noteClosed();
+            delete n;
+        }
 
-void CarBlock::noteReadUpdate()
-{
-    emit carDeleted(true);
+    }
 }
 
 void CarBlock::on_btnReserve_clicked()

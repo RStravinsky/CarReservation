@@ -77,6 +77,7 @@ void MainWindow::updateView(bool isCopyEnable)
        connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)));
        connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
        connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(5000);});
+       connect(carBlockVector.back(),&CarBlock::noteClosed,[=](){delete trayIconMenu; delete trayIcon; updateView(true); showTrayIcon();});
     }
 
     if(isAdmin) {
@@ -98,7 +99,7 @@ void MainWindow::updateView(bool isCopyEnable)
     scrollWidget = new QWidget(ui->scrollArea);
     scrollLayout = new QVBoxLayout(scrollWidget);
     for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos) {
-        qDebug() << *pos << endl;
+        //qDebug() << *pos << endl;
         scrollLayout->addWidget(*pos);
     }
     ui->scrollArea->setWidget(scrollWidget);
@@ -243,7 +244,6 @@ void MainWindow::createTrayIcon()
 {
     trayIconMenu = new QMenu(this);
     trayIconMenu->setStyleSheet("QMenu {"
-                                //"background-color: orange;"
                                 "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
                                 "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
                                 "}"
@@ -262,11 +262,9 @@ void MainWindow::createTrayIcon()
     notesMenu = new QMenu(this);
     notesMenu->setTitle(QString("Wiadomości (%1)").arg(newMessagesNumber));
     notesMenu->setStyleSheet("QMenu {"
-                             ///"background-color: orange;"
                              "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
                              "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
                              "}"
-
                             );
 
     if(newMessagesNumber) {
@@ -299,7 +297,6 @@ void MainWindow::createTrayIcon()
     trayIcon->setContextMenu(trayIconMenu);
 
     connect(notesMenu, SIGNAL(triggered(QAction*)), this, SLOT(noteActionClicked(QAction*)));
-
 }
 
 void MainWindow::loadTrayIcon()
@@ -346,6 +343,7 @@ void MainWindow::createActions()
 
        notesActionsVector.emplace_back(std::move( new QAction(QString("&%1 %2").arg(notesTable->data(notesTable->index(i,2)).toString()).arg(notesTable->data(notesTable->index(i,3)).toString()), this) ));
        lastAction = notesActionsVector.back();
+
 
        lastAction->setFont(QFont("Calibri", 9, QFont::Bold));
        ++newMessagesNumber;

@@ -48,7 +48,6 @@ bool NoteBlock::eventFilter(QObject *obj, QEvent *event)
 
         if (event->type() == QEvent::MouseButtonDblClick) {
 
-
             QSqlQuery qry;
             qry.prepare("UPDATE notes SET isRead=1 WHERE idNotes = :_idNotes;");
             qry.bindValue(":_idNotes", idNotes);
