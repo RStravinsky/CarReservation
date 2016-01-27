@@ -96,12 +96,18 @@ void CarBlock::setAdminPermissions(bool isAdmin)
 
 void CarBlock::showNotesDialog(int _idNotes, int _idCar)
 {
-    Q_UNUSED(_idNotes);
 
     if(_idCar == idCar) {
-    NotesDialog n(_idCar);
-    n.exec();
+
+        NotesDialog n(_idNotes,_idCar);
+        connect(&n, SIGNAL(noteWasRead()), this, SLOT(noteReadUpdate()));
+        n.exec();
     }
+}
+
+void CarBlock::noteReadUpdate()
+{
+    // emit signal to update in mainwindow
 }
 
 void CarBlock::on_btnReserve_clicked()
@@ -185,15 +191,14 @@ void CarBlock::on_btnRemove_clicked()
 
 void CarBlock::on_btnViewNotes_clicked()
 {
-    idNotes = 0; // <- add idNotes initialization in class constructor
-    showNotesDialog(idNotes, idCar);
+    showNotesDialog(-1, idCar);
 }
 
 void CarBlock::on_btnAddImage_clicked()
 {
     emit inProgress();
     addedCarImagePath = QFileDialog::getOpenFileName(this, tr("Plik z obrazkiem"),
-                               QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)+"/bez_tytułu.pdf",
+                               QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)+"/bez_tytułu.png",
                                tr("Pliki PNG (*.png)"));
     ui->lblPhoto->setPixmap(QPixmap(addedCarImagePath));
     emit progressFinished();

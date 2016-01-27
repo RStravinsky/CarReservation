@@ -1,13 +1,16 @@
 #include "notesdialog.h"
 #include "ui_notesdialog.h"
 
-NotesDialog::NotesDialog(int idC, QWidget *parent) :
+NotesDialog::NotesDialog(int idN, int idC, QWidget *parent) :
+    idNotes(idN),
     idCar(idC),
     QDialog(parent),
     ui(new Ui::NotesDialog)
 {
     ui->setupUi(this);
     updateView();
+
+    if(idNotes >= 0) selectNote();
 
 }
 
@@ -18,9 +21,13 @@ NotesDialog::~NotesDialog()
 
 void NotesDialog::updateView()
 {
+    const int verticalPosition = ui->scrollArea->verticalScrollBar()->value();
+
     delete notesTable;
     delete scrollLayout;
     delete scrollWidget;
+
+
 
     notesTable = new QSqlQueryModel(this);
     notesTable->setQuery(QString("SELECT * FROM notes WHERE idCar = %1;").arg(idCar));
@@ -41,7 +48,9 @@ void NotesDialog::updateView()
                                                              notesTable->data(notesTable->index(i,5)).toBool()
                                                             )));
 
-       connect(noteBlockVector[i],SIGNAL(noteDeleted()),this,SLOT(updateView()));
+
+       connect(noteBlockVector[i], SIGNAL(noteDeleted()), this, SLOT(updateView()));
+       connect(noteBlockVector[i], SIGNAL(noteDblClicked()), this, SLOT(updateView()));
     }
 
     noteBlockVector.emplace_back(std::move(new NoteBlock(idCar,0, QString("Wpisz treść uwagi"), QString("Admin"), QString("Admin"), QDateTime::currentDateTime(), false, true)));
@@ -52,4 +61,19 @@ void NotesDialog::updateView()
     for(auto pos= noteBlockVector.begin();pos!=noteBlockVector.end();++pos)
         scrollLayout->addWidget(*pos);
     ui->scrollArea->setWidget(scrollWidget);
+
+    ui->scrollArea->verticalScrollBar()->setValue(verticalPosition);
+
+    emit noteWasRead();
+}
+
+void NotesDialog::selectNote()
+{
+    std::for_each(noteBlockVector.begin(), noteBlockVector.end(), [&] (NoteBlock *& n) {
+                                                                                        if(n->getIdNotes() == idNotes) {
+                                                                                            n->setSelection();
+                                                                                            ui->scrollArea->verticalScrollBar()->setValue(n->y());
+                                                                                        }
+                                                                                      });
+
 }

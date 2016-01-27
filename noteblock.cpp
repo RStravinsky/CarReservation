@@ -10,6 +10,7 @@ NoteBlock::NoteBlock(int idC, int idN, QString contents, QString name, QString s
     ui(new Ui::NoteBlock)
 {
     ui->setupUi(this);
+    ui->lblIsRead->installEventFilter(this);
 
     if(!isAdded) {
         ui->txtEditContents->setText(contents);
@@ -17,8 +18,12 @@ NoteBlock::NoteBlock(int idC, int idN, QString contents, QString name, QString s
         (name == "Admin" && surename == "Admin") ? ui->lblNameSurename->setText(QString(name)) : ui->lblNameSurename->setText(QString("%1 %2").arg(name).arg(surename));
         ui->lblDate->setText(dateTime.toString("dd-MM-yyyy hh:mm:ss"));
 
-        if(isRead) ui->lblIsRead->setPixmap(QPixmap(":/images/images/read.png"));
-        else ui->lblIsRead->setPixmap(QPixmap(":/images/images/new.png"));
+        if(isRead) {
+            ui->lblIsRead->setPixmap(QPixmap(":/images/images/read.png"));
+        }
+        else {
+            ui->lblIsRead->setPixmap(QPixmap(":/images/images/new.png"));
+        }
     }
     else {
         ui->txtEditContents->setText(contents);
@@ -34,6 +39,37 @@ NoteBlock::NoteBlock(int idC, int idN, QString contents, QString name, QString s
 NoteBlock::~NoteBlock()
 {
     delete ui;
+}
+
+bool NoteBlock::eventFilter(QObject *obj, QEvent *event)
+{
+
+    if(obj == ui->lblIsRead) {
+
+        if (event->type() == QEvent::MouseButtonDblClick) {
+
+
+            QSqlQuery qry;
+            qry.prepare("UPDATE notes SET isRead=1 WHERE idNotes = :_idNotes;");
+            qry.bindValue(":_idNotes", idNotes);
+
+            if(!qry.exec()) {
+                return false;
+            }
+            else {
+                emit noteDblClicked();
+                return true;;
+            }
+        }
+
+    }
+
+    return false;
+}
+
+void NoteBlock::setSelection()
+{
+    ui->txtEditContents->setStyleSheet("background-color: rgba(146, 202, 128, 131); color: black");
 }
 
 void NoteBlock::on_btnRemove_clicked()

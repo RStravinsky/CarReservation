@@ -35,6 +35,7 @@ public:
 
 public slots:
     void showNotesDialog(int _idNotes, int _idCar);
+    void noteReadUpdate();
 
 private slots:
     void on_btnReserve_clicked();
