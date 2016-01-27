@@ -27,8 +27,6 @@ void NotesDialog::updateView()
     delete scrollLayout;
     delete scrollWidget;
 
-
-
     notesTable = new QSqlQueryModel(this);
     notesTable->setQuery(QString("SELECT * FROM notes WHERE idCar = %1;").arg(idCar));
 

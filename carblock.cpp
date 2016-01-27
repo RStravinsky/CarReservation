@@ -48,6 +48,7 @@ CarBlock::CarBlock(CarBlock &block, QWidget *parent):
     ui->btnRemove->setIcon(QIcon(":/images/images/add.png"));
 
     ui->lblPhoto->setPixmap(block.addedCarImagePath);
+    addedCarImagePath = block.addedCarImagePath;
     ui->lblCarName->setText(block.getCarName());
     ui->lblMileage->setText(block.getMileage());
     ui->lblLicensePlate->setText(block.getLicensePlate());

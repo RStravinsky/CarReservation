@@ -272,8 +272,13 @@ void MainWindow::createTrayIcon()
     }
 
 
-    for(int i = 0; i < 10; ++i)
-        notesMenu->addAction(notesActionsVector.at(i));
+    if(notesActionsVector.size()<=10) {
+        for(auto elem: notesActionsVector)
+            notesMenu->addAction(elem);
+    }
+    else
+        for(int i=0; i<10; ++i)
+            notesMenu->addAction(notesActionsVector.at(i));
 
     trayIconMenu->addMenu(notesMenu);
     trayIconMenu->addSeparator();
