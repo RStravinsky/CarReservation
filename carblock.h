@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QPair>
+#include <QRegExp>
 
 namespace Ui {
 class CarBlock;

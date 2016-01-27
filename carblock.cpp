@@ -32,6 +32,9 @@ CarBlock::CarBlock(int id, QString name, QString model, QString licensePlate, QD
         ui->lblCarName->setReadOnly(false);
         ui->lblLicensePlate->setReadOnly(false);
         ui->btnRemove->setIcon(QIcon(":/images/images/add.png"));
+        QRegExp rx("^\\w+\\s\\w+$");
+        ui->lblCarName->setValidator(new QRegExpValidator(rx, this));
+
     }
 }
 
@@ -61,6 +64,10 @@ CarBlock::CarBlock(CarBlock &block, QWidget *parent):
     ui->dateEditInspection->setDate(block.getDates().first);
     ui->dateEditInsurance->setDate(block.getDates().second);
     setStatus(Status::Free);
+
+    QRegExp rx("^\\w+\\s\\w+$");
+    ui->lblCarName->setValidator(new QRegExpValidator(rx, this));
+
 }
 
 CarBlock::~CarBlock()
