@@ -6,6 +6,10 @@
 #include <QVBoxLayout>
 #include <QtSql/QSqlQueryModel>
 #include <QSystemTrayIcon>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QTimer>
+#include <QScrollBar>
 #include <vector>
 #include "carblock.h"
 
@@ -20,7 +24,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void loadSqlModel();
     void setVisible(bool visible) Q_DECL_OVERRIDE;
     void showTrayIcon();
 
@@ -29,6 +32,9 @@ public slots:
     void setIcon();
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void noteActionClicked(QAction *act);
+
+private slots:
+    void onTimerOverflow();
 
 signals:
     void trayMenuNoteClicked(int _idNotes, int _idCar);
@@ -41,13 +47,14 @@ private:
     QSqlQueryModel * carTable{nullptr};
     QSqlQueryModel * bookingTable{nullptr};
     QSqlQueryModel * notesTable{nullptr};
-    std::vector<CarBlock*> carBlockVector;
+    QTimer *timer{nullptr};
+    std::vector<CarBlock*> carBlockVector{nullptr};
     QString login;
     QString password;
+    bool isAdmin{false};
 
     bool connectToDatabase(QString &login, QString &password);
     void closeDatabase();
-
 
     QSystemTrayIcon * trayIcon;
     QAction *minimizeAction;
@@ -66,6 +73,7 @@ private:
     void showMessage();
     void setPopupMessage();
     void loadTrayIcon();
+    void createLoginOption();
 };
 
 #endif // MAINWINDOW_H

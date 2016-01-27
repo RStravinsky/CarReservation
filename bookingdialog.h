@@ -13,6 +13,8 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QMap>
+#include <QTimer>
+#include <QScrollBar>
 
 namespace Ui {
 class BookingDialog;
@@ -27,18 +29,10 @@ public:
     ~BookingDialog();
 
 private slots:
-    void dateClicked(QDate date);
-
     void on_calendarWidget_clicked(const QDate &date);
-
     void on_btnReserve_clicked();
-
-    void on_calendarWidget_selectionChanged();
-
     void on_checkBoxBooking_clicked(bool checked);
-
     void on_checkBoxHistory_clicked(bool checked);
-
     void updateView();
 
 signals:
@@ -46,8 +40,8 @@ signals:
 
 private:
     Ui::BookingDialog *ui;
-    QVBoxLayout *scrollLayout;
-    QWidget *scrollWidget;
+    QVBoxLayout *scrollLayout{nullptr};
+    QWidget *scrollWidget{nullptr};
     std::vector<BookingBlock*> blockVector;
     QDate choosenDate;
     QSqlQueryModel * bookingTable {nullptr};
@@ -55,6 +49,7 @@ private:
     QSqlQueryModel * statusHistory {nullptr};
     QSqlQueryModel * carReservations {nullptr};
     int idCar;
+    QTimer *timer;
 
     enum ViewMode {
         Booked,
@@ -69,7 +64,6 @@ private:
     void clearScrollArea();
     bool isDateFree();
     void clearCalendarFormat();
-
     void setCalendarColor(QCalendarWidget *&calendarWidget,QColor color);
 };
 

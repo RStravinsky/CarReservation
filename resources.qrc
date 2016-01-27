@@ -26,5 +26,7 @@
         <file>images/restore.png</file>
         <file>images/new.png</file>
         <file>images/read.png</file>
+        <file>images/key.png</file>
+        <file>images/exit.png</file>
     </qresource>
 </RCC>

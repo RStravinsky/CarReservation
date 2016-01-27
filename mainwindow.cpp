@@ -9,13 +9,15 @@ MainWindow::MainWindow(QWidget *parent) :
     login = "root";
     password = "Serwis4q@"; //change password here
 
-
     if (connectToDatabase(login, password)) {
         ui->statusBar->showMessage("Połączono z użytkownikiem: " + login);
-        updateView();
     }
     else ui->statusBar->showMessage("Nie można połączyć z bazą danych");
 
+    createLoginOption();
+    timer = new QTimer(this);
+    QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimerOverflow()));
+    onTimerOverflow();
 }
 
 MainWindow::~MainWindow()
@@ -23,29 +25,38 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::onTimerOverflow()
+{
+    qDebug() << "Update mainwindow" << endl;
+    const int varticalPosition = ui->scrollArea->verticalScrollBar()->value();
+    updateView();
+    ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
+    timer->start(2000);
+}
+
 void MainWindow::updateView()
 {
-    delete carTable;
-    delete bookingTable;
-    delete scrollLayout;
-    delete scrollWidget;
+    delete carTable;  
+    carTable = new QSqlQueryModel(this);
+    carTable->setQuery("SELECT * FROM car;");
 
+    delete bookingTable;
+    bookingTable = new QSqlQueryModel(this);
+    bookingTable->setQuery("SELECT * FROM booking;");
 
     notesTable = new QSqlQueryModel(this);
     notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC LIMIT 10;");
-    carTable = new QSqlQueryModel(this);
-    carTable->setQuery("SELECT * FROM car;");
-    bookingTable = new QSqlQueryModel(this);
-    bookingTable->setQuery("SELECT * FROM booking;");
-    carBlockVector.clear();
     notesActionsVector.clear();
 
     loadTrayIcon();
 
+    CarBlock * element;
+    if (isAdmin)
+            element = new CarBlock(*(carBlockVector.at(carBlockVector.size()-1))); //*(carBlockVector.data());//
 
+    carBlockVector.clear();
     CarBlock * lastCarBlock{nullptr};
     for(int i = 0; i < carTable->rowCount(); ++i) {
-
         carBlockVector.emplace_back(std::move(new CarBlock(carTable->data(carTable->index(i,0)).toInt(),
                                                            carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
                                                            carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
@@ -55,26 +66,42 @@ void MainWindow::updateView()
                                               ));
        lastCarBlock = carBlockVector.back();
        lastCarBlock->setBookingTable(bookingTable);
-       lastCarBlock->setAdminPermissions(true);
+       lastCarBlock->setAdminPermissions(isAdmin);
        connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)));
-
-       connect(carBlockVector[i],SIGNAL(carDeleted()),this,SLOT(updateView()));
-
-
+       connect(carBlockVector.back(),SIGNAL(carDeleted()),this,SLOT(updateView()));
+       connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
+       connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(5000);});
     }
-    carBlockVector.emplace_back(std::move(new CarBlock(0,QString("-----"),QString("-----"),QString("------"),
-                                                       QDate::currentDate(),QDate::currentDate(),
-                                                       0,CarBlock::Rented,QString(":/images/images/car.png"),true)));
-    connect(carBlockVector.back(),SIGNAL(carAdded()),this,SLOT(updateView()));
 
+    static bool firstInit = true;
+    if(isAdmin) {
+        if(firstInit) {
+            carBlockVector.emplace_back(std::move(new CarBlock(0,QString("-----"),QString("-----"),QString("------"),
+                                                               QDate::currentDate(),QDate::currentDate(),
+                                                               0,CarBlock::Rented,QString(":/images/images/car.png"),true)));
+        }
 
+        else {
+                qDebug() << "befote1"<< endl;
+            carBlockVector.push_back(element);
+                qDebug() << "after1"<< endl;
+        }
+
+        connect(carBlockVector.back(),SIGNAL(carAdded()),this,SLOT(updateView()));
+        connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
+        connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(5000);});
+        firstInit = false;
+    }
+
+    delete scrollLayout;
+    delete scrollWidget;
     scrollWidget = new QWidget(ui->scrollArea);
     scrollLayout = new QVBoxLayout(scrollWidget);
-    for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos)
+    for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos) {
+        qDebug() << *pos << endl;
         scrollLayout->addWidget(*pos);
+    }
     ui->scrollArea->setWidget(scrollWidget);
-
-
 }
 
 bool MainWindow::connectToDatabase(QString &login, QString &password)
@@ -98,6 +125,52 @@ void MainWindow::closeDatabase()
 {
     sqlDatabase.close();
     QSqlDatabase::removeDatabase("sigmacars");
+}
+
+void MainWindow::createLoginOption()
+{
+    QPushButton * loginButton = new QPushButton(this);
+    loginButton->setIcon(QIcon(":/images/images/key.png"));
+    loginButton->setStyleSheet("border:none;");
+
+    QPushButton * logoutButton = new QPushButton(this);
+    logoutButton->setIcon(QIcon(":/images/images/exit.png"));
+    logoutButton->setStyleSheet("border:none;");
+    logoutButton->setVisible(false);
+
+    QLineEdit *  adminPassword = new QLineEdit(this);
+    adminPassword->setVisible(false);
+    adminPassword->setEchoMode(QLineEdit::Password);
+    adminPassword->setFixedWidth(100);
+
+    ui->statusBar->addPermanentWidget(loginButton);
+    ui->statusBar->addPermanentWidget(logoutButton);
+    ui->statusBar->addPermanentWidget(adminPassword);
+
+    connect(loginButton, &QPushButton::clicked, [=]() {
+        static bool visible = false;
+        visible = !visible;
+        adminPassword->clear();
+        adminPassword->setFocus();
+        adminPassword->setVisible(visible);
+    });
+
+    connect(adminPassword, &QLineEdit::editingFinished, [=]() {
+        if(adminPassword->text()=="sigma") {
+            isAdmin = true;
+            loginButton->click();
+            loginButton->setVisible(false);
+            logoutButton->setVisible(true);
+            updateView();
+        }
+    });
+
+    connect(logoutButton, &QPushButton::clicked, [=]() {
+        isAdmin = false;
+        loginButton->setVisible(true);
+        logoutButton->setVisible(false);
+        updateView();
+    });
 }
 
 // ----- TRAY ICON METHODS--------------
@@ -165,9 +238,9 @@ void MainWindow::createTrayIcon()
 {
     trayIconMenu = new QMenu(this);
     trayIconMenu->setStyleSheet("QMenu {"
-                                "background-color: orange;"
-                                //"background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
-                                //"stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                                //"background-color: orange;"
+                                "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+                                "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
                                 "}"
 
                                 "QMenu::icon {"
@@ -184,9 +257,9 @@ void MainWindow::createTrayIcon()
     notesMenu = new QMenu(this);
     notesMenu->setTitle(QString("Wiadomości (%1)").arg(newMessagesNumber));
     notesMenu->setStyleSheet("QMenu {"
-                             "background-color: orange;"
-                             //"background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
-                             //"stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                             ///"background-color: orange;"
+                             "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+                             "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
                              "}"
 
                             );
@@ -224,7 +297,6 @@ void MainWindow::loadTrayIcon()
     createTrayIcon();
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
     setIcon();
-
 }
 
 void MainWindow::setIcon()
@@ -254,27 +326,21 @@ void MainWindow::noteActionClicked(QAction * act)
 
 void MainWindow::createActions()
 {
-
     QAction * lastAction{nullptr};
     QString actionData;
 
     newMessagesNumber = 0;
 
-
     for(int i = 0; i < notesTable->rowCount(); ++i) {
 
-
-        notesActionsVector.emplace_back(std::move( new QAction(QString("&%1 %2").arg(notesTable->data(notesTable->index(i,2)).toString()).arg(notesTable->data(notesTable->index(i,3)).toString()), this) ));
-        lastAction = notesActionsVector.back();
+       notesActionsVector.emplace_back(std::move( new QAction(QString("&%1 %2").arg(notesTable->data(notesTable->index(i,2)).toString()).arg(notesTable->data(notesTable->index(i,3)).toString()), this) ));
+       lastAction = notesActionsVector.back();
 
        lastAction->setFont(QFont("Calibri", 9, QFont::Bold));
        ++newMessagesNumber;
        actionData = notesTable->data(notesTable->index(i,0)).toString() + QString(",") + notesTable->data(notesTable->index(i,6)).toString();
        lastAction->setData(actionData);
-
-
     }
-
 
     minimizeAction = new QAction(QString("Minimalizuj"), this);
     minimizeAction->setFont(QFont("Calibri", 9));
@@ -288,7 +354,6 @@ void MainWindow::createActions()
     quitAction->setFont(QFont("Calibri", 9));
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 }
-
 
 void MainWindow::showTrayIcon()
 {

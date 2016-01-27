@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>210</width>
+    <width>400</width>
     <height>75</height>
    </rect>
   </property>
@@ -31,13 +31,16 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QLabel" name="lblStatus">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>9</y>
      <width>16</width>
-     <height>55</height>
+     <height>52</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -51,7 +54,7 @@ border-radius: 5px</string>
   <widget class="QLabel" name="lblName">
    <property name="geometry">
     <rect>
-     <x>35</x>
+     <x>40</x>
      <y>15</y>
      <width>211</width>
      <height>21</height>
@@ -170,9 +173,12 @@ border-radius: 5px</string>
     <rect>
      <x>0</x>
      <y>60</y>
-     <width>251</width>
+     <width>401</width>
      <height>20</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>

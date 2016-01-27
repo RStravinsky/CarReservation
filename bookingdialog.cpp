@@ -15,8 +15,6 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
     ui->dateTimeEditBegin->setDateTime(QDateTime::currentDateTime());
     ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime());
 
-    connect(this, SIGNAL(bookedCar()), this, SLOT(updateView()));
-
     carReservations = new QSqlQueryModel(this);
     statusHistory = new QSqlQueryModel(this);
 
@@ -27,21 +25,19 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
                           + windTitle->data(windTitle->index(windTitle->rowCount()-1,1)).toString()
                           );
 
-    scrollWidget = new QWidget(ui->scrollArea);
-    scrollLayout = new QVBoxLayout(scrollWidget);
+    timer = new QTimer(this);
+    connect(timer,SIGNAL(timeout()),this,SLOT(updateView()));
+    timer->start(2000);
+    on_calendarWidget_clicked(QDate::currentDate());
 
     updateView();
-
+    connect(this, SIGNAL(bookedCar()), this, SLOT(updateView()));
+    connect(ui->calendarWidget,SIGNAL(selectionChanged()),this,SLOT(updateView()));
 }
 
 BookingDialog::~BookingDialog()
 {
     delete ui;
-}
-
-void BookingDialog::dateClicked(QDate date)
-{
-    choosenDate = date;
 }
 
 void BookingDialog::fillCalendar()
@@ -63,16 +59,14 @@ void BookingDialog::fillCalendar()
                 ui->calendarWidget->setDateTextFormat(itDate, format);
                 itDate = itDate.addDays(1);
             }
-
         }
-
     }
+
     else if(viewMode == ViewMode::History) {
 
         format.setBackground(QBrush(QColor(150,0,0,200), Qt::SolidPattern));
 
         for(int i = 0; i < statusHistory->rowCount(); ++i) {
-
 
             itDate = statusHistory->data(statusHistory->index(i,3)).toDate();
 
@@ -80,10 +74,8 @@ void BookingDialog::fillCalendar()
                 ui->calendarWidget->setDateTextFormat(itDate, format);
                 itDate = itDate.addDays(1);
             }
-
         }
     }
-
 }
 
 void BookingDialog::loadBlock(int idx)
@@ -156,6 +148,8 @@ void BookingDialog::setCalendarColor(QCalendarWidget *&calendarWidget,QColor col
 
 void BookingDialog::on_calendarWidget_clicked(const QDate &date)
 {
+    int varticalPosition = ui->scrollArea->verticalScrollBar()->value(); // previous scrollBar position
+
     choosenDate = date;
 
     blockVector.clear();
@@ -175,18 +169,17 @@ void BookingDialog::on_calendarWidget_clicked(const QDate &date)
 
     ui->scrollArea->setWidget(scrollWidget);
     ui->scrollArea->setWidgetResizable(true);
+    ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
 
     fillCalendar();
-
 }
 
 void BookingDialog::clearScrollArea()
 {
-    QLayoutItem *child;
-    while ((child =  scrollLayout->takeAt(0)) != 0) {
-        delete child->widget();
-    }
-
+    delete scrollLayout;
+    delete scrollWidget;
+    scrollWidget = new QWidget(ui->scrollArea);
+    scrollLayout = new QVBoxLayout(scrollWidget);
 }
 
 bool BookingDialog::isDateFree()
@@ -196,8 +189,15 @@ bool BookingDialog::isDateFree()
 
     QDateTime modelBegin = QDateTime::currentDateTime(), modelEnd = QDateTime::currentDateTime();
 
+    if(ui->dateTimeEditBegin->dateTime() < QDateTime::currentDateTime()) {
+        QMessageBox::warning(this, "Uwaga!", "Data i czas początku rezerwacji muszą być większe od aktualnej.");
+        ui->dateTimeEditBegin->setDateTime(QDateTime::currentDateTime());
+        ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime());
+        return false;
+    }
+
     if(ui->dateTimeEditEnd->dateTime() <= ui->dateTimeEditBegin->dateTime()) {
-        QMessageBox::warning(this, "Uwaga!", "Data i czas końca rezerwacji musi być większa od początkowej.");
+        QMessageBox::warning(this, "Uwaga!", "Data i czas końca rezerwacji muszą być większe od początkowej.");
         ui->dateTimeEditBegin->setDateTime(QDateTime::currentDateTime());
         ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime());
         return false;
@@ -253,12 +253,6 @@ void BookingDialog::on_btnReserve_clicked()
 
 }
 
-void BookingDialog::on_calendarWidget_selectionChanged()
-{
-    clearScrollArea();
-    fillCalendar();
-}
-
 void BookingDialog::on_checkBoxBooking_clicked(bool checked)
 {
     if(checked) {
@@ -268,8 +262,7 @@ void BookingDialog::on_checkBoxBooking_clicked(bool checked)
     else
         viewMode = ViewMode::Nothing;
 
-    clearScrollArea();
-    fillCalendar();
+    updateView();
 }
 
 void BookingDialog::on_checkBoxHistory_clicked(bool checked)
@@ -281,8 +274,7 @@ void BookingDialog::on_checkBoxHistory_clicked(bool checked)
     else
         viewMode = ViewMode::Nothing;
 
-    clearScrollArea();
-    fillCalendar();
+    updateView();
 }
 
 void BookingDialog::clearCalendarFormat()
@@ -298,12 +290,8 @@ void BookingDialog::clearCalendarFormat()
 
 void BookingDialog::updateView()
 {
+    qDebug() << "Update booking dialog" << endl;
     carReservations->setQuery(QString("SELECT * FROM sigmacars.booking WHERE idCar = %1").arg(idCar));
-    statusHistory->setQuery(QString("SELECT * FROM sigmacars.history WHERE idCar = %1").arg(idCar));
-
-    clearScrollArea();
-    fillCalendar();
-
-    ui->scrollArea->setWidget(scrollWidget);
-    ui->scrollArea->setWidgetResizable(true);
+    statusHistory->setQuery(QString("SELECT * FROM sigmacars.history WHERE idCar = %1").arg(idCar));   
+    on_calendarWidget_clicked(choosenDate);
 }

@@ -32,6 +32,27 @@ CarBlock::CarBlock(int id, QString name, QString model, QString licensePlate, QD
 
 }
 
+CarBlock::CarBlock(CarBlock &block, QWidget *parent):
+    QWidget(parent),
+    ui(new Ui::CarBlock)
+{
+    ui->setupUi(this);
+    ui->btnReserve->setVisible(false);
+    ui->btnAddInspection->setVisible(false);
+    ui->btnAddInsurance->setVisible(false);
+    ui->lblStatus->setVisible(false);
+    ui->lblMileage->setReadOnly(false);
+    ui->lblCarName->setReadOnly(false);
+    ui->lblLicensePlate->setReadOnly(false);
+    ui->btnAddImage->setVisible(true);
+    ui->btnRemove->setIcon(QIcon(":/images/images/add.png"));
+
+    ui->lblPhoto->setPixmap(block.addedCarImagePath);
+    ui->lblCarName->setText(block.getCarName());
+    ui->lblMileage->setText(block.getMileage());
+    ui->lblLicensePlate->setText(block.getLicensePlate());
+}
+
 CarBlock::~CarBlock()
 {
     delete ui;
@@ -86,12 +107,15 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
 void CarBlock::on_btnReserve_clicked()
 {
     bookingDialog = new BookingDialog(bookingTable, carTable, idCar);
-    bookingDialog->exec();
+    emit inProgress();
+    if(bookingDialog->exec()== BookingDialog::Rejected)
+        emit progressFinished();
     delete bookingDialog;
 }
 
 void CarBlock::on_btnAddInsurance_clicked()
 {
+    emit inProgress();
     QSqlQuery qry;
     qry.prepare("UPDATE car SET InsuranceDate=:_insuranceDate WHERE idCar=:_id");
     qry.bindValue(":_id", idCar);
@@ -101,10 +125,12 @@ void CarBlock::on_btnAddInsurance_clicked()
     else {
         QMessageBox::information(this,"Informacja","Zaktualizowano!");
     }
+    emit progressFinished();
 }
 
 void CarBlock::on_btnAddInspection_clicked()
 {
+    emit inProgress();
     QSqlQuery qry;
     qry.prepare("UPDATE car SET InspectionDate=:_inspectionDate WHERE idCar=:_id");
     qry.bindValue(":_id", idCar);
@@ -114,10 +140,12 @@ void CarBlock::on_btnAddInspection_clicked()
     else {
         QMessageBox::information(this,"Informacja","Zaktualizowano!");
     }
+    emit progressFinished();
 }
 
 void CarBlock::on_btnRemove_clicked()
 {
+    emit inProgress();
     if(!isAddBlock) {
         QSqlQuery qry;
         qry.prepare("DELETE FROM car WHERE idCar=:_id");
@@ -152,20 +180,36 @@ void CarBlock::on_btnRemove_clicked()
             emit carAdded();
         }
     }
+    emit progressFinished();
 }
 
 void CarBlock::on_btnViewNotes_clicked()
 {
     idNotes = 0; // <- add idNotes initialization in class constructor
     showNotesDialog(idNotes, idCar);
-
 }
 
 void CarBlock::on_btnAddImage_clicked()
 {
+    emit inProgress();
     addedCarImagePath = QFileDialog::getOpenFileName(this, tr("Plik z obrazkiem"),
                                QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)+"/bez_tytułu.pdf",
                                tr("Pliki PNG (*.png)"));
     ui->lblPhoto->setPixmap(QPixmap(addedCarImagePath));
+    emit progressFinished();
+}
 
+QString CarBlock::getCarName()
+{
+    return ui->lblCarName->text();
+}
+
+QString CarBlock::getMileage()
+{
+    return ui->lblMileage->text();
+}
+
+QString CarBlock::getLicensePlate()
+{
+    return ui->lblLicensePlate->text();
 }

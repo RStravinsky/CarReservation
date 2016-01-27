@@ -28,5 +28,4 @@ bool NameDialog::getNameAndSurname(QString &name, QString &surname)
         surname = "";
         return false;
     }
-
 }

@@ -26,6 +26,7 @@ public:
     };
 
     explicit CarBlock(int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, Status status = CarBlock::Free, QString photoPath = ":/images/images/car.png",bool toAdd = false, QWidget *parent = 0);
+    CarBlock(CarBlock & block,QWidget *parent = 0);
     ~CarBlock();
     void setStatus(Status);
     void setBookingTable(QSqlQueryModel * bookTable) {bookingTable = bookTable;}
@@ -46,6 +47,8 @@ private slots:
 signals:
     void carDeleted();
     void carAdded();
+    void inProgress();
+    void progressFinished();
 
 private:
     Ui::CarBlock *ui;
@@ -57,6 +60,10 @@ private:
     QString carNotes;
     bool isAddBlock;
     QString addedCarImagePath;
+    QString getCarName();
+    QString getMileage();
+    QString getLicensePlate();
+
 
 };
 

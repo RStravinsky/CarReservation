@@ -31,9 +31,9 @@ void NotesDialog::updateView()
                           + windTitle->data(windTitle->index(windTitle->rowCount()-1,0)).toString() + QString(" ")
                           + windTitle->data(windTitle->index(windTitle->rowCount()-1,1)).toString()
                           );
+    delete windTitle;
 
     noteBlockVector.clear();
-
     for(int i = 0; i < notesTable->rowCount(); ++i) {
         noteBlockVector.emplace_back(std::move(new NoteBlock(notesTable->data(notesTable->index(i,6)).toInt(), notesTable->data(notesTable->index(i,0)).toInt(),
                                                              notesTable->data(notesTable->index(i,1)).toString(), notesTable->data(notesTable->index(i,2)).toString(),
@@ -42,11 +42,10 @@ void NotesDialog::updateView()
                                                             )));
 
        connect(noteBlockVector[i],SIGNAL(noteDeleted()),this,SLOT(updateView()));
-
     }
+
     noteBlockVector.emplace_back(std::move(new NoteBlock(idCar,0, QString("Wpisz treść uwagi"), QString("Admin"), QString("Admin"), QDateTime::currentDateTime(), false, true)));
     connect(noteBlockVector.back(),SIGNAL(noteAdded()),this,SLOT(updateView()));
-
 
     scrollWidget = new QWidget(ui->scrollArea);
     scrollLayout = new QVBoxLayout(scrollWidget);

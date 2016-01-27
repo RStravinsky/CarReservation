@@ -36,7 +36,6 @@ NoteBlock::~NoteBlock()
     delete ui;
 }
 
-
 void NoteBlock::on_btnRemove_clicked()
 {
 
@@ -72,6 +71,4 @@ void NoteBlock::on_btnRemove_clicked()
             emit noteAdded();
         }
     }
-
-
 }
