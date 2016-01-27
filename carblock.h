@@ -10,6 +10,7 @@
 #include <QtSql>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QPair>
 
 namespace Ui {
 class CarBlock;
@@ -46,8 +47,8 @@ private slots:
     void on_btnAddImage_clicked();
 
 signals:
-    void carDeleted();
-    void carAdded();
+    void carDeleted(bool isCopyEnable);
+    void carAdded(bool isCopyEnable);
     void inProgress();
     void progressFinished();
 
@@ -64,8 +65,7 @@ private:
     QString getCarName();
     QString getMileage();
     QString getLicensePlate();
-
-
+    QPair<QDate,QDate> getDates();
 };
 
 #endif // CARBLOCK_H

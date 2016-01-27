@@ -9,18 +9,6 @@ CarBlock::CarBlock(int id, QString name, QString model, QString licensePlate, QD
 {
     ui->setupUi(this);
 
-    isAddBlock = toAdd;
-    if(isAddBlock){
-        ui->btnReserve->setVisible(false);
-        ui->btnAddInspection->setVisible(false);
-        ui->btnAddInsurance->setVisible(false);
-        ui->lblStatus->setVisible(false);
-        ui->lblMileage->setReadOnly(false);
-        ui->lblCarName->setReadOnly(false);
-        ui->lblLicensePlate->setReadOnly(false);
-        ui->btnAddImage->setVisible(true);
-        ui->btnRemove->setIcon(QIcon(":/images/images/add.png"));
-    }
 
     ui->lblLicensePlate->setText(licensePlate);
     ui->lblPhoto->setPixmap(QPixmap(photoPath));
@@ -30,6 +18,21 @@ CarBlock::CarBlock(int id, QString name, QString model, QString licensePlate, QD
     ui->dateEditInsurance->setDate(insuranceDate);
     setStatus(status);
 
+    isAddBlock = toAdd;
+    if(isAddBlock){
+        ui->btnReserve->setVisible(false);
+        ui->btnAddInspection->setVisible(false);
+        ui->btnAddInsurance->setVisible(false);
+        ui->lblStatus->setVisible(false);
+        ui->btnViewNotes->setVisible(false);
+        ui->lblNotesImage->setVisible(false);
+        ui->btnAddImage->setVisible(true);
+        ui->lblMileage->setReadOnly(false);
+        ui->lblMileage->setText(QString::number(mileage));
+        ui->lblCarName->setReadOnly(false);
+        ui->lblLicensePlate->setReadOnly(false);
+        ui->btnRemove->setIcon(QIcon(":/images/images/add.png"));
+    }
 }
 
 CarBlock::CarBlock(CarBlock &block, QWidget *parent):
@@ -41,17 +44,23 @@ CarBlock::CarBlock(CarBlock &block, QWidget *parent):
     ui->btnAddInspection->setVisible(false);
     ui->btnAddInsurance->setVisible(false);
     ui->lblStatus->setVisible(false);
+    ui->btnViewNotes->setVisible(false);
+    ui->lblNotesImage->setVisible(false);
+    ui->btnAddImage->setVisible(true);
     ui->lblMileage->setReadOnly(false);
     ui->lblCarName->setReadOnly(false);
     ui->lblLicensePlate->setReadOnly(false);
-    ui->btnAddImage->setVisible(true);
     ui->btnRemove->setIcon(QIcon(":/images/images/add.png"));
 
+    isAddBlock = true;
     ui->lblPhoto->setPixmap(block.addedCarImagePath);
     addedCarImagePath = block.addedCarImagePath;
     ui->lblCarName->setText(block.getCarName());
     ui->lblMileage->setText(block.getMileage());
     ui->lblLicensePlate->setText(block.getLicensePlate());
+    ui->dateEditInspection->setDate(block.getDates().first);
+    ui->dateEditInsurance->setDate(block.getDates().second);
+    setStatus(Status::Free);
 }
 
 CarBlock::~CarBlock()
@@ -97,18 +106,18 @@ void CarBlock::setAdminPermissions(bool isAdmin)
 
 void CarBlock::showNotesDialog(int _idNotes, int _idCar)
 {
-
     if(_idCar == idCar) {
-
+        emit inProgress();
         NotesDialog n(_idNotes,_idCar);
         connect(&n, SIGNAL(noteWasRead()), this, SLOT(noteReadUpdate()));
-        n.exec();
+        if(n.exec()==NotesDialog::Rejected)
+            emit progressFinished();
     }
 }
 
 void CarBlock::noteReadUpdate()
 {
-    // emit signal to update in mainwindow
+    emit carDeleted(true);
 }
 
 void CarBlock::on_btnReserve_clicked()
@@ -129,9 +138,9 @@ void CarBlock::on_btnAddInsurance_clicked()
     qry.bindValue(":_insuranceDate", ui->dateEditInsurance->date());
     if( !qry.exec() )
         QMessageBox::warning(this,"Informacja","Aktualizacja nie powidoła się./nERROR: "+qry.lastError().text()+"");
-    else {
+    else
         QMessageBox::information(this,"Informacja","Zaktualizowano!");
-    }
+
     emit progressFinished();
 }
 
@@ -144,9 +153,9 @@ void CarBlock::on_btnAddInspection_clicked()
     qry.bindValue(":_inspectionDate", ui->dateEditInspection->date());
     if( !qry.exec() )
         QMessageBox::warning(this,"Informacja","Aktualizacja nie powidoła się./nERROR: "+qry.lastError().text()+"");
-    else {
+    else
         QMessageBox::information(this,"Informacja","Zaktualizowano!");
-    }
+
     emit progressFinished();
 }
 
@@ -157,11 +166,14 @@ void CarBlock::on_btnRemove_clicked()
         QSqlQuery qry;
         qry.prepare("DELETE FROM car WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
-        if( !qry.exec() )
-            QMessageBox::warning(this,"Informacja","Usuwanie nie powiodła się./nERROR: "+qry.lastError().text()+"");
+        if( !qry.exec() ) {
+            QMessageBox::warning(this,"Informacja","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
+            emit progressFinished();
+        }
         else {
             QMessageBox::information(this,"Informacja","Usunieto!");
-            emit carDeleted();
+            emit progressFinished();
+            emit carDeleted(true);
         }
     }
 
@@ -180,14 +192,16 @@ void CarBlock::on_btnRemove_clicked()
         qry.bindValue(":_Status",0);
         qry.bindValue(":_Mileage", ui->lblMileage->text());
         qry.bindValue(":_PhotoPath",addedCarImagePath);
-        if( !qry.exec() )
-            QMessageBox::warning(this,"Informacja","Dodawanie nie powiodło się./nERROR "+qry.lastError().text()+"");
+        if( !qry.exec() ) {
+            QMessageBox::warning(this,"Informacja","Dodawanie nie powiodło się.\nERROR "+qry.lastError().text()+"");
+            emit progressFinished();
+        }
         else {
             QMessageBox::information(this,"Informacja","Dodano!");
-            emit carAdded();
+            emit progressFinished();
+            emit carAdded(false);
         }
     }
-    emit progressFinished();
 }
 
 void CarBlock::on_btnViewNotes_clicked()
@@ -218,4 +232,9 @@ QString CarBlock::getMileage()
 QString CarBlock::getLicensePlate()
 {
     return ui->lblLicensePlate->text();
+}
+
+QPair<QDate,QDate> CarBlock::getDates()
+{
+    return qMakePair(ui->dateEditInspection->date(),ui->dateEditInsurance->date());
 }

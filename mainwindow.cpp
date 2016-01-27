@@ -29,13 +29,18 @@ void MainWindow::onTimerOverflow()
 {
     qDebug() << "Update mainwindow" << endl;
     const int varticalPosition = ui->scrollArea->verticalScrollBar()->value();
-    updateView();
+    updateView(true);
     ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
     timer->start(2000);
 }
 
-void MainWindow::updateView()
-{
+void MainWindow::updateView(bool isCopyEnable)
+{  
+    if(isAdmin){
+        if(isCopyEnable) copyEnable = true;
+        else copyEnable = false;
+    }
+
     delete carTable;  
     carTable = new QSqlQueryModel(this);
     carTable->setQuery("SELECT * FROM car;");
@@ -50,9 +55,10 @@ void MainWindow::updateView()
 
     loadTrayIcon();
 
+    // Copy last CarBlock
     CarBlock * element;
     if (isAdmin)
-            element = new CarBlock(*(carBlockVector.at(carBlockVector.size()-1))); //*(carBlockVector.data());//
+            element = new CarBlock(*(carBlockVector.at(carBlockVector.size()-1)));
 
     carBlockVector.clear();
     CarBlock * lastCarBlock{nullptr};
@@ -68,29 +74,23 @@ void MainWindow::updateView()
        lastCarBlock->setBookingTable(bookingTable);
        lastCarBlock->setAdminPermissions(isAdmin);
        connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)));
-       connect(carBlockVector.back(),SIGNAL(carDeleted()),this,SLOT(updateView()));
+       connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)));
        connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
        connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(5000);});
     }
 
-    static bool firstInit = true;
     if(isAdmin) {
-        if(firstInit) {
+        if(!copyEnable)
             carBlockVector.emplace_back(std::move(new CarBlock(0,QString("-----"),QString("-----"),QString("------"),
                                                                QDate::currentDate(),QDate::currentDate(),
                                                                0,CarBlock::Rented,QString(":/images/images/car.png"),true)));
-        }
 
-        else {
-                qDebug() << "befote1"<< endl;
-            carBlockVector.push_back(element);
-                qDebug() << "after1"<< endl;
-        }
+        else carBlockVector.push_back(std::move(element));
 
-        connect(carBlockVector.back(),SIGNAL(carAdded()),this,SLOT(updateView()));
+        connect(carBlockVector.back(),SIGNAL(carAdded(bool)),this,SLOT(updateView(bool)));
         connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
         connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(5000);});
-        firstInit = false;
+        copyEnable = true;
     }
 
     delete scrollLayout;
@@ -161,7 +161,7 @@ void MainWindow::createLoginOption()
             loginButton->click();
             loginButton->setVisible(false);
             logoutButton->setVisible(true);
-            updateView();
+            updateView(false);
         }
     });
 
@@ -169,7 +169,7 @@ void MainWindow::createLoginOption()
         isAdmin = false;
         loginButton->setVisible(true);
         logoutButton->setVisible(false);
-        updateView();
+        updateView(true);
     });
 }
 
@@ -191,6 +191,11 @@ void MainWindow::setVisible(bool visible)
         restoreAction->setFont(QFont("Calibri", 9, QFont::Bold));
         minimizeAction->setFont(QFont("Calibri", 9));
     }
+}
+
+void MainWindow::showTrayIcon()
+{
+    trayIcon->show();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -360,12 +365,6 @@ void MainWindow::createActions()
     quitAction->setFont(QFont("Calibri", 9));
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 }
-
-void MainWindow::showTrayIcon()
-{
-   trayIcon->show();
-}
-
 
 void MainWindow::setPopupMessage()
 {

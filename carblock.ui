@@ -473,10 +473,13 @@ color: gray;
 background-color:transparent</string>
    </property>
    <property name="text">
-    <string>Nazwa samochodu</string>
+    <string/>
    </property>
    <property name="readOnly">
     <bool>true</bool>
+   </property>
+   <property name="placeholderText">
+    <string>Marka Model</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnAddImage">

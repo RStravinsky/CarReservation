@@ -28,13 +28,13 @@ public:
     void showTrayIcon();
 
 public slots:
-    void updateView();
-    void setIcon();
-    void iconActivated(QSystemTrayIcon::ActivationReason reason);
-    void noteActionClicked(QAction *act);
+    void updateView(bool isCopyEnable);
 
 private slots:
     void onTimerOverflow();
+    void setIcon();
+    void iconActivated(QSystemTrayIcon::ActivationReason reason);
+    void noteActionClicked(QAction *act);
 
 signals:
     void trayMenuNoteClicked(int _idNotes, int _idCar);
@@ -52,6 +52,7 @@ private:
     QString login;
     QString password;
     bool isAdmin{false};
+    bool copyEnable{false};
 
     bool connectToDatabase(QString &login, QString &password);
     void closeDatabase();
@@ -73,6 +74,7 @@ private:
     void setPopupMessage();
     void loadTrayIcon();
     void createLoginOption();
+
 };
 
 #endif // MAINWINDOW_H
