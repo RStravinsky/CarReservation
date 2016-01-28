@@ -82,8 +82,8 @@ color: gray
    </property>
    <property name="font">
     <font>
-     <family>Sans</family>
-     <pointsize>12</pointsize>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
     </font>
    </property>
    <property name="styleSheet">
@@ -238,7 +238,7 @@ background-color: rgba(255, 255, 255, 0);</string>
   <widget class="QPushButton" name="btnAddInsurance">
    <property name="geometry">
     <rect>
-     <x>594</x>
+     <x>597</x>
      <y>52</y>
      <width>31</width>
      <height>27</height>
@@ -264,7 +264,7 @@ background-color: rgba(255, 255, 255, 0);</string>
   <widget class="QPushButton" name="btnAddInspection">
    <property name="geometry">
     <rect>
-     <x>594</x>
+     <x>597</x>
      <y>97</y>
      <width>31</width>
      <height>27</height>
@@ -292,14 +292,14 @@ background-color: rgba(255, 255, 255, 0);</string>
     <rect>
      <x>500</x>
      <y>50</y>
-     <width>93</width>
+     <width>100</width>
      <height>27</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Sans</family>
-     <pointsize>12</pointsize>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
     </font>
    </property>
    <property name="styleSheet">
@@ -319,14 +319,14 @@ color: gray</string>
     <rect>
      <x>500</x>
      <y>95</y>
-     <width>93</width>
+     <width>100</width>
      <height>27</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Sans</family>
-     <pointsize>12</pointsize>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
     </font>
    </property>
    <property name="styleSheet">
@@ -368,8 +368,8 @@ color:gray;</string>
    </property>
    <property name="font">
     <font>
-     <family>Sans</family>
-     <pointsize>12</pointsize>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
     </font>
    </property>
    <property name="styleSheet">
@@ -407,8 +407,8 @@ background: rgb(230,230,230);
    </property>
    <property name="font">
     <font>
-     <family>Sans</family>
-     <pointsize>12</pointsize>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
     </font>
    </property>
    <property name="styleSheet">
@@ -417,10 +417,13 @@ color: gray;
 background-color:transparent</string>
    </property>
    <property name="text">
-    <string>Nr rejestracyjny</string>
+    <string/>
    </property>
    <property name="readOnly">
     <bool>true</bool>
+   </property>
+   <property name="placeholderText">
+    <string>Nr rejestracyjny</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lblMileage">
@@ -434,8 +437,8 @@ background-color:transparent</string>
    </property>
    <property name="font">
     <font>
-     <family>Sans</family>
-     <pointsize>12</pointsize>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
     </font>
    </property>
    <property name="styleSheet">
@@ -444,25 +447,28 @@ color: gray;
 background-color:transparent</string>
    </property>
    <property name="text">
-    <string>Przebieg</string>
+    <string/>
    </property>
    <property name="readOnly">
     <bool>true</bool>
+   </property>
+   <property name="placeholderText">
+    <string>Przebieg</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="lblCarName">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
+     <y>0</y>
      <width>401</width>
      <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Sans</family>
-     <pointsize>16</pointsize>
+     <family>Calibri</family>
+     <pointsize>20</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -490,6 +496,12 @@ background-color:transparent</string>
      <width>121</width>
      <height>27</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>10</pointsize>
+    </font>
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton:hover {

@@ -62,8 +62,8 @@ border-radius: 5px</string>
    </property>
    <property name="font">
     <font>
-     <family>Calibri Light</family>
-     <pointsize>12</pointsize>
+     <family>Calibri</family>
+     <pointsize>13</pointsize>
      <weight>50</weight>
      <bold>false</bold>
     </font>
@@ -89,9 +89,10 @@ border-radius: 5px</string>
    </property>
    <property name="font">
     <font>
-     <family>Calibri Light</family>
+     <family>Calibri</family>
      <pointsize>12</pointsize>
      <weight>50</weight>
+     <italic>false</italic>
      <bold>false</bold>
     </font>
    </property>
@@ -119,7 +120,7 @@ border-radius: 5px</string>
    </property>
    <property name="font">
     <font>
-     <family>Calibri Light</family>
+     <family>Calibri</family>
      <pointsize>12</pointsize>
      <weight>50</weight>
      <bold>false</bold>
@@ -149,7 +150,7 @@ border-radius: 5px</string>
    </property>
    <property name="font">
     <font>
-     <family>Calibri Light</family>
+     <family>Calibri</family>
      <pointsize>12</pointsize>
      <weight>50</weight>
      <bold>false</bold>

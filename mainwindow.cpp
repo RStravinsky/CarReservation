@@ -36,10 +36,8 @@ void MainWindow::onTimerOverflow()
 
 void MainWindow::updateView(bool isCopyEnable)
 {  
-    if(isAdmin){
-        if(isCopyEnable) copyEnable = true;
-        else copyEnable = false;
-    }
+    if(isAdmin)
+        copyEnable = isCopyEnable;
 
     delete carTable;  
     carTable = new QSqlQueryModel(this);
@@ -63,7 +61,7 @@ void MainWindow::updateView(bool isCopyEnable)
     carBlockVector.clear();
     CarBlock * lastCarBlock{nullptr};
     for(int i = 0; i < carTable->rowCount(); ++i) {
-        carBlockVector.emplace_back(std::move(new CarBlock(carTable->data(carTable->index(i,0)).toInt(),
+        carBlockVector.emplace_back(std::move(new CarBlock(false, carTable->data(carTable->index(i,0)).toInt(),
                                                            carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
                                                            carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
                                                            carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
@@ -77,14 +75,12 @@ void MainWindow::updateView(bool isCopyEnable)
        connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)));
        connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
        connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(5000);});
-       connect(carBlockVector.back(),&CarBlock::noteClosed,[=](){delete trayIconMenu; delete trayIcon; updateView(true); showTrayIcon();});
+       connect(carBlockVector.back(),&CarBlock::noteClosed,[=](){ delete notesMenu; delete trayIconMenu; delete trayIcon; createTrayIcon(); showTrayIcon();});
     }
 
     if(isAdmin) {
         if(!copyEnable)
-            carBlockVector.emplace_back(std::move(new CarBlock(0,QString("-----"),QString("-----"),QString("------"),
-                                                               QDate::currentDate(),QDate::currentDate(),
-                                                               0,CarBlock::Rented,QString(":/images/images/car.png"),true)));
+            carBlockVector.emplace_back(std::move(new CarBlock()));
 
         else carBlockVector.push_back(std::move(element));
 
@@ -98,10 +94,8 @@ void MainWindow::updateView(bool isCopyEnable)
     delete scrollWidget;
     scrollWidget = new QWidget(ui->scrollArea);
     scrollLayout = new QVBoxLayout(scrollWidget);
-    for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos) {
-        //qDebug() << *pos << endl;
+    for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos)
         scrollLayout->addWidget(*pos);
-    }
     ui->scrollArea->setWidget(scrollWidget);
 }
 
@@ -175,6 +169,15 @@ void MainWindow::createLoginOption()
 }
 
 // ----- TRAY ICON METHODS--------------
+
+void MainWindow::loadTrayIcon()
+{
+    createActions();
+    createTrayIcon();
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+    setIcon();
+}
+
 
 void MainWindow::setVisible(bool visible)
 {
@@ -297,14 +300,6 @@ void MainWindow::createTrayIcon()
     trayIcon->setContextMenu(trayIconMenu);
 
     connect(notesMenu, SIGNAL(triggered(QAction*)), this, SLOT(noteActionClicked(QAction*)));
-}
-
-void MainWindow::loadTrayIcon()
-{
-    createActions();
-    createTrayIcon();
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-    setIcon();
 }
 
 void MainWindow::setIcon()

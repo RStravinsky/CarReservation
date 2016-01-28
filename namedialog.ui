@@ -67,7 +67,8 @@ color: gray;
    </property>
    <property name="font">
     <font>
-     <pointsize>10</pointsize>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -85,6 +86,12 @@ color: gray;
      <height>20</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
   </widget>
   <widget class="QLineEdit" name="lineEditSurname">
    <property name="geometry">
@@ -94,6 +101,12 @@ color: gray;
      <width>181</width>
      <height>20</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
@@ -107,7 +120,8 @@ color: gray;
    </property>
    <property name="font">
     <font>
-     <pointsize>10</pointsize>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -125,6 +139,12 @@ color: gray;
      <height>23</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
    <property name="text">
     <string>Zatwierdź</string>
    </property>
@@ -137,6 +157,12 @@ color: gray;
      <width>91</width>
      <height>23</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>10</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Anuluj</string>

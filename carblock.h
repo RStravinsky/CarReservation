@@ -27,8 +27,9 @@ public:
         Rented,
     };
 
-    explicit CarBlock(int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, Status status = CarBlock::Free, QString photoPath = ":/images/images/car.png",bool toAdd = false, QWidget *parent = 0);
-    CarBlock(CarBlock & block,QWidget *parent = 0);
+    explicit CarBlock(bool toAdd = true, int id = 0, QString name = "", QString model = "", QString licensePlate = "", QDate inspectionDate = QDate::currentDate(),
+             QDate insuranceDate = QDate::currentDate(), int mileage = 0, Status status = Status::Free, QString photoPath = ":/images/images/car.png", QWidget *parent = 0) ;
+    CarBlock(CarBlock &block, QWidget *parent = 0);
     ~CarBlock();
     void setStatus(Status);
     void setBookingTable(QSqlQueryModel * bookTable) {bookingTable = bookTable;}
