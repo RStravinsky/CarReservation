@@ -1,25 +1,22 @@
 #include "carblock.h"
 #include "ui_carblock.h"
 
-
-CarBlock::CarBlock(int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, Status status, QString photoPath, bool toAdd, QWidget *parent) :
+CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, Status status,
+                   QString photoPath, QWidget *parent):
     QWidget(parent),
     ui(new Ui::CarBlock),
-    idCar(id)
+    idCar(id),
+    isAddBlock(toAdd)
 {
     ui->setupUi(this);
 
+    if(!isAddBlock){
+        ui->lblLicensePlate->setText(licensePlate);
+        ui->lblCarName->setText(name + QString(" ") + model);
+        ui->lblMileage->setText(QString::number(mileage) + " km");
+    }
 
-    ui->lblLicensePlate->setText(licensePlate);
-    ui->lblPhoto->setPixmap(QPixmap(photoPath));
-    ui->lblCarName->setText(name + QString(" ") + model);
-    ui->lblMileage->setText(QString::number(mileage) + " km");
-    ui->dateEditInspection->setDate(inspectionDate);
-    ui->dateEditInsurance->setDate(insuranceDate);
-    setStatus(status);
-
-    isAddBlock = toAdd;
-    if(isAddBlock){
+    else if(isAddBlock){
         ui->btnReserve->setVisible(false);
         ui->btnAddInspection->setVisible(false);
         ui->btnAddInsurance->setVisible(false);
@@ -28,14 +25,17 @@ CarBlock::CarBlock(int id, QString name, QString model, QString licensePlate, QD
         ui->lblNotesImage->setVisible(false);
         ui->btnAddImage->setVisible(true);
         ui->lblMileage->setReadOnly(false);
-        ui->lblMileage->setText(QString::number(mileage));
         ui->lblCarName->setReadOnly(false);
         ui->lblLicensePlate->setReadOnly(false);
         ui->btnRemove->setIcon(QIcon(":/images/images/add.png"));
         QRegExp rx("^\\w+\\s\\w+$");
         ui->lblCarName->setValidator(new QRegExpValidator(rx, this));
-
     }
+
+    ui->lblPhoto->setPixmap(QPixmap(photoPath));
+    ui->dateEditInspection->setDate(inspectionDate);
+    ui->dateEditInsurance->setDate(insuranceDate);
+    setStatus(status);
 }
 
 CarBlock::CarBlock(CarBlock &block, QWidget *parent):
@@ -57,7 +57,12 @@ CarBlock::CarBlock(CarBlock &block, QWidget *parent):
 
     isAddBlock = true;
     ui->lblPhoto->setPixmap(block.addedCarImagePath);
-    addedCarImagePath = block.addedCarImagePath;
+    if(block.addedCarImagePath.isEmpty())
+        ui->lblPhoto->setPixmap(QPixmap(":/images/images/car.png"));
+    else {
+        ui->lblPhoto->setPixmap(block.addedCarImagePath);
+        addedCarImagePath = block.addedCarImagePath;
+    }
     ui->lblCarName->setText(block.getCarName());
     ui->lblMileage->setText(block.getMileage());
     ui->lblLicensePlate->setText(block.getLicensePlate());
@@ -67,7 +72,6 @@ CarBlock::CarBlock(CarBlock &block, QWidget *parent):
 
     QRegExp rx("^\\w+\\s\\w+$");
     ui->lblCarName->setValidator(new QRegExpValidator(rx, this));
-
 }
 
 CarBlock::~CarBlock()
@@ -120,9 +124,9 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
         if(n->exec() == NotesDialog::Rejected){
             emit progressFinished();
             emit noteClosed();
+            qDebug() << "CarBlock showNotesDialog - noteClosed emmited";
             delete n;
         }
-
     }
 }
 
