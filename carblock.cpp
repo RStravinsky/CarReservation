@@ -85,6 +85,7 @@ void CarBlock::setStatus(Status status)
 
 void CarBlock::setAdminPermissions(bool isAdmin)
 {
+
     if(!isAdmin) {
         ui->lblInspectionImage->setVisible(false);
         ui->lblInsuranceImage->setVisible(false);

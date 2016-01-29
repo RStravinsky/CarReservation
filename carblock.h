@@ -67,6 +67,7 @@ private:
     QString getMileage();
     QString getLicensePlate();
     QPair<QDate,QDate> getDates();
+    bool isAdmin;
 };
 
 #endif // CARBLOCK_H

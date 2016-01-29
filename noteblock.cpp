@@ -90,15 +90,18 @@ void NoteBlock::on_btnRemove_clicked()
         QDateTime dateOfAdd = QDateTime::currentDateTime();
         ui->lblDate->setText(dateOfAdd.toString());
 
-        qry.prepare("INSERT INTO notes(Contents,Name,Surename,Datetime, idCar)"
-                     "VALUES(:_Contents,:_Name,:_Surename,:_Datetime,:_idCar)"
+        qry.prepare("INSERT INTO notes(Contents,Name,Surename,Datetime,isRead,idCar)"
+                     "VALUES(:_Contents,:_Name,:_Surename,:_Datetime,:_isRead,:_idCar)"
                     );
 
         qry.bindValue(":_Contents", ui->txtEditContents->toPlainText());
         qry.bindValue(":_Name", ui->lblNameSurename->text());
         qry.bindValue(":_Surename", ui->lblNameSurename->text());
         qry.bindValue(":_Datetime", dateOfAdd);
+        qry.bindValue(":_isRead", 1);
         qry.bindValue(":_idCar", idCar);
+
+
         if( !qry.exec() )
             QMessageBox::warning(this,"Informacja","Dodawanie nie powiodło się./nERROR "+qry.lastError().text()+"");
         else {

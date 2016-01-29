@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     timer = new QTimer(this);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimerOverflow()));
     onTimerOverflow();
+    loadTrayIcon();
 }
 
 MainWindow::~MainWindow()
@@ -41,19 +42,25 @@ void MainWindow::updateView(bool isCopyEnable)
         else copyEnable = false;
     }
 
-    delete carTable;  
+    if(carTable != nullptr) delete carTable;
     carTable = new QSqlQueryModel(this);
     carTable->setQuery("SELECT * FROM car;");
 
-    delete bookingTable;
+
+
+    if(bookingTable != nullptr) delete bookingTable;
     bookingTable = new QSqlQueryModel(this);
     bookingTable->setQuery("SELECT * FROM booking;");
+
+
+    if(notesTable != nullptr) {
+        lastRowCount = notesTable->rowCount();
+        delete notesTable;
+    }
 
     notesTable = new QSqlQueryModel(this);
     notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC;");
     notesActionsVector.clear();
-
-    loadTrayIcon();
 
     // Copy last CarBlock
     CarBlock * element;
@@ -77,10 +84,15 @@ void MainWindow::updateView(bool isCopyEnable)
        connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)));
        connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
        connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(5000);});
-       connect(carBlockVector.back(),&CarBlock::noteClosed,[=](){delete trayIconMenu; delete trayIcon; updateView(true); showTrayIcon();});
+       connect(carBlockVector.back(),&CarBlock::noteClosed,[=](){
+                                                                updateView(true);
+                                                                loadTrayIcon();
+                                                                });
     }
 
     if(isAdmin) {
+        setPopupMessage();
+
         if(!copyEnable)
             carBlockVector.emplace_back(std::move(new CarBlock(0,QString("-----"),QString("-----"),QString("------"),
                                                                QDate::currentDate(),QDate::currentDate(),
@@ -163,6 +175,7 @@ void MainWindow::createLoginOption()
             loginButton->setVisible(false);
             logoutButton->setVisible(true);
             updateView(false);
+            loadTrayIcon();
         }
     });
 
@@ -171,6 +184,7 @@ void MainWindow::createLoginOption()
         loginButton->setVisible(true);
         logoutButton->setVisible(false);
         updateView(true);
+        loadTrayIcon();
     });
 }
 
@@ -240,7 +254,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-void MainWindow::createTrayIcon()
+void MainWindow::createTrayIcon(bool _isAdmin)
 {
     trayIconMenu = new QMenu(this);
     trayIconMenu->setStyleSheet("QMenu {"
@@ -259,32 +273,39 @@ void MainWindow::createTrayIcon()
                                 "margin-right: 2px;"
                                 "}"
                                 );
-    notesMenu = new QMenu(this);
-    notesMenu->setTitle(QString("Wiadomości (%1)").arg(newMessagesNumber));
-    notesMenu->setStyleSheet("QMenu {"
-                             "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
-                             "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
-                             "}"
-                            );
+  if(_isAdmin) {
 
-    if(newMessagesNumber) {
-        notesMenu->setIcon(QIcon(":/images/images/new.png"));
+        delete notesMenu;
+        notesMenu = new QMenu(this);
+        notesMenu->setTitle(QString("Wiadomości (%1)").arg(newMessagesNumber));
+        notesMenu->setStyleSheet("QMenu {"
+                                 "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+                                 "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                                 "}"
+                                );
+
+        if(newMessagesNumber) {
+            notesMenu->setIcon(QIcon(":/images/images/new.png"));
+        }
+        else {
+            notesMenu->setIcon(QIcon(":/images/images/read.png"));
+        }
+
+
+        if(notesActionsVector.size()<=10) {
+            for(auto elem: notesActionsVector)
+                notesMenu->addAction(elem);
+        }
+        else
+            for(int i=0; i<10; ++i)
+                notesMenu->addAction(notesActionsVector.at(i));
+
+        trayIconMenu->addMenu(notesMenu);
+        trayIconMenu->addSeparator();
+
+        connect(notesMenu, SIGNAL(triggered(QAction*)), this, SLOT(noteActionClicked(QAction*)));
     }
-    else {
-        notesMenu->setIcon(QIcon(":/images/images/read.png"));
-    }
 
-
-    if(notesActionsVector.size()<=10) {
-        for(auto elem: notesActionsVector)
-            notesMenu->addAction(elem);
-    }
-    else
-        for(int i=0; i<10; ++i)
-            notesMenu->addAction(notesActionsVector.at(i));
-
-    trayIconMenu->addMenu(notesMenu);
-    trayIconMenu->addSeparator();
     minimizeAction->setIcon(QIcon(":/images/images/minimize.png"));
     trayIconMenu->addAction(minimizeAction);
     restoreAction->setIcon(QIcon(":/images/images/restore.png"));
@@ -296,15 +317,20 @@ void MainWindow::createTrayIcon()
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
 
-    connect(notesMenu, SIGNAL(triggered(QAction*)), this, SLOT(noteActionClicked(QAction*)));
+
 }
 
 void MainWindow::loadTrayIcon()
 {
-    createActions();
-    createTrayIcon();
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+    if(trayIcon != nullptr) delete trayIcon;
+    if(trayIconMenu != nullptr) delete trayIconMenu;
+
+    createActions(isAdmin);
+    createTrayIcon(isAdmin);
     setIcon();
+    showTrayIcon();
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+    connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(poupMessageClicked()));
 }
 
 void MainWindow::setIcon()
@@ -332,33 +358,44 @@ void MainWindow::noteActionClicked(QAction * act)
     emit trayMenuNoteClicked(act->data().toString().split(",").at(0).toInt(), act->data().toString().split(",").at(1).toInt()); // pass idCar to open NotesDialog (slot showNotesDialog)
 }
 
-void MainWindow::createActions()
+void MainWindow::poupMessageClicked()
 {
-    QAction * lastAction{nullptr};
-    QString actionData;
+    emit trayMenuNoteClicked(notesTable->index(0,0).data().toInt(), notesTable->index(0,6).data().toInt());
+}
 
-    newMessagesNumber = 0;
+void MainWindow::createActions(bool _isAdmin)
+{
+    if(_isAdmin) {
 
-    for(int i = 0; i < notesTable->rowCount(); ++i) {
+        QAction * lastAction{nullptr};
+        QString actionData;
 
-       notesActionsVector.emplace_back(std::move( new QAction(QString("&%1 %2").arg(notesTable->data(notesTable->index(i,2)).toString()).arg(notesTable->data(notesTable->index(i,3)).toString()), this) ));
-       lastAction = notesActionsVector.back();
+        newMessagesNumber = 0;
+
+        for(int i = 0; i < notesTable->rowCount(); ++i) {
+
+           notesActionsVector.emplace_back(std::move( new QAction(QString("&%1 %2").arg(notesTable->data(notesTable->index(i,2)).toString()).arg(notesTable->data(notesTable->index(i,3)).toString()), this) ));
+           lastAction = notesActionsVector.back();
 
 
-       lastAction->setFont(QFont("Calibri", 9, QFont::Bold));
-       ++newMessagesNumber;
-       actionData = notesTable->data(notesTable->index(i,0)).toString() + QString(",") + notesTable->data(notesTable->index(i,6)).toString();
-       lastAction->setData(actionData);
+           lastAction->setFont(QFont("Calibri", 9, QFont::Bold));
+           ++newMessagesNumber;
+           actionData = notesTable->data(notesTable->index(i,0)).toString() + QString(",") + notesTable->data(notesTable->index(i,6)).toString();
+           lastAction->setData(actionData);
+        }
     }
 
+    delete minimizeAction;
     minimizeAction = new QAction(QString("Minimalizuj"), this);
     minimizeAction->setFont(QFont("Calibri", 9));
     connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
 
+    delete restoreAction;
     restoreAction = new QAction(QString("Przywróć"), this);
     restoreAction->setFont(QFont("Calibri", 9));
     connect(restoreAction, SIGNAL(triggered()), this, SLOT(show()));
 
+    delete quitAction;
     quitAction = new QAction(QString("Zamknij"), this);
     quitAction->setFont(QFont("Calibri", 9));
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
@@ -366,5 +403,14 @@ void MainWindow::createActions()
 
 void MainWindow::setPopupMessage()
 {
+
+    int actualRowCount = notesTable->rowCount();
+
+    if( actualRowCount > lastRowCount) {
+
+        QString newNote = notesTable->index(0,2).data().toString() + QString(" ") + notesTable->index(0,3).data().toString();
+        QString title = "Nowa uwaga:";
+        trayIcon->showMessage(title, newNote, QSystemTrayIcon::Information, 10000);
+    }
 
 }
