@@ -28,7 +28,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::onTimerOverflow()
 {
-    qDebug() << "Update mainwindow" << endl;
+    qDebug() << "Updating..." << endl;
     const int varticalPosition = ui->scrollArea->verticalScrollBar()->value();
     updateView(true);
     ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
@@ -44,12 +44,9 @@ void MainWindow::updateView(bool isCopyEnable)
     carTable = new QSqlQueryModel(this);
     carTable->setQuery("SELECT * FROM car;");
 
-
-
     delete bookingTable;
     bookingTable = new QSqlQueryModel(this);
     bookingTable->setQuery("SELECT * FROM booking;");
-
 
     if(notesTable != nullptr) {
         lastRowCount = notesTable->rowCount();
@@ -79,7 +76,7 @@ void MainWindow::updateView(bool isCopyEnable)
        lastCarBlock->setBookingTable(bookingTable);
        lastCarBlock->setAdminPermissions(isAdmin);
        connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)));
-       connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)));
+       connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
        connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
        connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(5000);});
        connect(carBlockVector.back(),&CarBlock::noteClosed,[=](){
@@ -97,7 +94,7 @@ void MainWindow::updateView(bool isCopyEnable)
 
         else carBlockVector.push_back(std::move(element));
 
-        connect(carBlockVector.back(),SIGNAL(carAdded(bool)),this,SLOT(updateView(bool)));
+        connect(carBlockVector.back(),SIGNAL(carAdded(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
         connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
         connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(5000);});
         copyEnable = true;
@@ -131,8 +128,11 @@ bool MainWindow::connectToDatabase(QString &login, QString &password)
 
 void MainWindow::closeDatabase()
 {
+    QString connection;
+    connection = sqlDatabase.connectionName();
     sqlDatabase.close();
-    QSqlDatabase::removeDatabase("sigmacars");
+    sqlDatabase = QSqlDatabase();
+    sqlDatabase.removeDatabase(connection);
 }
 
 void MainWindow::createLoginOption()
@@ -320,7 +320,6 @@ void MainWindow::createTrayIcon(bool _isAdmin)
             notesMenu->setIcon(QIcon(":/images/images/read.png"));
         }
 
-
         if(notesActionsVector.size()<=10) {
             for(auto elem: notesActionsVector)
                 notesMenu->addAction(elem);
@@ -333,22 +332,19 @@ void MainWindow::createTrayIcon(bool _isAdmin)
         trayIconMenu->addSeparator();
 
         connect(notesMenu, SIGNAL(triggered(QAction*)), this, SLOT(noteActionClicked(QAction*)), Qt::QueuedConnection );
-    }
+  }
 
-    minimizeAction->setIcon(QIcon(":/images/images/minimize.png"));
-    trayIconMenu->addAction(minimizeAction);
-    restoreAction->setIcon(QIcon(":/images/images/restore.png"));
-    trayIconMenu->addAction(restoreAction);
-    trayIconMenu->addSeparator();
-    quitAction->setIcon(QIcon(":/images/images/close.png"));
-    trayIconMenu->addAction(quitAction);
+  minimizeAction->setIcon(QIcon(":/images/images/minimize.png"));
+  trayIconMenu->addAction(minimizeAction);
+  restoreAction->setIcon(QIcon(":/images/images/restore.png"));
+  trayIconMenu->addAction(restoreAction);
+  trayIconMenu->addSeparator();
+  quitAction->setIcon(QIcon(":/images/images/close.png"));
+  trayIconMenu->addAction(quitAction);
 
-    trayIcon = new QSystemTrayIcon(this);
-    trayIcon->setContextMenu(trayIconMenu);
-
-
+  trayIcon = new QSystemTrayIcon(this);
+  trayIcon->setContextMenu(trayIconMenu);
 }
-
 
 void MainWindow::loadTrayIcon()
 {
@@ -393,10 +389,8 @@ void MainWindow::poupMessageClicked()
     emit trayMenuNoteClicked(notesTable->index(0,0).data().toInt(), notesTable->index(0,6).data().toInt());
 }
 
-
 void MainWindow::setPopupMessage()
 {
-
     int actualRowCount = notesTable->rowCount();
 
     if( actualRowCount > lastRowCount) {
@@ -405,5 +399,4 @@ void MainWindow::setPopupMessage()
         QString title = "Nowa uwaga:";
         trayIcon->showMessage(title, newNote, QSystemTrayIcon::Information, 10000);
     }
-
 }

@@ -6,8 +6,6 @@ NameDialog::NameDialog(QWidget *parent) :
     ui(new Ui::NameDialog)
 {
     ui->setupUi(this);
-
-    connect(ui->pushButtonConfirm, SIGNAL(released()), this, SLOT(accept()));
     connect(ui->pushButtonCancel, SIGNAL(released()), this, SLOT(reject()));
 }
 
@@ -16,16 +14,23 @@ NameDialog::~NameDialog()
     delete ui;
 }
 
-bool NameDialog::getNameAndSurname(QString &name, QString &surname)
+QString NameDialog::getName()
 {
-    if(this->exec()) {
-        name = ui->lineEditName->text();
-        surname = ui->lineEditSurname->text();
-        return true;
-    }
-    else {
-        name = "";
-        surname = "";
-        return false;
-    }
+    return ui->lineEditName->text();
+}
+
+QString NameDialog::getSurname()
+{
+    return ui->lineEditSurname->text();
+}
+
+void NameDialog::on_pushButtonConfirm_released()
+{
+    QString name = ui->lineEditName->text();
+    QString surname = ui->lineEditSurname->text();
+
+    if(name.isEmpty() || surname.isEmpty())
+        QMessageBox::information(this,"Informacja","Pole tekstowe nie zostało wypełnione.");
+
+    else this->accept();
 }

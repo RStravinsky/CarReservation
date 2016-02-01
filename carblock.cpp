@@ -172,17 +172,15 @@ void CarBlock::on_btnAddInspection_clicked()
 void CarBlock::on_btnRemove_clicked()
 {
     emit inProgress();
+
     if(!isAddBlock) {
         QSqlQuery qry;
         qry.prepare("DELETE FROM car WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
-        if( !qry.exec() ) {
+        if( !qry.exec() )
             QMessageBox::warning(this,"Informacja","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
-            emit progressFinished();
-        }
         else {
             QMessageBox::information(this,"Informacja","Usunieto!");
-            emit progressFinished();
             emit carDeleted(true);
         }
     }
@@ -202,16 +200,15 @@ void CarBlock::on_btnRemove_clicked()
         qry.bindValue(":_Status",0);
         qry.bindValue(":_Mileage", ui->lblMileage->text());
         qry.bindValue(":_PhotoPath",addedCarImagePath);
-        if( !qry.exec() ) {
+        if( !qry.exec() )
             QMessageBox::warning(this,"Informacja","Dodawanie nie powiodło się.\nERROR "+qry.lastError().text()+"");
-            emit progressFinished();
-        }
         else {
             QMessageBox::information(this,"Informacja","Dodano!");
-            emit progressFinished();
             emit carAdded(false);
         }
     }
+
+    emit progressFinished();
 }
 
 void CarBlock::on_btnViewNotes_clicked()

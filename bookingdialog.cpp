@@ -209,12 +209,23 @@ bool BookingDialog::isDateFree()
         modelBegin = bookedDates->data(bookedDates->index(i,0)).toDateTime();
         modelEnd = bookedDates->data(bookedDates->index(i,1)).toDateTime();
 
-        if(ui->dateTimeEditBegin->dateTime() >= modelBegin && ui->dateTimeEditBegin->dateTime() <= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Wybrany termin początkowy jest już zarezerwowany.");
+        if(ui->dateTimeEditBegin->dateTime() >= modelBegin && ui->dateTimeEditEnd->dateTime() <= modelEnd) {
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany1.");
             return false;
         }
-        else if(ui->dateTimeEditEnd->dateTime() >= modelBegin && ui->dateTimeEditEnd->dateTime() <= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Wybrany termin końcowy jest już zarezerwowany.");
+
+        if(ui->dateTimeEditBegin->dateTime() <= modelBegin && ui->dateTimeEditEnd->dateTime() >= modelEnd) {
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany2.");
+            return false;
+        }
+
+        if(ui->dateTimeEditBegin->dateTime() <= modelBegin && ui->dateTimeEditEnd->dateTime() >= modelBegin && ui->dateTimeEditEnd->dateTime() <= modelEnd) {
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany3.");
+            return false;
+        }
+
+        if(ui->dateTimeEditBegin->dateTime() >= modelBegin && ui->dateTimeEditBegin->dateTime() <= modelEnd && ui->dateTimeEditEnd->dateTime() >= modelEnd) {
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany4.");
             return false;
         }
 
@@ -227,28 +238,28 @@ void BookingDialog::on_btnReserve_clicked()
 {
     if(isDateFree()) {
 
-        QString name, surname;
         NameDialog n;
-        if(!n.getNameAndSurname(name, surname)) return;
+        if(n.exec() == NameDialog::Accepted) {
 
-        QSqlQuery qry;
-        qry.prepare("INSERT INTO booking(Name,Surename,Begin,End, idCar)"
-                 "VALUES(:_Name,:_Surename,:_Begin,:_End,:_idCar)");
+            QSqlQuery qry;
+            qry.prepare("INSERT INTO booking(Name,Surename,Begin,End, idCar)"
+                     "VALUES(:_Name,:_Surename,:_Begin,:_End,:_idCar)");
 
-        qry.bindValue(":_Name", name);
-        qry.bindValue(":_Surename", surname);
-        qry.bindValue(":_Begin", ui->dateTimeEditBegin->dateTime());
-        qry.bindValue(":_End", ui->dateTimeEditEnd->dateTime());
-        qry.bindValue(":_idCar",idCar);
+            qry.bindValue(":_Name", n.getName());
+            qry.bindValue(":_Surename", n.getSurname());
+            qry.bindValue(":_Begin", ui->dateTimeEditBegin->dateTime());
+            qry.bindValue(":_End", ui->dateTimeEditEnd->dateTime());
+            qry.bindValue(":_idCar",idCar);
 
-        if( !qry.exec() )
-            QMessageBox::warning(this,"Informacja","Dodawanie nie powiodło się./nERROR "+qry.lastError().text()+"");
-        else {
-            QMessageBox::information(this,"Informacja","Dodano!");
+            if( !qry.exec() )
+                QMessageBox::warning(this,"Informacja","Dodawanie nie powiodło się./nERROR "+qry.lastError().text()+"");
+            else {
+                QMessageBox::information(this,"Informacja","Dodano!");
 
+            }
+
+            emit bookedCar();
         }
-
-        emit bookedCar();
     }
 
 }

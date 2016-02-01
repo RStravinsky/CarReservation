@@ -2,6 +2,7 @@
 #define NAMEDIALOG_H
 
 #include <QDialog>
+#include <QMessageBox>
 
 namespace Ui {
 class NameDialog;
@@ -14,10 +15,11 @@ class NameDialog : public QDialog
 public:
     explicit NameDialog(QWidget *parent = 0);
     ~NameDialog();
-    bool getNameAndSurname(QString & name, QString & surname);
+    QString getName();
+    QString getSurname();
 
 private slots:
-
+    void on_pushButtonConfirm_released();
 
 private:
     Ui::NameDialog *ui;
