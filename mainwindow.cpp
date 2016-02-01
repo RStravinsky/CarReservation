@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#define UPDATE_TIME 5000
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -9,10 +11,10 @@ MainWindow::MainWindow(QWidget *parent) :
     login = "root";
     password = "Serwis4q@"; //change password here
 
-    if (connectToDatabase(login, password)) {
-        ui->statusBar->showMessage("Połączono z użytkownikiem: " + login);
-    }
-    else ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+    if(connectToDatabase(login,password))
+       ui->statusBar->showMessage("Połączono z bazą danych");
+    else
+    ui->statusBar->showMessage("Nie można połączyć z bazą danych");
 
     createLoginOption();
     timer = new QTimer(this);
@@ -28,91 +30,106 @@ MainWindow::~MainWindow()
 
 void MainWindow::onTimerOverflow()
 {
-    qDebug() << "Updating..." << endl;
-    const int varticalPosition = ui->scrollArea->verticalScrollBar()->value();
     updateView(true);
-    ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
-    timer->start(2000);
+    timer->start(UPDATE_TIME);
 }
 
 void MainWindow::updateView(bool isCopyEnable)
 {  
-    if(isAdmin)
-        copyEnable = isCopyEnable;
+    qDebug() << "Updating..." << endl;
+    //if(connectToDatabase(login,password)) {
 
-    delete carTable;
-    carTable = new QSqlQueryModel(this);
-    carTable->setQuery("SELECT * FROM car;");
+    //    ui->statusBar->showMessage("Połączono z bazą danych");
+        const int varticalPosition = ui->scrollArea->verticalScrollBar()->value();
 
-    delete bookingTable;
-    bookingTable = new QSqlQueryModel(this);
-    bookingTable->setQuery("SELECT * FROM booking;");
+        if(isAdmin)
+            copyEnable = isCopyEnable;
 
-    if(notesTable != nullptr) {
-        lastRowCount = notesTable->rowCount();
-        delete notesTable;
-    }
+        delete carTable;
+        carTable = new QSqlQueryModel(this);
+        carTable->setQuery("SELECT * FROM car;");
 
-    notesTable = new QSqlQueryModel(this);
-    notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC;");
-    notesActionsVector.clear();
+        delete bookingTable;
+        bookingTable = new QSqlQueryModel(this);
+        bookingTable->setQuery("SELECT * FROM booking;");
 
-    // Copy last CarBlock
-    CarBlock * element;
-    if (isAdmin)
-            element = new CarBlock(*(carBlockVector.at(carBlockVector.size()-1)));
+        if(notesTable != nullptr) {
+            lastRowCount = notesTable->rowCount();
+            delete notesTable;
+        }
 
-    carBlockVector.clear();
-    CarBlock * lastCarBlock{nullptr};
-    for(int i = 0; i < carTable->rowCount(); ++i) {
-        carBlockVector.emplace_back(std::move(new CarBlock(false, carTable->data(carTable->index(i,0)).toInt(),
-                                                           carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
-                                                           carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
-                                                           carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
-                                                           static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString()
-                                                          )
-                                              ));
-       lastCarBlock = carBlockVector.back();
-       lastCarBlock->setBookingTable(bookingTable);
-       lastCarBlock->setAdminPermissions(isAdmin);
-       connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)));
-       connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
-       connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
-       connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(5000);});
-       connect(carBlockVector.back(),&CarBlock::noteClosed,[=](){
-                                                                updateView(true);
-                                                                loadTrayIcon();
-                                                                qDebug() << "MainWindow - noteClosed slot called";
-                                                                });
-    }
+        notesTable = new QSqlQueryModel(this);
+        notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC;");
+        notesActionsVector.clear();
 
-    if(isAdmin) {
-        setPopupMessage();
+        // Copy last CarBlock
+        CarBlock * element;
+        if (isAdmin)
+                element = new CarBlock(*(carBlockVector.at(carBlockVector.size()-1)));
 
-        if(!copyEnable)
-            carBlockVector.emplace_back(std::move(new CarBlock()));
+        carBlockVector.clear();
+        CarBlock * lastCarBlock{nullptr};
+        for(int i = 0; i < carTable->rowCount(); ++i) {
+            carBlockVector.emplace_back(std::move(new CarBlock(false, carTable->data(carTable->index(i,0)).toInt(),
+                                                               carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
+                                                               carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
+                                                               carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
+                                                               static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString()
+                                                              )
+                                                  ));
+           lastCarBlock = carBlockVector.back();
+           lastCarBlock->setBookingTable(bookingTable);
+           lastCarBlock->setAdminPermissions(isAdmin);
+           connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)));
+           connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
+           connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
+           connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
+           connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(UPDATE_TIME);});
+           connect(carBlockVector.back(),&CarBlock::noteClosed,[=](){
+                                                                    updateView(true);
+                                                                    loadTrayIcon();
+                                                                    qDebug() << "MainWindow - noteClosed slot called";
+                                                                    });
+        }
 
-        else carBlockVector.push_back(std::move(element));
+        if(isAdmin) {
+            setPopupMessage();
 
-        connect(carBlockVector.back(),SIGNAL(carAdded(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
-        connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
-        connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(5000);});
-        copyEnable = true;
-    }
+            if(!copyEnable)
+                carBlockVector.emplace_back(std::move(new CarBlock()));
 
-    delete scrollLayout;
-    delete scrollWidget;
-    scrollWidget = new QWidget(ui->scrollArea);
-    scrollLayout = new QVBoxLayout(scrollWidget);
-    for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos)
-        scrollLayout->addWidget(*pos);
-    ui->scrollArea->setWidget(scrollWidget);
+            else carBlockVector.push_back(std::move(element));
+
+            connect(carBlockVector.back(),SIGNAL(carAdded(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
+            connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
+            connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(UPDATE_TIME);});
+            copyEnable = true;
+        }
+
+        delete scrollLayout;
+        delete scrollWidget;
+        scrollWidget = new QWidget(ui->scrollArea);
+        scrollLayout = new QVBoxLayout(scrollWidget);
+        for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos)
+            scrollLayout->addWidget(*pos);
+        ui->scrollArea->setWidget(scrollWidget);
+
+        ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
+
+//        closeDatabase();
+//    }
+
+//    else {
+//        closeDatabase();
+//        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+//        ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+//    }
 }
 
 bool MainWindow::connectToDatabase(QString &login, QString &password)
 {
     sqlDatabase = QSqlDatabase::addDatabase("QMYSQL");
-    sqlDatabase.setHostName("192.168.1.7"); //server 192.168.1.7
+    sqlDatabase.setHostName("192.168.1.7");
     sqlDatabase.setDatabaseName("sigmacars");
     if(login.isEmpty() && password.isEmpty()) {
         sqlDatabase.setUserName("root");
@@ -156,30 +173,45 @@ void MainWindow::createLoginOption()
     ui->statusBar->addPermanentWidget(adminPassword);
 
     connect(loginButton, &QPushButton::clicked, [=]() {
-        static bool visible = false;
-        visible = !visible;
-        adminPassword->clear();
-        adminPassword->setFocus();
-        adminPassword->setVisible(visible);
+        //if(connectToDatabase(login,password)) {
+            static bool visible = false;
+            visible = !visible;
+            adminPassword->clear();
+            adminPassword->setFocus();
+            adminPassword->setVisible(visible);
+//            closeDatabase();
+//        }
+//        else {
+//            closeDatabase();
+//            QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+//            ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+//        }
     });
 
     connect(adminPassword, &QLineEdit::editingFinished, [=]() {
         if(adminPassword->text()=="sigma") {
-            isAdmin = true;
-            loginButton->click();
-            loginButton->setVisible(false);
-            logoutButton->setVisible(true);
-            updateView(false);
-            loadTrayIcon();
+                isAdmin = true;
+                loginButton->click();
+                loginButton->setVisible(false);
+                logoutButton->setVisible(true);
+                updateView(false);
+                loadTrayIcon();
         }
     });
 
     connect(logoutButton, &QPushButton::clicked, [=]() {
-        isAdmin = false;
-        loginButton->setVisible(true);
-        logoutButton->setVisible(false);
-        updateView(true);
-        loadTrayIcon();
+        //if(connectToDatabase(login,password)) {
+            isAdmin = false;
+            loginButton->setVisible(true);
+            logoutButton->setVisible(false);
+            updateView(true);
+            loadTrayIcon();
+//        }
+//        else {
+//            closeDatabase();
+//            QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+//            ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+//        }
     });
 }
 
@@ -258,10 +290,12 @@ void MainWindow::createActions(bool _isAdmin)
 
         for(int i = 0; i < notesTable->rowCount(); ++i) {
 
+           qDebug() << notesTable->data(notesTable->index(i,2)).toString();
            notesActionsVector.emplace_back(std::move( new QAction(QString("&%1 %2").arg(notesTable->data(notesTable->index(i,2)).toString()).arg(notesTable->data(notesTable->index(i,3)).toString()), this) ));
            notesActionsVector.back()->setFont(QFont("Calibri", 9, QFont::Bold));
 
            ++newMessagesNumber;
+           qDebug() << newMessagesNumber;
            actionData = notesTable->data(notesTable->index(i,0)).toString() + QString(",") + notesTable->data(notesTable->index(i,6)).toString();
            notesActionsVector.back()->setData(actionData);
         }
@@ -392,9 +426,7 @@ void MainWindow::poupMessageClicked()
 void MainWindow::setPopupMessage()
 {
     int actualRowCount = notesTable->rowCount();
-
     if( actualRowCount > lastRowCount) {
-
         QString newNote = notesTable->index(0,2).data().toString() + QString(" ") + notesTable->index(0,3).data().toString();
         QString title = "Nowa uwaga:";
         trayIcon->showMessage(title, newNote, QSystemTrayIcon::Information, 10000);

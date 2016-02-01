@@ -1,6 +1,7 @@
-
 #include "bookingdialog.h"
 #include "ui_bookingdialog.h"
+
+#define UPDATE_TIME 2000
 
 BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, int id, int vMode,  QWidget *parent) :
     bookingTable(bookTable),
@@ -11,6 +12,7 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
     ui(new Ui::BookingDialog)
 {
     ui->setupUi(this);
+
     setCalendarColor(ui->calendarWidget,QColor(255,140,0));
     ui->dateTimeEditBegin->setDateTime(QDateTime::currentDateTime());
     ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime());
@@ -26,18 +28,58 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
                           );
 
     timer = new QTimer(this);
-    connect(timer,SIGNAL(timeout()),this,SLOT(updateView()));
-    timer->start(2000);
-    on_calendarWidget_clicked(QDate::currentDate());
-
-    updateView();
+    connect(timer,SIGNAL(timeout()),this,SLOT(onTimerOverflow()));
     connect(this, SIGNAL(bookedCar()), this, SLOT(updateView()));
     connect(ui->calendarWidget,SIGNAL(selectionChanged()),this,SLOT(updateView()));
+    onTimerOverflow();
 }
 
 BookingDialog::~BookingDialog()
 {
     delete ui;
+}
+
+bool BookingDialog::connectToDatabase(QString login, QString password)
+{
+    sqlDatabase = QSqlDatabase::addDatabase("QMYSQL");
+    sqlDatabase.setHostName("192.168.1.7"); //server 192.168.1.7
+    sqlDatabase.setDatabaseName("sigmacars");
+    if(login.isEmpty() && password.isEmpty()) {
+        sqlDatabase.setUserName("root");
+        sqlDatabase.setPassword("Serwis4q@");
+    }
+    else {
+        sqlDatabase.setUserName(login);
+        sqlDatabase.setPassword(password);
+    }
+    if (!sqlDatabase.open()) return false;
+    else return true;
+}
+
+void BookingDialog::closeDatabase()
+{
+    QString connection;
+    connection = sqlDatabase.connectionName();
+    sqlDatabase.close();
+    sqlDatabase = QSqlDatabase();
+    sqlDatabase.removeDatabase(connection);
+}
+
+void BookingDialog::updateView()
+{
+    qDebug() << "Updating booking ..." << endl;
+    static bool firstInit = true;
+    if(firstInit) {
+        on_calendarWidget_clicked(QDate::currentDate());
+        firstInit = false;
+    }
+    on_calendarWidget_clicked(choosenDate);
+}
+
+void BookingDialog::onTimerOverflow()
+{
+    updateView();
+    timer->start(UPDATE_TIME);
 }
 
 void BookingDialog::fillCalendar()
@@ -148,30 +190,40 @@ void BookingDialog::setCalendarColor(QCalendarWidget *&calendarWidget,QColor col
 
 void BookingDialog::on_calendarWidget_clicked(const QDate &date)
 {
-    int varticalPosition = ui->scrollArea->verticalScrollBar()->value(); // previous scrollBar position
+ //   if(connectToDatabase(QString("root"),QString("Serwis4q@"))) {
 
-    choosenDate = date;
+        carReservations->setQuery(QString("SELECT * FROM sigmacars.booking WHERE idCar = %1").arg(idCar));
+        statusHistory->setQuery(QString("SELECT * FROM sigmacars.history WHERE idCar = %1").arg(idCar));
+        int varticalPosition = ui->scrollArea->verticalScrollBar()->value(); // previous scrollBar position
 
-    blockVector.clear();
-    clearScrollArea();
+        choosenDate = date;
 
-    if(viewMode == ViewMode::Booked) {
-        for(int i = 0; i < carReservations->rowCount(); ++i)
-            loadBlock(i);
-    }
-    else if(viewMode == ViewMode::History) {
-        for(int i = 0; i < statusHistory->rowCount(); ++i)
-            loadBlock(i);
-    }
+        blockVector.clear();
+        clearScrollArea();
 
-    for(auto pos = blockVector.begin(); pos != blockVector.end(); ++pos)
-        scrollLayout->addWidget(*pos);
+        if(viewMode == ViewMode::Booked) {
+            for(int i = 0; i < carReservations->rowCount(); ++i)
+                loadBlock(i);
+        }
+        else if(viewMode == ViewMode::History) {
+            for(int i = 0; i < statusHistory->rowCount(); ++i)
+                loadBlock(i);
+        }
 
-    ui->scrollArea->setWidget(scrollWidget);
-    ui->scrollArea->setWidgetResizable(true);
-    ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
+        for(auto pos = blockVector.begin(); pos != blockVector.end(); ++pos)
+            scrollLayout->addWidget(*pos);
 
-    fillCalendar();
+        ui->scrollArea->setWidget(scrollWidget);
+        ui->scrollArea->setWidgetResizable(true);
+        ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
+
+        fillCalendar();
+//        closeDatabase();
+//    }
+//    else {
+//        closeDatabase();
+//        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+//    }
 }
 
 void BookingDialog::clearScrollArea()
@@ -236,32 +288,39 @@ bool BookingDialog::isDateFree()
 
 void BookingDialog::on_btnReserve_clicked()
 {
-    if(isDateFree()) {
+    //if(connectToDatabase(QString("root"),QString("Serwis4q@"))) {
+        if(isDateFree()) {
 
-        NameDialog n;
-        if(n.exec() == NameDialog::Accepted) {
+            NameDialog n;
+            timer->stop();
+            if(n.exec() == NameDialog::Accepted) {
 
-            QSqlQuery qry;
-            qry.prepare("INSERT INTO booking(Name,Surename,Begin,End, idCar)"
-                     "VALUES(:_Name,:_Surename,:_Begin,:_End,:_idCar)");
+                QSqlQuery qry;
+                qry.prepare("INSERT INTO booking(Name,Surename,Begin,End, idCar)"
+                         "VALUES(:_Name,:_Surename,:_Begin,:_End,:_idCar)");
 
-            qry.bindValue(":_Name", n.getName());
-            qry.bindValue(":_Surename", n.getSurname());
-            qry.bindValue(":_Begin", ui->dateTimeEditBegin->dateTime());
-            qry.bindValue(":_End", ui->dateTimeEditEnd->dateTime());
-            qry.bindValue(":_idCar",idCar);
+                qry.bindValue(":_Name", n.getName());
+                qry.bindValue(":_Surename", n.getSurname());
+                qry.bindValue(":_Begin", ui->dateTimeEditBegin->dateTime());
+                qry.bindValue(":_End", ui->dateTimeEditEnd->dateTime());
+                qry.bindValue(":_idCar",idCar);
+                bool isExecuted = qry.exec();
+                closeDatabase();
+                if( !isExecuted )
+                    QMessageBox::warning(this,"Informacja","Dodawanie nie powiodło się./nERROR "+qry.lastError().text()+"");
+                else
+                    QMessageBox::information(this,"Informacja","Dodano!");
 
-            if( !qry.exec() )
-                QMessageBox::warning(this,"Informacja","Dodawanie nie powiodło się./nERROR "+qry.lastError().text()+"");
-            else {
-                QMessageBox::information(this,"Informacja","Dodano!");
-
+                emit bookedCar();
             }
-
-            emit bookedCar();
         }
-    }
 
+//        closeDatabase();
+//    }
+//    else {
+//        closeDatabase();
+//        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+//    }
 }
 
 void BookingDialog::on_checkBoxBooking_clicked(bool checked)
@@ -299,10 +358,4 @@ void BookingDialog::clearCalendarFormat()
 
 }
 
-void BookingDialog::updateView()
-{
-    qDebug() << "Update booking dialog" << endl;
-    carReservations->setQuery(QString("SELECT * FROM sigmacars.booking WHERE idCar = %1").arg(idCar));
-    statusHistory->setQuery(QString("SELECT * FROM sigmacars.history WHERE idCar = %1").arg(idCar));   
-    on_calendarWidget_clicked(choosenDate);
-}
+

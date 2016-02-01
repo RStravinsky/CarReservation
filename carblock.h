@@ -53,12 +53,14 @@ signals:
     void inProgress();
     void progressFinished();
     void noteClosed();
+    void changeStatusBar(QString,int timeout = 0);
 
 private:
     Ui::CarBlock *ui;
     BookingDialog * bookingDialog{nullptr};
     QSqlQueryModel * bookingTable{nullptr};
     QSqlQueryModel * carTable{nullptr};
+    QSqlDatabase sqlDatabase;
     int idCar;
     int idNotes;
     QString carNotes;
@@ -69,6 +71,9 @@ private:
     QString getLicensePlate();
     QPair<QDate,QDate> getDates();
     bool isAdmin;
+
+    bool connectToDatabase(QString login, QString password);
+    void closeDatabase();
 };
 
 #endif // CARBLOCK_H

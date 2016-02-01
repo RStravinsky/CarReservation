@@ -34,6 +34,7 @@ private slots:
     void on_checkBoxBooking_clicked(bool checked);
     void on_checkBoxHistory_clicked(bool checked);
     void updateView();
+    void onTimerOverflow();
 
 signals:
     void bookedCar();
@@ -64,7 +65,11 @@ private:
     void clearScrollArea();
     bool isDateFree();
     void clearCalendarFormat();
-    void setCalendarColor(QCalendarWidget *&calendarWidget,QColor color);
+    void setCalendarColor(QCalendarWidget *&calendarWidget,QColor color);  
+
+    QSqlDatabase sqlDatabase;
+    bool connectToDatabase(QString login, QString password);
+    void closeDatabase();
 };
 
 #endif // BOOKINGDIALOG_H
