@@ -12,6 +12,7 @@
 #include <QFileDialog>
 #include <QPair>
 #include <QRegExp>
+#include "database.h"
 
 namespace Ui {
 class CarBlock;
@@ -60,7 +61,6 @@ private:
     BookingDialog * bookingDialog{nullptr};
     QSqlQueryModel * bookingTable{nullptr};
     QSqlQueryModel * carTable{nullptr};
-    QSqlDatabase sqlDatabase;
     int idCar;
     int idNotes;
     QString carNotes;
@@ -72,8 +72,6 @@ private:
     QPair<QDate,QDate> getDates();
     bool isAdmin;
 
-    bool connectToDatabase(QString login, QString password);
-    void closeDatabase();
 };
 
 #endif // CARBLOCK_H

@@ -39,32 +39,6 @@ BookingDialog::~BookingDialog()
     delete ui;
 }
 
-bool BookingDialog::connectToDatabase(QString login, QString password)
-{
-    sqlDatabase = QSqlDatabase::addDatabase("QMYSQL");
-    sqlDatabase.setHostName("192.168.1.7"); //server 192.168.1.7
-    sqlDatabase.setDatabaseName("sigmacars");
-    if(login.isEmpty() && password.isEmpty()) {
-        sqlDatabase.setUserName("root");
-        sqlDatabase.setPassword("Serwis4q@");
-    }
-    else {
-        sqlDatabase.setUserName(login);
-        sqlDatabase.setPassword(password);
-    }
-    if (!sqlDatabase.open()) return false;
-    else return true;
-}
-
-void BookingDialog::closeDatabase()
-{
-    QString connection;
-    connection = sqlDatabase.connectionName();
-    sqlDatabase.close();
-    sqlDatabase = QSqlDatabase();
-    sqlDatabase.removeDatabase(connection);
-}
-
 void BookingDialog::updateView()
 {
     qDebug() << "Updating booking ..." << endl;
@@ -190,7 +164,7 @@ void BookingDialog::setCalendarColor(QCalendarWidget *&calendarWidget,QColor col
 
 void BookingDialog::on_calendarWidget_clicked(const QDate &date)
 {
- //   if(connectToDatabase(QString("root"),QString("Serwis4q@"))) {
+    if(Database::getDatabase().isOpen()) {
 
         carReservations->setQuery(QString("SELECT * FROM sigmacars.booking WHERE idCar = %1").arg(idCar));
         statusHistory->setQuery(QString("SELECT * FROM sigmacars.history WHERE idCar = %1").arg(idCar));
@@ -218,12 +192,11 @@ void BookingDialog::on_calendarWidget_clicked(const QDate &date)
         ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
 
         fillCalendar();
-//        closeDatabase();
-//    }
-//    else {
-//        closeDatabase();
-//        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
-//    }
+    }
+    else {
+        Database::closeDatabase();
+        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+    }
 }
 
 void BookingDialog::clearScrollArea()
@@ -288,7 +261,7 @@ bool BookingDialog::isDateFree()
 
 void BookingDialog::on_btnReserve_clicked()
 {
-    //if(connectToDatabase(QString("root"),QString("Serwis4q@"))) {
+    if(Database::getDatabase().isOpen()) {
         if(isDateFree()) {
 
             NameDialog n;
@@ -305,7 +278,6 @@ void BookingDialog::on_btnReserve_clicked()
                 qry.bindValue(":_End", ui->dateTimeEditEnd->dateTime());
                 qry.bindValue(":_idCar",idCar);
                 bool isExecuted = qry.exec();
-                closeDatabase();
                 if( !isExecuted )
                     QMessageBox::warning(this,"Informacja","Dodawanie nie powiodło się./nERROR "+qry.lastError().text()+"");
                 else
@@ -315,12 +287,11 @@ void BookingDialog::on_btnReserve_clicked()
             }
         }
 
-//        closeDatabase();
-//    }
-//    else {
-//        closeDatabase();
-//        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
-//    }
+    }
+    else {
+        Database::closeDatabase();
+        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+    }
 }
 
 void BookingDialog::on_checkBoxBooking_clicked(bool checked)

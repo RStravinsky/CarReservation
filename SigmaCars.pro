@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     bookingblock.cpp \
     namedialog.cpp \
     notesdialog.cpp \
-    noteblock.cpp
+    noteblock.cpp \
+    database.cpp
 
 HEADERS  += mainwindow.h \
     carblock.h \
@@ -29,7 +30,8 @@ HEADERS  += mainwindow.h \
     bookingblock.h \
     namedialog.h \
     notesdialog.h \
-    noteblock.h
+    noteblock.h \
+    database.h
 
 FORMS    += mainwindow.ui \
     carblock.ui \

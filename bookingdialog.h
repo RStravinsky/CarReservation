@@ -15,6 +15,7 @@
 #include <QMap>
 #include <QTimer>
 #include <QScrollBar>
+#include "database.h"
 
 namespace Ui {
 class BookingDialog;
@@ -66,10 +67,6 @@ private:
     bool isDateFree();
     void clearCalendarFormat();
     void setCalendarColor(QCalendarWidget *&calendarWidget,QColor color);  
-
-    QSqlDatabase sqlDatabase;
-    bool connectToDatabase(QString login, QString password);
-    void closeDatabase();
 };
 
 #endif // BOOKINGDIALOG_H

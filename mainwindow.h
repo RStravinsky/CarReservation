@@ -11,7 +11,9 @@
 #include <QTimer>
 #include <QScrollBar>
 #include <vector>
+#include <memory>
 #include "carblock.h"
+#include "database.h"
 
 namespace Ui {
 class MainWindow;
@@ -30,6 +32,7 @@ public:
 
 public slots:
     void updateView(bool isCopyEnable);
+    void reloadNotes();
 
 private slots:
     void onTimerOverflow();
@@ -46,7 +49,8 @@ private:
     Ui::MainWindow *ui;
     QVBoxLayout *scrollLayout{nullptr};
     QWidget *scrollWidget{nullptr};
-    QSqlDatabase sqlDatabase;
+    //QSqlDatabase sqlDatabase;
+    Database * database;
     QSqlQueryModel * carTable{nullptr};
     QSqlQueryModel * bookingTable{nullptr};
     QSqlQueryModel * notesTable{nullptr};
@@ -56,9 +60,6 @@ private:
     QString password;
     bool isAdmin{false};
     bool copyEnable{false};
-
-    bool connectToDatabase(QString &login, QString &password);
-    void closeDatabase();
 
     QSystemTrayIcon * trayIcon{nullptr};
     QAction *minimizeAction{nullptr};

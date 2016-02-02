@@ -3,6 +3,8 @@
 
 #define UPDATE_TIME 5000
 
+std::shared_ptr<NotesDialog> notesDialogPointer;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -11,7 +13,9 @@ MainWindow::MainWindow(QWidget *parent) :
     login = "root";
     password = "Serwis4q@"; //change password here
 
-    if(connectToDatabase(login,password))
+    database = new Database();
+
+    if(database->connectToDatabase(login,password))
        ui->statusBar->showMessage("Połączono z bazą danych");
     else
     ui->statusBar->showMessage("Nie można połączyć z bazą danych");
@@ -37,7 +41,7 @@ void MainWindow::onTimerOverflow()
 void MainWindow::updateView(bool isCopyEnable)
 {  
     qDebug() << "Updating..." << endl;
-    //if(connectToDatabase(login,password)) {
+    if(Database::getDatabase().isOpen()) {
 
     //    ui->statusBar->showMessage("Połączono z bazą danych");
         const int varticalPosition = ui->scrollArea->verticalScrollBar()->value();
@@ -53,14 +57,7 @@ void MainWindow::updateView(bool isCopyEnable)
         bookingTable = new QSqlQueryModel(this);
         bookingTable->setQuery("SELECT * FROM booking;");
 
-        if(notesTable != nullptr) {
-            lastRowCount = notesTable->rowCount();
-            delete notesTable;
-        }
-
-        notesTable = new QSqlQueryModel(this);
-        notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC;");
-        notesActionsVector.clear();
+        reloadNotes();
 
         // Copy last CarBlock
         CarBlock * element;
@@ -83,13 +80,15 @@ void MainWindow::updateView(bool isCopyEnable)
            connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)));
            connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
            connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
-           connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
-           connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(UPDATE_TIME);});
-           connect(carBlockVector.back(),&CarBlock::noteClosed,[=](){
-                                                                    updateView(true);
+           connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
+           connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
+           connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){
+                                                                    reloadNotes();
                                                                     loadTrayIcon();
                                                                     qDebug() << "MainWindow - noteClosed slot called";
-                                                                    });
+                                                                    }, Qt::QueuedConnection);
+
+
         }
 
         if(isAdmin) {
@@ -116,41 +115,27 @@ void MainWindow::updateView(bool isCopyEnable)
 
         ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
 
-//        closeDatabase();
-//    }
-
-//    else {
-//        closeDatabase();
-//        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
-//        ui->statusBar->showMessage("Nie można połączyć z bazą danych");
-//    }
-}
-
-bool MainWindow::connectToDatabase(QString &login, QString &password)
-{
-    sqlDatabase = QSqlDatabase::addDatabase("QMYSQL");
-    sqlDatabase.setHostName("192.168.1.7");
-    sqlDatabase.setDatabaseName("sigmacars");
-    if(login.isEmpty() && password.isEmpty()) {
-        sqlDatabase.setUserName("root");
-        sqlDatabase.setPassword("Serwis4q@");
     }
+
     else {
-        sqlDatabase.setUserName(login);
-        sqlDatabase.setPassword(password);
+        Database::closeDatabase();
+        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+        ui->statusBar->showMessage("Nie można połączyć z bazą danych");
     }
-    if (!sqlDatabase.open()) return false;
-    else return true;
 }
 
-void MainWindow::closeDatabase()
+void MainWindow::reloadNotes()
 {
-    QString connection;
-    connection = sqlDatabase.connectionName();
-    sqlDatabase.close();
-    sqlDatabase = QSqlDatabase();
-    sqlDatabase.removeDatabase(connection);
+    if(notesTable != nullptr) {
+        lastRowCount = notesTable->rowCount();
+        delete notesTable;
+    }
+
+    notesTable = new QSqlQueryModel(this);
+    notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC;");
+    notesActionsVector.clear();
 }
+
 
 void MainWindow::createLoginOption()
 {
@@ -173,19 +158,18 @@ void MainWindow::createLoginOption()
     ui->statusBar->addPermanentWidget(adminPassword);
 
     connect(loginButton, &QPushButton::clicked, [=]() {
-        //if(connectToDatabase(login,password)) {
+        if(Database::getDatabase().isOpen()) {
             static bool visible = false;
             visible = !visible;
             adminPassword->clear();
             adminPassword->setFocus();
             adminPassword->setVisible(visible);
-//            closeDatabase();
-//        }
-//        else {
-//            closeDatabase();
-//            QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
-//            ui->statusBar->showMessage("Nie można połączyć z bazą danych");
-//        }
+        }
+        else {
+            Database::closeDatabase();
+            QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+            ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+        }
     });
 
     connect(adminPassword, &QLineEdit::editingFinished, [=]() {
@@ -200,18 +184,18 @@ void MainWindow::createLoginOption()
     });
 
     connect(logoutButton, &QPushButton::clicked, [=]() {
-        //if(connectToDatabase(login,password)) {
+        if(Database::getDatabase().isOpen()) {
             isAdmin = false;
             loginButton->setVisible(true);
             logoutButton->setVisible(false);
             updateView(true);
             loadTrayIcon();
-//        }
-//        else {
-//            closeDatabase();
-//            QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
-//            ui->statusBar->showMessage("Nie można połączyć z bazą danych");
-//        }
+        }
+        else {
+            Database::closeDatabase();
+            QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+            ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+        }
     });
 }
 
@@ -290,12 +274,12 @@ void MainWindow::createActions(bool _isAdmin)
 
         for(int i = 0; i < notesTable->rowCount(); ++i) {
 
-           qDebug() << notesTable->data(notesTable->index(i,2)).toString();
+           //qDebug() << notesTable->data(notesTable->index(i,2)).toString();
            notesActionsVector.emplace_back(std::move( new QAction(QString("&%1 %2").arg(notesTable->data(notesTable->index(i,2)).toString()).arg(notesTable->data(notesTable->index(i,3)).toString()), this) ));
            notesActionsVector.back()->setFont(QFont("Calibri", 9, QFont::Bold));
 
            ++newMessagesNumber;
-           qDebug() << newMessagesNumber;
+           //qDebug() << newMessagesNumber;
            actionData = notesTable->data(notesTable->index(i,0)).toString() + QString(",") + notesTable->data(notesTable->index(i,6)).toString();
            notesActionsVector.back()->setData(actionData);
         }
