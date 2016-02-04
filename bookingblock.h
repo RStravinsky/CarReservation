@@ -20,8 +20,6 @@ public:
 
 private:
     Ui::BookingBlock *ui;
-
-
 };
 
 #endif // BOOKINGBLOCK_H

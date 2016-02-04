@@ -29,25 +29,26 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
 
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(onTimerOverflow()));
-    connect(this, SIGNAL(bookedCar()), this, SLOT(updateView()));
+    connect(this, SIGNAL(bookedCar()), this, SLOT(updateView()),Qt::QueuedConnection);
     connect(ui->calendarWidget,SIGNAL(selectionChanged()),this,SLOT(updateView()));
     onTimerOverflow();
 }
 
 BookingDialog::~BookingDialog()
 {
+    firstInit = true;
     delete ui;
 }
 
 void BookingDialog::updateView()
 {
     qDebug() << "Updating booking ..." << endl;
-    static bool firstInit = true;
     if(firstInit) {
-        on_calendarWidget_clicked(QDate::currentDate());
-        firstInit = false;
+        ui->calendarWidget->clicked(QDate::currentDate());
+        firstInit=false;
     }
-    on_calendarWidget_clicked(choosenDate);
+    else
+        on_calendarWidget_clicked(choosenDate);
 }
 
 void BookingDialog::onTimerOverflow()
@@ -71,7 +72,7 @@ void BookingDialog::fillCalendar()
 
             itDate = carReservations->data(carReservations->index(i,3)).toDate();
 
-            while(itDate <= carReservations->data(carReservations->index(i,4)).toDate()) {
+            while(itDate <= carReservations->data(carReservations->index(i,4)).toDate() && itDate >= QDate::currentDate()) {
                 ui->calendarWidget->setDateTextFormat(itDate, format);
                 itDate = itDate.addDays(1);
             }
@@ -164,6 +165,11 @@ void BookingDialog::setCalendarColor(QCalendarWidget *&calendarWidget,QColor col
 
 void BookingDialog::on_calendarWidget_clicked(const QDate &date)
 {
+    if(Database::getDatabase().isOpen()) {
+        Database::closeDatabase();
+        qDebug() << "Close database" << endl;
+    }
+
     if(Database::connectToDatabase("root","Serwis4q@")) {
 
         carReservations->setQuery(QString("SELECT * FROM sigmacars.booking WHERE idCar = %1").arg(idCar));
@@ -196,7 +202,7 @@ void BookingDialog::on_calendarWidget_clicked(const QDate &date)
     }
     else {
         Database::closeDatabase();
-        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
     }
 }
 
@@ -217,15 +223,11 @@ bool BookingDialog::isDateFree()
 
     if(ui->dateTimeEditBegin->dateTime() < QDateTime::currentDateTime()) {
         QMessageBox::warning(this, "Uwaga!", "Data i czas początku rezerwacji muszą być większe od aktualnej.");
-        ui->dateTimeEditBegin->setDateTime(QDateTime::currentDateTime());
-        ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime());
         return false;
     }
 
     if(ui->dateTimeEditEnd->dateTime() <= ui->dateTimeEditBegin->dateTime()) {
         QMessageBox::warning(this, "Uwaga!", "Data i czas końca rezerwacji muszą być większe od początkowej.");
-        ui->dateTimeEditBegin->setDateTime(QDateTime::currentDateTime());
-        ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime());
         return false;
     }
 
@@ -236,22 +238,22 @@ bool BookingDialog::isDateFree()
         modelEnd = bookedDates->data(bookedDates->index(i,1)).toDateTime();
 
         if(ui->dateTimeEditBegin->dateTime() >= modelBegin && ui->dateTimeEditEnd->dateTime() <= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany1.");
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
             return false;
         }
 
         if(ui->dateTimeEditBegin->dateTime() <= modelBegin && ui->dateTimeEditEnd->dateTime() >= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany2.");
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
             return false;
         }
 
         if(ui->dateTimeEditBegin->dateTime() <= modelBegin && ui->dateTimeEditEnd->dateTime() >= modelBegin && ui->dateTimeEditEnd->dateTime() <= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany3.");
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
             return false;
         }
 
         if(ui->dateTimeEditBegin->dateTime() >= modelBegin && ui->dateTimeEditBegin->dateTime() <= modelEnd && ui->dateTimeEditEnd->dateTime() >= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany4.");
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
             return false;
         }
 
@@ -270,20 +272,21 @@ void BookingDialog::on_btnReserve_clicked()
             if(n.exec() == NameDialog::Accepted) {
 
                 QSqlQuery qry;
-                qry.prepare("INSERT INTO booking(Name,Surename,Begin,End, idCar)"
-                         "VALUES(:_Name,:_Surename,:_Begin,:_End,:_idCar)");
+                qry.prepare("INSERT INTO booking(Name,Surename,Begin,End,idCar)"
+                         "VALUES(:_Name,:_Surname,:_Begin,:_End,:_idCar)");
 
                 qry.bindValue(":_Name", n.getName());
-                qry.bindValue(":_Surename", n.getSurname());
+                qry.bindValue(":_Surname", n.getSurname());
                 qry.bindValue(":_Begin", ui->dateTimeEditBegin->dateTime());
                 qry.bindValue(":_End", ui->dateTimeEditEnd->dateTime());
                 qry.bindValue(":_idCar",idCar);
                 bool isExecuted = qry.exec();
                 if( !isExecuted )
-                    QMessageBox::warning(this,"Informacja","Dodawanie nie powiodło się./nERROR "+qry.lastError().text()+"");
+                    QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
                 else
                     QMessageBox::information(this,"Informacja","Dodano!");
 
+                timer->start(UPDATE_TIME);
                 emit bookedCar();
             }
         }       
@@ -291,7 +294,7 @@ void BookingDialog::on_btnReserve_clicked()
     }
     else {
         Database::closeDatabase();
-        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
     }
 }
 
@@ -327,7 +330,6 @@ void BookingDialog::clearCalendarFormat()
 
    for(auto itr : ui->calendarWidget->dateTextFormat().keys())
         ui->calendarWidget->setDateTextFormat(itr, format);
-
 }
 
 

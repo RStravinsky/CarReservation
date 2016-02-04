@@ -4,17 +4,16 @@
 #include <QDialog>
 #include <QCalendarWidget>
 #include <QVBoxLayout>
-#include <vector>
-#include <bookingblock.h>
-#include <namedialog.h>
 #include <QtSql>
 #include <QTextCharFormat>
 #include <QDebug>
 #include <QMessageBox>
 #include <QMenu>
-#include <QMap>
 #include <QTimer>
 #include <QScrollBar>
+#include <vector>
+#include "bookingblock.h"
+#include "namedialog.h"
 #include "database.h"
 
 namespace Ui {
@@ -52,6 +51,7 @@ private:
     QSqlQueryModel * carReservations {nullptr};
     int idCar;
     QTimer *timer;
+    bool firstInit{true};
 
     enum ViewMode {
         Booked,

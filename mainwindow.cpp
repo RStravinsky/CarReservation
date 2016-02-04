@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#define UPDATE_TIME 50000
+#define UPDATE_TIME 2000
 
 std::shared_ptr<NotesDialog> notesDialogPointer;
 
@@ -14,11 +14,6 @@ MainWindow::MainWindow(QWidget *parent) :
     password = "Serwis4q@"; //change password here
 
     database = new Database();
-
-//    if(database->connectToDatabase(login,password))
-//       ui->statusBar->showMessage("Połączono z bazą danych");
-//    else
-//    ui->statusBar->showMessage("Nie można połączyć z bazą danych");
 
     createLoginOption();
     timer = new QTimer(this);
@@ -57,8 +52,6 @@ void MainWindow::updateView(bool isCopyEnable)
         bookingTable = new QSqlQueryModel(this);
         bookingTable->setQuery("SELECT * FROM booking;");
 
-        reloadNotes();
-
         // Copy last CarBlock
         CarBlock * element;
         if (isAdmin)
@@ -83,7 +76,7 @@ void MainWindow::updateView(bool isCopyEnable)
            connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
            connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
            connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){
-                                                                    reloadNotes();
+                                                                    //reloadNotes();
                                                                     loadTrayIcon();
                                                                     qDebug() << "MainWindow - noteClosed slot called";
                                                                     }, Qt::QueuedConnection);
@@ -119,7 +112,7 @@ void MainWindow::updateView(bool isCopyEnable)
 
     else {
         Database::closeDatabase();
-        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         ui->statusBar->showMessage("Nie można połączyć z bazą danych");
     }
 }
@@ -158,41 +151,34 @@ void MainWindow::createLoginOption()
     ui->statusBar->addPermanentWidget(adminPassword);
 
     connect(loginButton, &QPushButton::clicked, [=]() {
-        if(Database::connectToDatabase("root","Serwis4q@")) {
             static bool visible = false;
             visible = !visible;
             adminPassword->clear();
             adminPassword->setFocus();
             adminPassword->setVisible(visible);
-            Database::closeDatabase();
-        }
-        else {
-            Database::closeDatabase();
-            QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
-            ui->statusBar->showMessage("Nie można połączyć z bazą danych");
-        }
     });
 
     connect(adminPassword, &QLineEdit::editingFinished, [=]() {
+        if(Database::getDatabase().isOpen()) Database::closeDatabase();
+        if(Database::connectToDatabase("root","Serwis4q@")) {
             if(adminPassword->text()=="sigma") {
                     isAdmin = true;
                     loginButton->click();
                     loginButton->setVisible(false);
                     logoutButton->setVisible(true);
+                    Database::closeDatabase();
                     updateView(false);
-                    if(Database::connectToDatabase("root","Serwis4q@")) {
-                        reloadNotes();
-                        loadTrayIcon();
-                        Database::closeDatabase();
-                    }
-                    else {
-                        Database::closeDatabase();
-                        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
-                        ui->statusBar->showMessage("Nie można połączyć z bazą danych");
-                    }
+                    loadTrayIcon();
             }
+        }
+        else {
+            Database::closeDatabase();
+            QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+            ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+        }
     });
     connect(logoutButton, &QPushButton::clicked, [=]() {
+        if(Database::getDatabase().isOpen()) Database::closeDatabase();
         if(Database::connectToDatabase("root","Serwis4q@")) {
             isAdmin = false;
             loginButton->setVisible(true);
@@ -203,7 +189,7 @@ void MainWindow::createLoginOption()
         }
         else {
             Database::closeDatabase();
-            QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+            QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
             ui->statusBar->showMessage("Nie można połączyć z bazą danych");
         }
     });
@@ -278,18 +264,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::createActions(bool _isAdmin)
 {
     if(_isAdmin) {
-
         QString actionData;
         newMessagesNumber = 0;
-
         for(int i = 0; i < notesTable->rowCount(); ++i) {
-
-           //qDebug() << notesTable->data(notesTable->index(i,2)).toString();
            notesActionsVector.emplace_back(std::move( new QAction(QString("&%1 %2").arg(notesTable->data(notesTable->index(i,2)).toString()).arg(notesTable->data(notesTable->index(i,3)).toString()), this) ));
            notesActionsVector.back()->setFont(QFont("Calibri", 9, QFont::Bold));
 
            ++newMessagesNumber;
-           //qDebug() << newMessagesNumber;
            actionData = notesTable->data(notesTable->index(i,0)).toString() + QString(",") + notesTable->data(notesTable->index(i,6)).toString();
            notesActionsVector.back()->setData(actionData);
         }
@@ -375,16 +356,28 @@ void MainWindow::createTrayIcon(bool _isAdmin)
 }
 
 void MainWindow::loadTrayIcon()
-{    
-    delete trayIcon;
-    delete trayIconMenu;
+{
+    if(Database::getDatabase().isOpen())
+        Database::closeDatabase();
 
-    createActions(isAdmin);
-    createTrayIcon(isAdmin);
-    setIcon();
-    showTrayIcon();
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-    connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(poupMessageClicked()));
+    if(Database::connectToDatabase("root","Serwis4q@")) {
+        reloadNotes();
+
+        delete trayIcon;
+        delete trayIconMenu;
+
+        createActions(isAdmin);
+        createTrayIcon(isAdmin);
+        setIcon();
+        showTrayIcon();
+        connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+        connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(poupMessageClicked()));
+        Database::closeDatabase();
+    }
+    else {
+        Database::closeDatabase();
+        ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+    }
 }
 
 void MainWindow::setIcon()
