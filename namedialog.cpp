@@ -7,6 +7,7 @@ NameDialog::NameDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->pushButtonCancel, SIGNAL(released()), this, SLOT(reject()));
+    ui->lineEditName->setFocus();
 }
 
 NameDialog::~NameDialog()

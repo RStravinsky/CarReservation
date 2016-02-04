@@ -11,9 +11,9 @@ BookingBlock::BookingBlock(QString name, QString timeBegin, QString timeEnd, boo
     ui->lblEnd->setText(timeEnd);
 
     if(isBooking)
-        ui->lblStatus->setStyleSheet("background-color: rgb(0,0,150,200); border-radius: 5px");
+        ui->lblStatus->setStyleSheet("background-color: rgb(255,140,0); border-radius: 5px");
     else
-        ui->lblStatus->setStyleSheet("background-color: rgb(150,0,0,200); border-radius: 5px");
+        ui->lblStatus->setStyleSheet("background-color: rgb(100,149,237); border-radius: 5px");
 
     ui->lblBegin->setVisible(isTimeVisible);
     ui->lblEnd->setVisible(isTimeVisible);

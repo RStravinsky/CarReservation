@@ -15,7 +15,7 @@ NoteBlock::NoteBlock(int idC, int idN, QString contents, QString name, QString s
     if(!isAdded) {
         ui->txtEditContents->setText(contents);
         ui->txtEditContents->setReadOnly(true);
-        (name == "Admin" && surename == "Admin") ? ui->lblNameSurename->setText(QString(name)) : ui->lblNameSurename->setText(QString("%1 %2").arg(name).arg(surename));
+        (name == "Admin" && surename == "Admin") ? ui->lblNameSurname->setText(QString(name)) : ui->lblNameSurname->setText(QString("%1 %2").arg(name).arg(surename));
         ui->lblDate->setText(dateTime.toString("dd-MM-yyyy hh:mm:ss"));
 
         if(isRead) {
@@ -28,7 +28,7 @@ NoteBlock::NoteBlock(int idC, int idN, QString contents, QString name, QString s
     else {
         ui->txtEditContents->setText(contents);
         ui->txtEditContents->setReadOnly(false);
-        ui->lblNameSurename->setText(surename);
+        ui->lblNameSurname->setText(surename);
         ui->lblDate->setText(" - ");
         ui->btnRemove->setIcon(QIcon(":/images/images/add.png"));
         ui->txtEditContents->setFocus();
@@ -90,13 +90,13 @@ void NoteBlock::on_btnRemove_clicked()
         QDateTime dateOfAdd = QDateTime::currentDateTime();
         ui->lblDate->setText(dateOfAdd.toString());
 
-        qry.prepare("INSERT INTO notes(Contents,Name,Surename,Datetime,isRead,idCar)"
-                     "VALUES(:_Contents,:_Name,:_Surename,:_Datetime,:_isRead,:_idCar)"
+        qry.prepare("INSERT INTO notes(Contents,Name,Surname,Datetime,isRead,idCar)"
+                     "VALUES(:_Contents,:_Name,:_Surname,:_Datetime,:_isRead,:_idCar)"
                     );
 
         qry.bindValue(":_Contents", ui->txtEditContents->toPlainText());
-        qry.bindValue(":_Name", ui->lblNameSurename->text());
-        qry.bindValue(":_Surename", ui->lblNameSurename->text());
+        qry.bindValue(":_Name", ui->lblNameSurname->text());
+        qry.bindValue(":_Surname", ui->lblNameSurname->text());
         qry.bindValue(":_Datetime", dateOfAdd);
         qry.bindValue(":_isRead", 1);
         qry.bindValue(":_idCar", idCar);

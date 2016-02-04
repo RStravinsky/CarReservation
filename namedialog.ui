@@ -34,27 +34,30 @@
 background-color: white;
 }
 
-QPushButton:hover {
-border-radius: 5px;
-background: rgb(210,210,210);
-}
-
-QPushButton{
-color: rgb(70,70,70);
-border-radius: 5px;
-background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-   stop: 0 rgba(230,230,230), stop: 0.7 rgb(210,210,210));
-}
-
-QPushButton:pressed {
-color: white;
-border-radius: 5px;
-background: rgb(230,230,230);
-}
-
 QLabel{
 color: gray;
-}</string>
+}
+
+QMessageBox QPushButton:hover {
+border-radius: 5px;
+background: rgb(255,140,0);
+}
+
+QMessageBox QPushButton{
+color: white;
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));
+min-height: 30px;
+min-width: 70px;
+}
+
+QMessageBox QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(255,105,0);
+}
+</string>
   </property>
   <widget class="QLineEdit" name="lineEditSurname">
    <property name="geometry">
@@ -70,6 +73,9 @@ color: gray;
      <family>Calibri</family>
      <pointsize>12</pointsize>
     </font>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::StrongFocus</enum>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtonCancel">

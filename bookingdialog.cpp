@@ -14,6 +14,8 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
     ui->setupUi(this);
 
     setCalendarColor(ui->calendarWidget,QColor(255,140,0));
+    setCalendarColor(ui->dateTimeEditBegin->calendarWidget(),QColor(255,140,0));
+    setCalendarColor(ui->dateTimeEditEnd->calendarWidget(),QColor(255,140,0));
     ui->dateTimeEditBegin->setDateTime(QDateTime::currentDateTime());
     ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime());
 
@@ -66,7 +68,7 @@ void BookingDialog::fillCalendar()
 
     if(viewMode == ViewMode::Booked) {
 
-        format.setBackground(QBrush(QColor(0,0,150,200), Qt::SolidPattern));
+        format.setBackground(QBrush(QColor(255,140,0), Qt::SolidPattern));
 
         for(int i = 0; i < carReservations->rowCount(); ++i) {
 
@@ -81,7 +83,7 @@ void BookingDialog::fillCalendar()
 
     else if(viewMode == ViewMode::History) {
 
-        format.setBackground(QBrush(QColor(150,0,0,200), Qt::SolidPattern));
+        format.setBackground(QBrush(QColor(100,149,237), Qt::SolidPattern));
 
         for(int i = 0; i < statusHistory->rowCount(); ++i) {
 
@@ -153,7 +155,7 @@ void BookingDialog::loadBlock(int idx)
     }
 }
 
-void BookingDialog::setCalendarColor(QCalendarWidget *&calendarWidget,QColor color)
+void BookingDialog::setCalendarColor(QCalendarWidget *calendarWidget,QColor color)
 {
     QWidget *calendarNavBar = calendarWidget->findChild<QWidget *>("qt_calendar_navigationbar");
     if (calendarNavBar) {
@@ -231,7 +233,6 @@ bool BookingDialog::isDateFree()
         return false;
     }
 
-
     for(int i = 0; i < bookedDates->rowCount(); ++i) {
 
         modelBegin = bookedDates->data(bookedDates->index(i,0)).toDateTime();
@@ -256,9 +257,7 @@ bool BookingDialog::isDateFree()
             QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
             return false;
         }
-
     }
-
     return true;
 }
 
@@ -270,21 +269,22 @@ void BookingDialog::on_btnReserve_clicked()
             NameDialog n;
             timer->stop();
             if(n.exec() == NameDialog::Accepted) {
+                if(isDateFree()) {
+                    QSqlQuery qry;
+                    qry.prepare("INSERT INTO booking(Name,Surname,Begin,End,idCar)"
+                             "VALUES(:_Name,:_Surname,:_Begin,:_End,:_idCar)");
 
-                QSqlQuery qry;
-                qry.prepare("INSERT INTO booking(Name,Surename,Begin,End,idCar)"
-                         "VALUES(:_Name,:_Surname,:_Begin,:_End,:_idCar)");
-
-                qry.bindValue(":_Name", n.getName());
-                qry.bindValue(":_Surname", n.getSurname());
-                qry.bindValue(":_Begin", ui->dateTimeEditBegin->dateTime());
-                qry.bindValue(":_End", ui->dateTimeEditEnd->dateTime());
-                qry.bindValue(":_idCar",idCar);
-                bool isExecuted = qry.exec();
-                if( !isExecuted )
-                    QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
-                else
-                    QMessageBox::information(this,"Informacja","Dodano!");
+                    qry.bindValue(":_Name", n.getName());
+                    qry.bindValue(":_Surname", n.getSurname());
+                    qry.bindValue(":_Begin", ui->dateTimeEditBegin->dateTime());
+                    qry.bindValue(":_End", ui->dateTimeEditEnd->dateTime());
+                    qry.bindValue(":_idCar",idCar);
+                    bool isExecuted = qry.exec();
+                    if( !isExecuted )
+                        QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
+                    else
+                        QMessageBox::information(this,"Informacja","Dodano!");
+                }
 
                 timer->start(UPDATE_TIME);
                 emit bookedCar();

@@ -66,7 +66,7 @@ private:
     void clearScrollArea();
     bool isDateFree();
     void clearCalendarFormat();
-    void setCalendarColor(QCalendarWidget *&calendarWidget,QColor color);  
+    void setCalendarColor(QCalendarWidget *calendarWidget, QColor color);
 };
 
 #endif // BOOKINGDIALOG_H

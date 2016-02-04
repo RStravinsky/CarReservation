@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>490</width>
-    <height>155</height>
+    <width>510</width>
+    <height>160</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>490</width>
+    <width>510</width>
     <height>150</height>
    </size>
   </property>
@@ -56,7 +56,30 @@ QScrollBar::sub-line:vertical {
       background: none;
 width: 0px;
 height: 0px;
-}</string>
+}
+
+QMessageBox QPushButton:hover {
+border-radius: 5px;
+background: rgb(255,140,0);
+}
+
+QMessageBox QPushButton{
+color: white;
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));
+min-height: 30px;
+min-width: 70px;
+}
+
+QMessageBox QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(255,105,0);
+}
+
+
+</string>
   </property>
   <widget class="QLabel" name="lblPersonImage">
    <property name="geometry">
@@ -175,7 +198,7 @@ background-color:transparent</string>
     <string>Data</string>
    </property>
   </widget>
-  <widget class="QLabel" name="lblNameSurename">
+  <widget class="QLabel" name="lblNameSurname">
    <property name="geometry">
     <rect>
      <x>90</x>
@@ -211,7 +234,7 @@ background-color:transparent</string>
     <rect>
      <x>0</x>
      <y>148</y>
-     <width>491</width>
+     <width>501</width>
      <height>1</height>
     </rect>
    </property>
@@ -230,7 +253,7 @@ background-color:transparent</string>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(107, 124, 140);</string>
+    <string notr="true">background-color: gray;</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::NoFrame</enum>
@@ -294,7 +317,7 @@ p, li { white-space: pre-wrap; }
   <zorder>lblPersonImage</zorder>
   <zorder>lblDateImage</zorder>
   <zorder>lblDate</zorder>
-  <zorder>lblNameSurename</zorder>
+  <zorder>lblNameSurname</zorder>
   <zorder>btnRemove</zorder>
   <zorder>lbl</zorder>
   <zorder>txtEditContents</zorder>
