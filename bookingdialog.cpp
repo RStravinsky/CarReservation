@@ -164,7 +164,7 @@ void BookingDialog::setCalendarColor(QCalendarWidget *&calendarWidget,QColor col
 
 void BookingDialog::on_calendarWidget_clicked(const QDate &date)
 {
-    if(Database::getDatabase().isOpen()) {
+    if(Database::connectToDatabase("root","Serwis4q@")) {
 
         carReservations->setQuery(QString("SELECT * FROM sigmacars.booking WHERE idCar = %1").arg(idCar));
         statusHistory->setQuery(QString("SELECT * FROM sigmacars.history WHERE idCar = %1").arg(idCar));
@@ -192,6 +192,7 @@ void BookingDialog::on_calendarWidget_clicked(const QDate &date)
         ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
 
         fillCalendar();
+        Database::closeDatabase();
     }
     else {
         Database::closeDatabase();
@@ -261,7 +262,7 @@ bool BookingDialog::isDateFree()
 
 void BookingDialog::on_btnReserve_clicked()
 {
-    if(Database::getDatabase().isOpen()) {
+    if(Database::connectToDatabase("root","Serwis4q@")) {
         if(isDateFree()) {
 
             NameDialog n;
@@ -285,8 +286,8 @@ void BookingDialog::on_btnReserve_clicked()
 
                 emit bookedCar();
             }
-        }
-
+        }       
+        Database::closeDatabase();
     }
     else {
         Database::closeDatabase();

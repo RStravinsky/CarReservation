@@ -7,7 +7,7 @@ Database::Database(QObject *parent) : QObject(parent)
 
 }
 
-bool Database::connectToDatabase(QString &login, QString &password)
+bool Database::connectToDatabase(QString login, QString password)
 {
     sqlDatabase = QSqlDatabase::addDatabase("QMYSQL");
     sqlDatabase.setHostName("192.168.1.7");

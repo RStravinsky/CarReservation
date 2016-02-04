@@ -120,17 +120,17 @@ void CarBlock::setAdminPermissions(bool isAdmin)
 
 void CarBlock::showNotesDialog(int _idNotes, int _idCar)
 {
-    emit inProgress();
-    if(Database::getDatabase().isOpen()) {
+    if(Database::connectToDatabase("root","Serwis4q@")) {
+        emit inProgress();
         if(_idCar == idCar) {
             notesDialogPointer = std::shared_ptr<NotesDialog>(new NotesDialog(_idNotes, _idCar));
             if(notesDialogPointer.use_count() == 1 && notesDialogPointer.get()->exec() == NotesDialog::Rejected){
+                Database::closeDatabase();
                 emit progressFinished();
                 emit noteClosed();
                 qDebug() << "CarBlock showNotesDialog - noteClosed emmited";
             }
         }
-    emit progressFinished();
     }
     else {
         Database::closeDatabase();
@@ -140,12 +140,13 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
 
 void CarBlock::on_btnReserve_clicked()
 {
-    if(Database::getDatabase().isOpen()) {
+    if(Database::connectToDatabase("root","Serwis4q@")) {
         bookingDialog = new BookingDialog(bookingTable, carTable, idCar);
         emit inProgress();
         if(bookingDialog->exec()== BookingDialog::Rejected)
             emit progressFinished();
         delete bookingDialog;
+        Database::closeDatabase();
     }
     else {
         Database::closeDatabase();
@@ -158,12 +159,13 @@ void CarBlock::on_btnAddInsurance_clicked()
 {
     emit inProgress();
 
-    if(Database::getDatabase().isOpen()) {
+    if(Database::connectToDatabase("root","Serwis4q@")) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET InsuranceDate=:_insuranceDate WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
         qry.bindValue(":_insuranceDate", ui->dateEditInsurance->date());
         bool isExecuted = qry.exec();
+        Database::closeDatabase();
         if( !isExecuted )
             QMessageBox::warning(this,"Informacja","Aktualizacja nie powiodła się./nERROR: "+qry.lastError().text()+"");
         else
@@ -182,12 +184,13 @@ void CarBlock::on_btnAddInspection_clicked()
 {
     emit inProgress();
 
-    if(Database::getDatabase().isOpen()) {
+    if(Database::connectToDatabase("root","Serwis4q@")) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET InspectionDate=:_inspectionDate WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
         qry.bindValue(":_inspectionDate", ui->dateEditInspection->date());
         bool isExecuted = qry.exec();
+        Database::closeDatabase();
         if( !isExecuted )
             QMessageBox::warning(this,"Informacja","Aktualizacja nie powidoła się./nERROR: "+qry.lastError().text()+"");
         else
@@ -206,12 +209,13 @@ void CarBlock::on_btnRemove_clicked()
 {
     emit inProgress();
 
-    if(Database::getDatabase().isOpen()) {
+    if(Database::connectToDatabase("root","Serwis4q@")) {
         if(!isAddBlock) {
             QSqlQuery qry;
             qry.prepare("DELETE FROM car WHERE idCar=:_id");
             qry.bindValue(":_id", idCar);
             bool isExecuted = qry.exec();
+            Database::closeDatabase();
             if( !isExecuted )
                 QMessageBox::warning(this,"Informacja","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
             else {
@@ -241,6 +245,7 @@ void CarBlock::on_btnRemove_clicked()
             qry.bindValue(":_Mileage", ui->lblMileage->text());
             qry.bindValue(":_PhotoPath",addedCarImagePath);
             bool isExecuted = qry.exec();
+            Database::closeDatabase();
             if( !isExecuted )
                 QMessageBox::warning(this,"Informacja","Dodawanie nie powiodło się.\nERROR "+qry.lastError().text()+"");
             else {

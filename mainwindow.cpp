@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#define UPDATE_TIME 5000
+#define UPDATE_TIME 50000
 
 std::shared_ptr<NotesDialog> notesDialogPointer;
 
@@ -15,10 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     database = new Database();
 
-    if(database->connectToDatabase(login,password))
-       ui->statusBar->showMessage("Połączono z bazą danych");
-    else
-    ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+//    if(database->connectToDatabase(login,password))
+//       ui->statusBar->showMessage("Połączono z bazą danych");
+//    else
+//    ui->statusBar->showMessage("Nie można połączyć z bazą danych");
 
     createLoginOption();
     timer = new QTimer(this);
@@ -41,9 +41,9 @@ void MainWindow::onTimerOverflow()
 void MainWindow::updateView(bool isCopyEnable)
 {  
     qDebug() << "Updating..." << endl;
-    if(Database::getDatabase().isOpen()) {
+    if(Database::connectToDatabase("root","Serwis4q@")) {
 
-    //    ui->statusBar->showMessage("Połączono z bazą danych");
+        ui->statusBar->showMessage("Połączono z bazą danych");
         const int varticalPosition = ui->scrollArea->verticalScrollBar()->value();
 
         if(isAdmin)
@@ -114,7 +114,7 @@ void MainWindow::updateView(bool isCopyEnable)
         ui->scrollArea->setWidget(scrollWidget);
 
         ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
-
+        Database::closeDatabase();
     }
 
     else {
@@ -158,12 +158,13 @@ void MainWindow::createLoginOption()
     ui->statusBar->addPermanentWidget(adminPassword);
 
     connect(loginButton, &QPushButton::clicked, [=]() {
-        if(Database::getDatabase().isOpen()) {
+        if(Database::connectToDatabase("root","Serwis4q@")) {
             static bool visible = false;
             visible = !visible;
             adminPassword->clear();
             adminPassword->setFocus();
             adminPassword->setVisible(visible);
+            Database::closeDatabase();
         }
         else {
             Database::closeDatabase();
@@ -173,23 +174,32 @@ void MainWindow::createLoginOption()
     });
 
     connect(adminPassword, &QLineEdit::editingFinished, [=]() {
-        if(adminPassword->text()=="sigma") {
-                isAdmin = true;
-                loginButton->click();
-                loginButton->setVisible(false);
-                logoutButton->setVisible(true);
-                updateView(false);
-                loadTrayIcon();
-        }
+            if(adminPassword->text()=="sigma") {
+                    isAdmin = true;
+                    loginButton->click();
+                    loginButton->setVisible(false);
+                    logoutButton->setVisible(true);
+                    updateView(false);
+                    if(Database::connectToDatabase("root","Serwis4q@")) {
+                        reloadNotes();
+                        loadTrayIcon();
+                        Database::closeDatabase();
+                    }
+                    else {
+                        Database::closeDatabase();
+                        QMessageBox::critical(this,"BŁĄD", "Utracono połączenie z bazą danych!");
+                        ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+                    }
+            }
     });
-
     connect(logoutButton, &QPushButton::clicked, [=]() {
-        if(Database::getDatabase().isOpen()) {
+        if(Database::connectToDatabase("root","Serwis4q@")) {
             isAdmin = false;
             loginButton->setVisible(true);
             logoutButton->setVisible(false);
             updateView(true);
             loadTrayIcon();
+            Database::closeDatabase();
         }
         else {
             Database::closeDatabase();
@@ -365,7 +375,7 @@ void MainWindow::createTrayIcon(bool _isAdmin)
 }
 
 void MainWindow::loadTrayIcon()
-{
+{    
     delete trayIcon;
     delete trayIconMenu;
 

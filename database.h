@@ -14,7 +14,7 @@ private:
 public:
     explicit Database(QObject *parent = 0);
     static QSqlDatabase getDatabase() {return sqlDatabase;}
-    bool connectToDatabase(QString &login, QString &password);
+    static bool connectToDatabase(QString login, QString password);
     static void closeDatabase();
 
 signals:
