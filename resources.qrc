@@ -28,5 +28,6 @@
         <file>images/read.png</file>
         <file>images/key.png</file>
         <file>images/exit.png</file>
+        <file>images/update.png</file>
     </qresource>
 </RCC>

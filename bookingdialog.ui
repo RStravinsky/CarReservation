@@ -96,6 +96,12 @@ background: rgb(255,105,0);
    <property name="contextMenuPolicy">
     <enum>Qt::CustomContextMenu</enum>
    </property>
+   <property name="gridVisible">
+    <bool>false</bool>
+   </property>
+   <property name="horizontalHeaderFormat">
+    <enum>QCalendarWidget::ShortDayNames</enum>
+   </property>
    <property name="verticalHeaderFormat">
     <enum>QCalendarWidget::NoVerticalHeader</enum>
    </property>
@@ -116,7 +122,7 @@ background: rgb(255,105,0);
     </rect>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -131,7 +137,7 @@ background: rgb(255,105,0);
     <enum>Qt::ScrollBarAlwaysOff</enum>
    </property>
    <property name="widgetResizable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <widget class="QWidget" name="scrollAreaWidgetContents">
     <property name="geometry">

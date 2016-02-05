@@ -49,7 +49,6 @@ private:
     Ui::MainWindow *ui;
     QVBoxLayout *scrollLayout{nullptr};
     QWidget *scrollWidget{nullptr};
-    //QSqlDatabase sqlDatabase;
     Database * database;
     QSqlQueryModel * carTable{nullptr};
     QSqlQueryModel * bookingTable{nullptr};
@@ -78,6 +77,7 @@ private:
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
 
     void createLoginOption();
+    void createUpdateButton();
 };
 
 #endif // MAINWINDOW_H

@@ -140,6 +140,9 @@ background: rgb(255,105,0);
      <height>61</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>Status samochodu</string>
+   </property>
    <property name="text">
     <string/>
    </property>
@@ -159,6 +162,9 @@ background: rgb(255,105,0);
      <height>31</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>Przebieg</string>
+   </property>
    <property name="text">
     <string/>
    </property>
@@ -177,6 +183,9 @@ background: rgb(255,105,0);
      <width>31</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>Numer rejestracyjny</string>
    </property>
    <property name="text">
     <string/>
@@ -227,6 +236,9 @@ background-color: rgba(255, 255, 255, 0);</string>
      <height>31</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>Koniec ubezpieczenia</string>
+   </property>
    <property name="text">
     <string/>
    </property>
@@ -245,6 +257,9 @@ background-color: rgba(255, 255, 255, 0);</string>
      <width>31</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>Koniec przeglądu</string>
    </property>
    <property name="text">
     <string/>

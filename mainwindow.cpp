@@ -15,6 +15,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     database = new Database();
 
+    createUpdateButton();
+    ui->statusBar->setStyleSheet("background: white; color: gray; font-family: Calibri; font-size: 10pt;");
+
     createLoginOption();
     timer = new QTimer(this);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimerOverflow()));
@@ -129,16 +132,27 @@ void MainWindow::reloadNotes()
     notesActionsVector.clear();
 }
 
+void MainWindow::createUpdateButton()
+{
+    QPushButton * updateButton = new QPushButton(this);
+    updateButton->setIcon(QIcon(":/images/images/update.png"));
+    updateButton->setToolTip("Aktualizuj");
+    updateButton->setStyleSheet("border:none;");
+    ui->statusBar->addPermanentWidget(updateButton);
+    connect(updateButton, &QPushButton::clicked,[=](){updateView(true);});
+}
 
 void MainWindow::createLoginOption()
 {
     QPushButton * loginButton = new QPushButton(this);
     loginButton->setIcon(QIcon(":/images/images/key.png"));
     loginButton->setStyleSheet("border:none;");
+    loginButton->setToolTip("Zaloguj jako administrator");
 
     QPushButton * logoutButton = new QPushButton(this);
     logoutButton->setIcon(QIcon(":/images/images/exit.png"));
     logoutButton->setStyleSheet("border:none;");
+    logoutButton->setToolTip("Wyloguj");
     logoutButton->setVisible(false);
 
     QLineEdit *  adminPassword = new QLineEdit(this);

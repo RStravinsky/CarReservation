@@ -273,8 +273,11 @@ void CarBlock::on_btnAddImage_clicked()
     emit inProgress();
     addedCarImagePath = QFileDialog::getOpenFileName(this, tr("Plik z obrazkiem"),
                                QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)+"/bez_tytułu.png",
-                               tr("Pliki PNG (*.png)"));
-    ui->lblPhoto->setPixmap(QPixmap(addedCarImagePath));
+                               tr("Pliki PNG, JPG (*.jpg *.png)"));
+    if(addedCarImagePath.isEmpty())
+        ui->lblPhoto->setPixmap(QPixmap(":/images/images/car.png"));
+    else
+        ui->lblPhoto->setPixmap(QPixmap(addedCarImagePath));
     emit progressFinished();
 }
 

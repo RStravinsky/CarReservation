@@ -19,6 +19,8 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
     ui->dateTimeEditBegin->setDateTime(QDateTime::currentDateTime());
     ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime());
 
+
+
     carReservations = new QSqlQueryModel(this);
     statusHistory = new QSqlQueryModel(this);
 
@@ -162,6 +164,7 @@ void BookingDialog::setCalendarColor(QCalendarWidget *calendarWidget,QColor colo
         QPalette pal = calendarNavBar->palette();
         pal.setColor(calendarNavBar->backgroundRole(), color);
         calendarNavBar->setPalette(pal);
+        //calendarNavBar->
     }
 }
 
@@ -194,10 +197,7 @@ void BookingDialog::on_calendarWidget_clicked(const QDate &date)
 
         for(auto pos = blockVector.begin(); pos != blockVector.end(); ++pos)
             scrollLayout->addWidget(*pos);
-
         ui->scrollArea->setWidget(scrollWidget);
-        ui->scrollArea->setWidgetResizable(true);
-        ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
 
         fillCalendar();
         Database::closeDatabase();
