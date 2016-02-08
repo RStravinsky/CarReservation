@@ -121,6 +121,8 @@ void CarBlock::setAdminPermissions(bool isAdmin)
 void CarBlock::showNotesDialog(int _idNotes, int _idCar)
 {
     if(_idCar == idCar) {
+        if(Database::getDatabase().isOpen())
+            Database::closeDatabase();
         if(Database::connectToDatabase("root","Serwis4q@")) {
             emit inProgress();
                 notesDialogPointer = std::shared_ptr<NotesDialog>(new NotesDialog(_idNotes, _idCar));
@@ -130,6 +132,7 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
                     emit noteClosed();
                     qDebug() << "CarBlock showNotesDialog - noteClosed emmited";
                 }
+
         }
         else {
             Database::closeDatabase();

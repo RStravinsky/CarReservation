@@ -55,6 +55,9 @@ void MainWindow::updateView(bool isCopyEnable)
         bookingTable = new QSqlQueryModel(this);
         bookingTable->setQuery("SELECT * FROM booking;");
 
+        if(notesTable != nullptr)
+            lastRowCount = notesTable->rowCount();
+
         // Copy last CarBlock
         CarBlock * element;
         if (isAdmin)
@@ -73,7 +76,7 @@ void MainWindow::updateView(bool isCopyEnable)
            lastCarBlock = carBlockVector.back();
            lastCarBlock->setBookingTable(bookingTable);
            lastCarBlock->setAdminPermissions(isAdmin);
-           connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)));
+           connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)), Qt::DirectConnection);
            connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
            connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
            connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
@@ -123,12 +126,12 @@ void MainWindow::updateView(bool isCopyEnable)
 void MainWindow::reloadNotes()
 {
     if(notesTable != nullptr) {
-        lastRowCount = notesTable->rowCount();
+        //lastRowCount = notesTable->rowCount();
         delete notesTable;
     }
 
     notesTable = new QSqlQueryModel(this);
-    notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC;");
+    notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC, idNotes DESC;");
     notesActionsVector.clear();
 }
 
@@ -421,15 +424,24 @@ void MainWindow::noteActionClicked(QAction * act)
 
 void MainWindow::poupMessageClicked()
 {
-    emit trayMenuNoteClicked(notesTable->index(0,0).data().toInt(), notesTable->index(0,6).data().toInt());
+    if(Database::getDatabase().isOpen())
+        Database::closeDatabase();
+
+    if(Database::connectToDatabase("root","Serwis4q@")) {
+        notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC, idNotes DESC;");
+        emit trayMenuNoteClicked(notesTable->data(notesTable->index(0,0)).toInt(), notesTable->data(notesTable->index(0,6)).toInt());
+        Database::closeDatabase();
+    }
 }
 
 void MainWindow::setPopupMessage()
 {
+    reloadNotes();
     int actualRowCount = notesTable->rowCount();
     if( actualRowCount > lastRowCount) {
         QString newNote = notesTable->index(0,2).data().toString() + QString(" ") + notesTable->index(0,3).data().toString();
         QString title = "Nowa uwaga:";
+        loadTrayIcon();
         trayIcon->showMessage(title, newNote, QSystemTrayIcon::Information, 10000);
     }
 }
