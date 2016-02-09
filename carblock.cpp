@@ -4,7 +4,7 @@
 extern std::shared_ptr<NotesDialog> notesDialogPointer;
 
 CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, Status status,
-                   QString photoPath, QWidget *parent):
+                   QString photoPath, bool isVisible, QWidget *parent):
     QWidget(parent),
     ui(new Ui::CarBlock),
     idCar(id),
@@ -15,29 +15,39 @@ CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString lice
     if(!isAddBlock){
         ui->lblLicensePlate->setText(licensePlate);
         ui->lblCarName->setText(name + QString(" ") + model);
-        ui->lblMileage->setText(QString::number(mileage) + " km");
+        ui->lblMileage->setText(QString::number(mileage));
     }
 
     else if(isAddBlock){
         ui->btnReserve->setVisible(false);
         ui->btnAddInspection->setVisible(false);
         ui->btnAddInsurance->setVisible(false);
+        ui->btnAddLicensePlate->setVisible(false);
+        ui->btnAddMileage->setVisible(false);
         ui->lblStatus->setVisible(false);
         ui->btnViewNotes->setVisible(false);
         ui->lblNotesImage->setVisible(false);
         ui->btnAddImage->setVisible(true);
+        ui->btnAddLicensePlate->setVisible(false);
+        ui->btnAddMileage->setVisible(false);
         ui->lblMileage->setReadOnly(false);
         ui->lblCarName->setReadOnly(false);
         ui->lblLicensePlate->setReadOnly(false);
         ui->btnRemove->setIcon(QIcon(":/images/images/add.png"));
         QRegExp rx("^\\w+\\s\\w+$");
         ui->lblCarName->setValidator(new QRegExpValidator(rx, this));
+        ui->lblisVisibleImage->setVisible(true);
+        ui->btnIsVisible->setVisible(true);
+        ui->btnIsVisible->setChecked(true);
     }
 
     ui->lblPhoto->setPixmap(QPixmap(photoPath));
     ui->dateEditInspection->setDate(inspectionDate);
     ui->dateEditInsurance->setDate(insuranceDate);
     setStatus(status);
+
+    if(!isVisible)
+        ui->btnReserve->setVisible(false);
 }
 
 CarBlock::CarBlock(CarBlock &block, QWidget *parent):
@@ -51,11 +61,14 @@ CarBlock::CarBlock(CarBlock &block, QWidget *parent):
     ui->lblStatus->setVisible(false);
     ui->btnViewNotes->setVisible(false);
     ui->lblNotesImage->setVisible(false);
+    ui->btnAddLicensePlate->setVisible(false);
+    ui->btnAddMileage->setVisible(false);
     ui->btnAddImage->setVisible(true);
     ui->lblMileage->setReadOnly(false);
     ui->lblCarName->setReadOnly(false);
     ui->lblLicensePlate->setReadOnly(false);
     ui->btnRemove->setIcon(QIcon(":/images/images/add.png"));
+    ui->btnIsVisible->setChecked(block.ui->btnIsVisible->isChecked());
 
     isAddBlock = true;
     ui->lblPhoto->setPixmap(block.addedCarImagePath);
@@ -93,7 +106,6 @@ void CarBlock::setStatus(Status status)
 
 void CarBlock::setAdminPermissions(bool isAdmin)
 {
-
     if(!isAdmin) {
         ui->lblInspectionImage->setVisible(false);
         ui->lblInsuranceImage->setVisible(false);
@@ -102,9 +114,13 @@ void CarBlock::setAdminPermissions(bool isAdmin)
         ui->dateEditInsurance->setVisible(false);
         ui->btnAddInspection->setVisible(false);
         ui->btnAddInsurance->setVisible(false);
+        ui->btnAddLicensePlate->setVisible(false);
+        ui->btnAddMileage->setVisible(false);
         ui->btnViewNotes->setVisible(false);
         ui->btnRemove->setVisible(false);
         ui->btnAddImage->setVisible(false);
+        ui->lblisVisibleImage->setVisible(false);
+        ui->btnIsVisible->setVisible(false);
     }
     else {
         ui->lblInspectionImage->setVisible(true);
@@ -114,9 +130,15 @@ void CarBlock::setAdminPermissions(bool isAdmin)
         ui->dateEditInsurance->setVisible(true);
         ui->btnAddInspection->setVisible(true);
         ui->btnAddInsurance->setVisible(true);
+        ui->btnAddLicensePlate->setVisible(true);
+        ui->btnAddMileage->setVisible(true);
         ui->btnViewNotes->setVisible(true);
         ui->btnRemove->setVisible(true);
         ui->btnAddImage->setVisible(false);
+        ui->lblisVisibleImage->setVisible(false);
+        ui->btnIsVisible->setVisible(false);
+        ui->lblMileage->setReadOnly(false);
+        ui->lblLicensePlate->setReadOnly(false);
     }
 }
 
@@ -157,6 +179,56 @@ void CarBlock::on_btnReserve_clicked()
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
+}
+
+void CarBlock::on_btnAddMileage_clicked()
+{
+    emit inProgress();
+
+    if(Database::connectToDatabase("root","Serwis4q@")) {
+        QSqlQuery qry;
+        qry.prepare("UPDATE car SET Mileage=:_Mileage WHERE idCar=:_id");
+        qry.bindValue(":_id", idCar);
+        qry.bindValue(":_Mileage", ui->lblMileage->text());
+        bool isExecuted = qry.exec();
+        Database::closeDatabase();
+        if( !isExecuted )
+            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się./nERROR: "+qry.lastError().text()+"");
+        else
+            QMessageBox::information(this,"Informacja","Zaktualizowano!");
+    }
+    else {
+        Database::closeDatabase();
+        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        emit changeStatusBar("Nie można połączyć z bazą danych");
+    }
+
+    emit progressFinished();
+}
+
+void CarBlock::on_btnAddLicensePlate_clicked()
+{
+    emit inProgress();
+
+    if(Database::connectToDatabase("root","Serwis4q@")) {
+        QSqlQuery qry;
+        qry.prepare("UPDATE car SET LicensePlate=:_LicensePlate WHERE idCar=:_id");
+        qry.bindValue(":_id", idCar);
+        qry.bindValue(":_LicensePlate", ui->lblLicensePlate->text());
+        bool isExecuted = qry.exec();
+        Database::closeDatabase();
+        if( !isExecuted )
+            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się./nERROR: "+qry.lastError().text()+"");
+        else
+            QMessageBox::information(this,"Informacja","Zaktualizowano!");
+    }
+    else {
+        Database::closeDatabase();
+        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        emit changeStatusBar("Nie można połączyć z bazą danych");
+    }
+
+    emit progressFinished();
 }
 
 void CarBlock::on_btnAddInsurance_clicked()
@@ -231,9 +303,9 @@ void CarBlock::on_btnRemove_clicked()
         else {
             QSqlQuery qry;
             qry.prepare("INSERT INTO car(Brand,Model,LicensePlate,InspectionDate,"
-                                        "InsuranceDate,Mileage,Status,PhotoPath)"
+                                        "InsuranceDate,Mileage,Status,PhotoPath,IsVisible)"
                          "VALUES(:_Brand,:_Model,:_LicensePlate,:_InspectionDate,"
-                         ":_InsuranceDate,:_Mileage,:_Status,:_PhotoPath)");
+                         ":_InsuranceDate,:_Mileage,:_Status,:_PhotoPath,:_IsVisible)");
             if(ui->lblCarName->text().contains(" ")) {
                 qry.bindValue(":_Brand", ui->lblCarName->text().split(" ").at(0));
                 qry.bindValue(":_Model", ui->lblCarName->text().split(" ").at(1));
@@ -247,10 +319,12 @@ void CarBlock::on_btnRemove_clicked()
             qry.bindValue(":_LicensePlate", ui->lblLicensePlate->text());
             qry.bindValue(":_InspectionDate",ui->dateEditInspection->date());
             qry.bindValue(":_InsuranceDate",ui->dateEditInsurance->date());
-            qry.bindValue(":_Status",0);
+            if(ui->btnIsVisible->isChecked())qry.bindValue(":_Status",0);
+            else qry.bindValue(":_Status",1);
             qry.bindValue(":_Mileage", ui->lblMileage->text());
             if(!addedCarImagePath.isEmpty())qry.bindValue(":_PhotoPath",addedCarImagePath);
             else qry.bindValue(":_PhotoPath", QString(":/images/images/car.png"));
+            qry.bindValue(":_IsVisible", ui->btnIsVisible->isChecked());
             bool isExecuted = qry.exec();
             Database::closeDatabase();
             if( !isExecuted )

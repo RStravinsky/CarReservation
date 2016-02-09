@@ -61,32 +61,56 @@ void MainWindow::updateView(bool isCopyEnable)
 
         // Copy last CarBlock
         CarBlock * element;
-        if (isAdmin)
+        if (isAdmin && carBlockVector.size()>0)
                 element = new CarBlock(*(carBlockVector.at(carBlockVector.size()-1)));
 
         carBlockVector.clear();
         CarBlock * lastCarBlock{nullptr};
         for(int i = 0; i < carTable->rowCount(); ++i) {
-            carBlockVector.emplace_back(std::move(new CarBlock(false, carTable->data(carTable->index(i,0)).toInt(),
-                                                               carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
-                                                               carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
-                                                               carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
-                                                               static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString()
-                                                              )
-                                                  ));
-           lastCarBlock = carBlockVector.back();
-           lastCarBlock->setBookingTable(bookingTable);
-           lastCarBlock->setAdminPermissions(isAdmin);
-           connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)), Qt::DirectConnection);
-           connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
-           connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
-           connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
-           connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
-           connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();}, Qt::QueuedConnection);
+            if(carTable->data(carTable->index(i,9)).toBool()) {
+                carBlockVector.emplace_back(std::move(new CarBlock(false, carTable->data(carTable->index(i,0)).toInt(),
+                                                                   carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
+                                                                   carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
+                                                                   carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
+                                                                   static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString()
+                                                                  )
+                                                      ));
+               lastCarBlock = carBlockVector.back();
+               lastCarBlock->setBookingTable(bookingTable);
+               lastCarBlock->setAdminPermissions(isAdmin);
+               connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)), Qt::DirectConnection);
+               connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
+               connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
+               connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
+               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
+               connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();}, Qt::QueuedConnection);
+           }
         }
 
         if(isAdmin) {
             setPopupMessage();
+
+            for(int i = 0; i < carTable->rowCount(); ++i) {
+                if(!carTable->data(carTable->index(i,9)).toBool()) {
+                    carBlockVector.emplace_back(std::move(new CarBlock(false, carTable->data(carTable->index(i,0)).toInt(),
+                                                                       carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
+                                                                       carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
+                                                                       carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
+                                                                       static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString(),
+                                                                       carTable->data(carTable->index(i,9)).toBool()
+                                                                      )
+                                                          ));
+                   lastCarBlock = carBlockVector.back();
+                   lastCarBlock->setBookingTable(bookingTable);
+                   lastCarBlock->setAdminPermissions(isAdmin);
+                   connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)), Qt::DirectConnection);
+                   connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
+                   connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
+                   connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
+                   connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
+                   connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();}, Qt::QueuedConnection);
+               }
+            }
 
             if(!copyEnable)
                 carBlockVector.emplace_back(std::move(new CarBlock()));

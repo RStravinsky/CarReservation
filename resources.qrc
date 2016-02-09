@@ -3,15 +3,11 @@
         <file>images/car.png</file>
         <file>images/free.png</file>
         <file>images/rented.png</file>
-        <file>images/reserved.png</file>
         <file>images/person.png</file>
         <file>images/plate.png</file>
         <file>images/speed.png</file>
         <file>images/delete.png</file>
-        <file>images/info.png</file>
         <file>images/add.png</file>
-        <file>images/car_rent.ico</file>
-        <file>images/car_rent.png</file>
         <file>images/icon.ico</file>
         <file>images/beginTime.png</file>
         <file>images/endTime.png</file>
@@ -29,5 +25,11 @@
         <file>images/key.png</file>
         <file>images/exit.png</file>
         <file>images/update.png</file>
+        <file>images/visible.png</file>
+        <file>images/berlingo_gray.jpg</file>
+        <file>images/berlingo_silver.jpg</file>
+        <file>images/jumper_white.png</file>
+        <file>images/lancer_graphite.png</file>
+        <file>images/lancer_silver.png</file>
     </qresource>
 </RCC>
