@@ -1,7 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#define UPDATE_TIME 2000
+#define UPDATE_TIME 120000
+#define ADMIN_PASSWD "Admin4q@"
 
 std::shared_ptr<NotesDialog> notesDialogPointer;
 
@@ -38,7 +39,7 @@ void MainWindow::onTimerOverflow()
 
 void MainWindow::updateView(bool isCopyEnable)
 {  
-    qDebug() << "Updating..." << endl;
+    //qDebug() << "Updating..." << endl;
     if(Database::connectToDatabase("root","Serwis4q@")) {
 
         ui->statusBar->showMessage("Połączono z bazą danych");
@@ -81,13 +82,7 @@ void MainWindow::updateView(bool isCopyEnable)
            connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
            connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
            connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
-           connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){
-                                                                    //reloadNotes();
-                                                                    loadTrayIcon();
-                                                                    qDebug() << "MainWindow - noteClosed slot called";
-                                                                    }, Qt::QueuedConnection);
-
-
+           connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();}, Qt::QueuedConnection);
         }
 
         if(isAdmin) {
@@ -126,7 +121,6 @@ void MainWindow::updateView(bool isCopyEnable)
 void MainWindow::reloadNotes()
 {
     if(notesTable != nullptr) {
-        //lastRowCount = notesTable->rowCount();
         delete notesTable;
     }
 
@@ -178,7 +172,7 @@ void MainWindow::createLoginOption()
     connect(adminPassword, &QLineEdit::editingFinished, [=]() {
         if(Database::getDatabase().isOpen()) Database::closeDatabase();
         if(Database::connectToDatabase("root","Serwis4q@")) {
-            if(adminPassword->text()=="sigma") {
+            if(adminPassword->text()==ADMIN_PASSWD) {
                     isAdmin = true;
                     loginButton->click();
                     loginButton->setVisible(false);

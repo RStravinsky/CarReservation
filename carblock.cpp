@@ -59,8 +59,10 @@ CarBlock::CarBlock(CarBlock &block, QWidget *parent):
 
     isAddBlock = true;
     ui->lblPhoto->setPixmap(block.addedCarImagePath);
-    if(block.addedCarImagePath.isEmpty())
+    if(block.addedCarImagePath.isEmpty()) {
         ui->lblPhoto->setPixmap(QPixmap(":/images/images/car.png"));
+        addedCarImagePath = ":/images/images/car.png";
+    }
     else {
         ui->lblPhoto->setPixmap(block.addedCarImagePath);
         addedCarImagePath = block.addedCarImagePath;
@@ -130,7 +132,6 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
                     Database::closeDatabase();
                     emit progressFinished();
                     emit noteClosed();
-                    qDebug() << "CarBlock showNotesDialog - noteClosed emmited";
                 }
 
         }
@@ -241,12 +242,15 @@ void CarBlock::on_btnRemove_clicked()
                 qry.bindValue(":_Brand", ui->lblCarName->text());
                 qry.bindValue(":_Model", ui->lblCarName->text());
             }
+
+
             qry.bindValue(":_LicensePlate", ui->lblLicensePlate->text());
             qry.bindValue(":_InspectionDate",ui->dateEditInspection->date());
             qry.bindValue(":_InsuranceDate",ui->dateEditInsurance->date());
             qry.bindValue(":_Status",0);
             qry.bindValue(":_Mileage", ui->lblMileage->text());
-            qry.bindValue(":_PhotoPath",addedCarImagePath);
+            if(!addedCarImagePath.isEmpty())qry.bindValue(":_PhotoPath",addedCarImagePath);
+            else qry.bindValue(":_PhotoPath", QString(":/images/images/car.png"));
             bool isExecuted = qry.exec();
             Database::closeDatabase();
             if( !isExecuted )

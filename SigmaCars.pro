@@ -12,7 +12,7 @@ TARGET = SigmaCars
 TEMPLATE = app
 CONFIG += c++11
 CONFIG += debug
-RC_ICON = icon.ico
+RC_ICONS = \images\icon.ico
 
 SOURCES += main.cpp\
         mainwindow.cpp \

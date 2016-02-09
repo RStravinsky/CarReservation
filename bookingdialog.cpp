@@ -1,7 +1,7 @@
 #include "bookingdialog.h"
 #include "ui_bookingdialog.h"
 
-#define UPDATE_TIME 2000
+#define UPDATE_TIME 30000
 
 BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, int id, int vMode,  QWidget *parent) :
     bookingTable(bookTable),
@@ -18,8 +18,6 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
     setCalendarColor(ui->dateTimeEditEnd->calendarWidget(),QColor(255,140,0));
     ui->dateTimeEditBegin->setDateTime(QDateTime::currentDateTime());
     ui->dateTimeEditEnd->setDateTime(QDateTime::currentDateTime());
-
-
 
     carReservations = new QSqlQueryModel(this);
     statusHistory = new QSqlQueryModel(this);
