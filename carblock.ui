@@ -134,7 +134,7 @@ background: rgb(255,105,0);
   <widget class="QLabel" name="lblStatus">
    <property name="geometry">
     <rect>
-     <x>740</x>
+     <x>730</x>
      <y>10</y>
      <width>61</width>
      <height>61</height>
@@ -274,7 +274,7 @@ background-color: rgba(255, 255, 255, 0);</string>
   <widget class="QPushButton" name="btnAddInsurance">
    <property name="geometry">
     <rect>
-     <x>622</x>
+     <x>653</x>
      <y>55</y>
      <width>31</width>
      <height>27</height>
@@ -300,7 +300,7 @@ background-color: rgba(255, 255, 255, 0);</string>
   <widget class="QPushButton" name="btnAddInspection">
    <property name="geometry">
     <rect>
-     <x>622</x>
+     <x>653</x>
      <y>100</y>
      <width>31</width>
      <height>27</height>
@@ -328,7 +328,7 @@ background-color: rgba(255, 255, 255, 0);</string>
     <rect>
      <x>523</x>
      <y>52</y>
-     <width>100</width>
+     <width>131</width>
      <height>25</height>
     </rect>
    </property>
@@ -355,7 +355,7 @@ color: gray</string>
     <rect>
      <x>523</x>
      <y>97</y>
-     <width>100</width>
+     <width>131</width>
      <height>25</height>
     </rect>
    </property>
@@ -399,7 +399,7 @@ color:gray;</string>
      <x>310</x>
      <y>140</y>
      <width>120</width>
-     <height>27</height>
+     <height>30</height>
     </rect>
    </property>
    <property name="font">
@@ -498,7 +498,7 @@ background-color:transparent</string>
      <x>10</x>
      <y>0</y>
      <width>401</width>
-     <height>31</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
@@ -527,9 +527,9 @@ background-color:transparent</string>
   <widget class="QPushButton" name="btnAddImage">
    <property name="geometry">
     <rect>
-     <x>120</x>
+     <x>90</x>
      <y>160</y>
-     <width>121</width>
+     <width>151</width>
      <height>27</height>
     </rect>
    </property>
@@ -567,9 +567,9 @@ background: rgb(230,230,230);
    <property name="geometry">
     <rect>
      <x>525</x>
-     <y>145</y>
-     <width>101</width>
-     <height>17</height>
+     <y>140</y>
+     <width>141</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">

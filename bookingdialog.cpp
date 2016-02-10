@@ -44,7 +44,7 @@ BookingDialog::~BookingDialog()
 
 void BookingDialog::updateView()
 {
-    qDebug() << "Updating booking ..." << endl;
+    //qDebug() << "Updating booking ..." << endl;
     if(firstInit) {
         ui->calendarWidget->clicked(QDate::currentDate());
         firstInit=false;
@@ -170,10 +170,10 @@ void BookingDialog::on_calendarWidget_clicked(const QDate &date)
 {
     if(Database::getDatabase().isOpen()) {
         Database::closeDatabase();
-        qDebug() << "Close database" << endl;
+        //qDebug() << "Close database" << endl;
     }
 
-    if(Database::connectToDatabase("root","Serwis4q@")) {
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
 
         carReservations->setQuery(QString("SELECT * FROM sigmacars.booking WHERE idCar = %1").arg(idCar));
         statusHistory->setQuery(QString("SELECT * FROM sigmacars.history WHERE idCar = %1").arg(idCar));
@@ -261,7 +261,7 @@ bool BookingDialog::isDateFree()
 
 void BookingDialog::on_btnReserve_clicked()
 {
-    if(Database::connectToDatabase("root","Serwis4q@")) {
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
         if(isDateFree()) {
 
             NameDialog n;

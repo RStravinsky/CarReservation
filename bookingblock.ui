@@ -55,9 +55,9 @@ border-radius: 5px</string>
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>15</y>
-     <width>291</width>
-     <height>21</height>
+     <y>10</y>
+     <width>281</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
@@ -81,9 +81,9 @@ border-radius: 5px</string>
   <widget class="QLabel" name="lblBegin">
    <property name="geometry">
     <rect>
-     <x>35</x>
+     <x>40</x>
      <y>40</y>
-     <width>51</width>
+     <width>55</width>
      <height>21</height>
     </rect>
    </property>
@@ -106,15 +106,15 @@ border-radius: 5px</string>
     <string>00:00</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignCenter</set>
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="lblEnd">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>110</x>
      <y>40</y>
-     <width>51</width>
+     <width>55</width>
      <height>21</height>
     </rect>
    </property>
@@ -136,13 +136,13 @@ border-radius: 5px</string>
     <string>00:00</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignCenter</set>
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="lbl">
    <property name="geometry">
     <rect>
-     <x>80</x>
+     <x>95</x>
      <y>40</y>
      <width>16</width>
      <height>21</height>
@@ -174,7 +174,7 @@ border-radius: 5px</string>
     <rect>
      <x>0</x>
      <y>60</y>
-     <width>361</width>
+     <width>331</width>
      <height>20</height>
     </rect>
    </property>

@@ -11,8 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    login = "root";
-    password = "Serwis4q@"; //change password here
+    login = "rezerwacja";
+    password = "rezerwacja"; //change password here
 
     database = new Database();
 
@@ -40,7 +40,7 @@ void MainWindow::onTimerOverflow()
 void MainWindow::updateView(bool isCopyEnable)
 {  
     //qDebug() << "Updating..." << endl;
-    if(Database::connectToDatabase("root","Serwis4q@")) {
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
 
         ui->statusBar->showMessage("Połączono z bazą danych");
         const int varticalPosition = ui->scrollArea->verticalScrollBar()->value();
@@ -195,7 +195,7 @@ void MainWindow::createLoginOption()
 
     connect(adminPassword, &QLineEdit::editingFinished, [=]() {
         if(Database::getDatabase().isOpen()) Database::closeDatabase();
-        if(Database::connectToDatabase("root","Serwis4q@")) {
+        if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
             if(adminPassword->text()==ADMIN_PASSWD) {
                     isAdmin = true;
                     loginButton->click();
@@ -214,7 +214,7 @@ void MainWindow::createLoginOption()
     });
     connect(logoutButton, &QPushButton::clicked, [=]() {
         if(Database::getDatabase().isOpen()) Database::closeDatabase();
-        if(Database::connectToDatabase("root","Serwis4q@")) {
+        if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
             isAdmin = false;
             loginButton->setVisible(true);
             logoutButton->setVisible(false);
@@ -395,7 +395,7 @@ void MainWindow::loadTrayIcon()
     if(Database::getDatabase().isOpen())
         Database::closeDatabase();
 
-    if(Database::connectToDatabase("root","Serwis4q@")) {
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
         reloadNotes();
 
         delete trayIcon;
@@ -445,7 +445,7 @@ void MainWindow::poupMessageClicked()
     if(Database::getDatabase().isOpen())
         Database::closeDatabase();
 
-    if(Database::connectToDatabase("root","Serwis4q@")) {
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
         notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC, idNotes DESC;");
         emit trayMenuNoteClicked(notesTable->data(notesTable->index(0,0)).toInt(), notesTable->data(notesTable->index(0,6)).toInt());
         Database::closeDatabase();

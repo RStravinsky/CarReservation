@@ -147,7 +147,7 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
     if(_idCar == idCar) {
         if(Database::getDatabase().isOpen())
             Database::closeDatabase();
-        if(Database::connectToDatabase("root","Serwis4q@")) {
+        if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
             emit inProgress();
                 notesDialogPointer = std::shared_ptr<NotesDialog>(new NotesDialog(_idNotes, _idCar));
                 if(notesDialogPointer.use_count() == 1 && notesDialogPointer.get()->exec() == NotesDialog::Rejected){
@@ -166,7 +166,7 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
 
 void CarBlock::on_btnReserve_clicked()
 {
-    if(Database::connectToDatabase("root","Serwis4q@")) {
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
         bookingDialog = new BookingDialog(bookingTable, carTable, idCar);
         emit inProgress();
         if(bookingDialog->exec()== BookingDialog::Rejected)
@@ -185,7 +185,7 @@ void CarBlock::on_btnAddMileage_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase("root","Serwis4q@")) {
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET Mileage=:_Mileage WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
@@ -210,7 +210,7 @@ void CarBlock::on_btnAddLicensePlate_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase("root","Serwis4q@")) {
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET LicensePlate=:_LicensePlate WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
@@ -235,7 +235,7 @@ void CarBlock::on_btnAddInsurance_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase("root","Serwis4q@")) {
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET InsuranceDate=:_insuranceDate WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
@@ -260,7 +260,7 @@ void CarBlock::on_btnAddInspection_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase("root","Serwis4q@")) {
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET InspectionDate=:_inspectionDate WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
@@ -285,7 +285,7 @@ void CarBlock::on_btnRemove_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase("root","Serwis4q@")) {
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
         if(!isAddBlock) {
             QSqlQuery qry;
             qry.prepare("DELETE FROM car WHERE idCar=:_id");

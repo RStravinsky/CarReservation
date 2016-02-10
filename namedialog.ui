@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
+    <width>320</width>
     <height>120</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>300</width>
+    <width>320</width>
     <height>120</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>300</width>
+    <width>320</width>
     <height>120</height>
    </size>
   </property>
@@ -62,10 +62,10 @@ background: rgb(255,105,0);
   <widget class="QLineEdit" name="lineEditSurname">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>120</x>
      <y>40</y>
-     <width>191</width>
-     <height>25</height>
+     <width>195</width>
+     <height>30</height>
     </rect>
    </property>
    <property name="font">
@@ -81,10 +81,10 @@ background: rgb(255,105,0);
   <widget class="QPushButton" name="pushButtonCancel">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>99</x>
      <y>80</y>
-     <width>90</width>
-     <height>30</height>
+     <width>105</width>
+     <height>35</height>
     </rect>
    </property>
    <property name="font">
@@ -121,9 +121,9 @@ background: rgb(255,50,50);
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>15</y>
-     <width>41</width>
-     <height>16</height>
+     <y>0</y>
+     <width>61</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
@@ -141,10 +141,10 @@ background: rgb(255,50,50);
   <widget class="QLineEdit" name="lineEditName">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>10</y>
-     <width>191</width>
-     <height>25</height>
+     <x>120</x>
+     <y>5</y>
+     <width>195</width>
+     <height>30</height>
     </rect>
    </property>
    <property name="font">
@@ -157,10 +157,10 @@ background: rgb(255,50,50);
   <widget class="QPushButton" name="pushButtonConfirm">
    <property name="geometry">
     <rect>
-     <x>190</x>
+     <x>209</x>
      <y>80</y>
-     <width>90</width>
-     <height>30</height>
+     <width>105</width>
+     <height>35</height>
     </rect>
    </property>
    <property name="font">
@@ -198,7 +198,7 @@ background: rgb(0,150,0);
     <rect>
      <x>10</x>
      <y>45</y>
-     <width>81</width>
+     <width>111</width>
      <height>20</height>
     </rect>
    </property>
