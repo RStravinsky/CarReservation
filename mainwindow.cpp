@@ -5,6 +5,7 @@
 #define ADMIN_PASSWD "Admin4q@"
 
 std::shared_ptr<NotesDialog> notesDialogPointer;
+bool isAdmin{false};
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     database = new Database();
 
+    createHelpButton();
     createUpdateButton();
     ui->statusBar->setStyleSheet("background: white; color: gray; font-family: Calibri; font-size: 10pt;");
 
@@ -24,6 +26,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimerOverflow()));
     onTimerOverflow();
     loadTrayIcon();
+
+
+    ui->lblHoliday->setPixmap(QPixmap("//k1/DBIR/Programowanie/Aplikacja REZERWACJA/lblHoliday/holiday.png"));
 }
 
 MainWindow::~MainWindow()
@@ -161,6 +166,16 @@ void MainWindow::createUpdateButton()
     updateButton->setStyleSheet("border:none;");
     ui->statusBar->addPermanentWidget(updateButton);
     connect(updateButton, &QPushButton::clicked,[=](){updateView(true);});
+}
+
+void MainWindow::createHelpButton()
+{
+    QPushButton * helpButton = new QPushButton(this);
+    helpButton->setIcon(QIcon(":/images/images/help.png"));
+    helpButton->setText("Jak wypożyczyć ");
+    helpButton->setStyleSheet("border:none; color: gray");
+    ui->statusBar->addPermanentWidget(helpButton);
+    connect(helpButton, &QPushButton::clicked,[=](){HelpDialog h; h.exec();});
 }
 
 void MainWindow::createLoginOption()

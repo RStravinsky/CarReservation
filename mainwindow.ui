@@ -137,6 +137,25 @@ color: white</string>
       <string>Rezerwacja samochodów</string>
      </property>
     </widget>
+    <widget class="QLabel" name="lblHoliday">
+     <property name="geometry">
+      <rect>
+       <x>730</x>
+       <y>10</y>
+       <width>101</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: &quot;transparent&quot;;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QScrollArea" name="scrollArea">
     <property name="geometry">
@@ -178,7 +197,7 @@ color: white</string>
      <x>0</x>
      <y>0</y>
      <width>840</width>
-     <height>31</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

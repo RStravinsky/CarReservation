@@ -15,22 +15,28 @@ NameDialog::~NameDialog()
     delete ui;
 }
 
-QString NameDialog::getName()
+QString NameDialog::getName() const
 {
     return ui->lineEditName->text();
 }
 
-QString NameDialog::getSurname()
+QString NameDialog::getSurname() const
 {
     return ui->lineEditSurname->text();
+}
+
+QString NameDialog::getDestination() const
+{
+    return ui->lineEditDestination->text();
 }
 
 void NameDialog::on_pushButtonConfirm_released()
 {
     QString name = ui->lineEditName->text();
     QString surname = ui->lineEditSurname->text();
+    QString destination = ui->lineEditDestination->text();
 
-    if(name.isEmpty() || surname.isEmpty())
+    if(name.isEmpty() || surname.isEmpty() || destination.isEmpty())
         QMessageBox::warning(this,"Uwaga!","Pole tekstowe nie zostało wypełnione.");
 
     else this->accept();

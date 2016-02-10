@@ -31,10 +31,11 @@ void NotesDialog::updateView()
     notesTable->setQuery(QString("SELECT * FROM notes WHERE idCar = %1;").arg(idCar));
 
     QSqlQueryModel * windTitle = new QSqlQueryModel(this);
-    windTitle->setQuery(QString("SELECT Brand, Model FROM sigmacars.car WHERE idCar = %1").arg(idCar));
+    windTitle->setQuery(QString("SELECT Brand, Model, LicensePlate FROM sigmacars.car WHERE idCar = %1").arg(idCar));
     this->setWindowTitle( QString("Uwagi - ")
                           + windTitle->data(windTitle->index(windTitle->rowCount()-1,0)).toString() + QString(" ")
-                          + windTitle->data(windTitle->index(windTitle->rowCount()-1,1)).toString()
+                          + windTitle->data(windTitle->index(windTitle->rowCount()-1,1)).toString() + QString(" - ")
+                          + windTitle->data(windTitle->index(windTitle->rowCount()-1,2)).toString()
                           );
     delete windTitle;
 

@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     namedialog.cpp \
     notesdialog.cpp \
     noteblock.cpp \
-    database.cpp
+    database.cpp \
+    helpdialog.cpp
 
 HEADERS  += mainwindow.h \
     carblock.h \
@@ -31,7 +32,8 @@ HEADERS  += mainwindow.h \
     namedialog.h \
     notesdialog.h \
     noteblock.h \
-    database.h
+    database.h \
+    helpdialog.h
 
 FORMS    += mainwindow.ui \
     carblock.ui \
@@ -39,7 +41,8 @@ FORMS    += mainwindow.ui \
     bookingblock.ui \
     namedialog.ui \
     notesdialog.ui \
-    noteblock.ui
+    noteblock.ui \
+    helpdialog.ui
 
 RESOURCES += \
     resources.qrc

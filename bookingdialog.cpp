@@ -23,10 +23,11 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
     statusHistory = new QSqlQueryModel(this);
 
     QSqlQueryModel * windTitle = new QSqlQueryModel(this);
-    windTitle->setQuery(QString("SELECT Brand, Model FROM sigmacars.car WHERE idCar = %1").arg(idCar));
+    windTitle->setQuery(QString("SELECT Brand, Model, LicensePlate FROM sigmacars.car WHERE idCar = %1").arg(idCar));
     this->setWindowTitle( QString("Rezerwacja - ")
                           + windTitle->data(windTitle->index(windTitle->rowCount()-1,0)).toString() + QString(" ")
-                          + windTitle->data(windTitle->index(windTitle->rowCount()-1,1)).toString()
+                          + windTitle->data(windTitle->index(windTitle->rowCount()-1,1)).toString() + QString(" - ")
+                          + windTitle->data(windTitle->index(windTitle->rowCount()-1,2)).toString()
                           );
 
     timer = new QTimer(this);
@@ -112,18 +113,20 @@ void BookingDialog::loadBlock(int idx)
             if(beginDate != endDate) {
 
                 if(choosenDate > beginDate && choosenDate < endDate)
-                    blockVector.emplace_back(std::move(new BookingBlock(carReservations->data(carReservations->index(idx,1)).toString() + QString(" ") + carReservations->data(carReservations->index(idx,2)).toString(),
-                                                                               QString("..."), QString("..."), false)));
+                    blockVector.emplace_back(std::move(new BookingBlock(carReservations->data(carReservations->index(idx,0)).toInt(),carReservations->data(carReservations->index(idx,1)).toString() + QString(" ") + carReservations->data(carReservations->index(idx,2)).toString(),
+                                                                        carReservations->data(carReservations->index(idx,6)).toString() ,QString("..."), QString("..."), false)));
                 else if (choosenDate == beginDate)
-                    blockVector.emplace_back(std::move(new BookingBlock(carReservations->data(carReservations->index(idx,1)).toString() + QString(" ") + carReservations->data(carReservations->index(idx,2)).toString(),
-                                                                               carReservations->data(carReservations->index(idx,3)).toDateTime().time().toString("hh:mm"), QString("..."))));
+                    blockVector.emplace_back(std::move(new BookingBlock(carReservations->data(carReservations->index(idx,0)).toInt(),carReservations->data(carReservations->index(idx,1)).toString() + QString(" ") + carReservations->data(carReservations->index(idx,2)).toString(),
+                                                                        carReservations->data(carReservations->index(idx,6)).toString() ,carReservations->data(carReservations->index(idx,3)).toDateTime().time().toString("hh:mm"), QString("..."))));
                 else if(choosenDate == endDate)
-                    blockVector.emplace_back(std::move(new BookingBlock(carReservations->data(carReservations->index(idx,1)).toString() + QString(" ") + carReservations->data(carReservations->index(idx,2)).toString(),
-                                                                               QString("..."), carReservations->data(carReservations->index(idx,4)).toDateTime().time().toString("hh:mm"))));
+                    blockVector.emplace_back(std::move(new BookingBlock(carReservations->data(carReservations->index(idx,0)).toInt(),carReservations->data(carReservations->index(idx,1)).toString() + QString(" ") + carReservations->data(carReservations->index(idx,2)).toString(),
+                                                                        carReservations->data(carReservations->index(idx,6)).toString() ,QString("..."), carReservations->data(carReservations->index(idx,4)).toDateTime().time().toString("hh:mm"))));
             }
             else
-                blockVector.emplace_back(std::move(new BookingBlock(carReservations->data(carReservations->index(idx,1)).toString() + QString(" ") + carReservations->data(carReservations->index(idx,2)).toString(),
-                                                                           carReservations->data(carReservations->index(idx,3)).toDateTime().time().toString("hh:mm"), carReservations->data(carReservations->index(idx,4)).toDateTime().time().toString("hh:mm"))));
+                blockVector.emplace_back(std::move(new BookingBlock(carReservations->data(carReservations->index(idx,0)).toInt(),carReservations->data(carReservations->index(idx,1)).toString() + QString(" ") + carReservations->data(carReservations->index(idx,2)).toString(),
+                                                                    carReservations->data(carReservations->index(idx,6)).toString() , carReservations->data(carReservations->index(idx,3)).toDateTime().time().toString("hh:mm"), carReservations->data(carReservations->index(idx,4)).toDateTime().time().toString("hh:mm"))));
+
+            connect(blockVector.back(),SIGNAL(refresh()),this,SLOT(updateView()));
 
         }
     }
@@ -137,18 +140,18 @@ void BookingDialog::loadBlock(int idx)
             if(beginDate != endDate) {
 
                 if(choosenDate > beginDate && choosenDate < endDate)
-                    blockVector.emplace_back(std::move(new BookingBlock(statusHistory->data(statusHistory->index(idx,1)).toString() + QString(" ") + statusHistory->data(statusHistory->index(idx,2)).toString(),
-                                                                               QString("..."), QString("..."), false, false)));
+                    blockVector.emplace_back(std::move(new BookingBlock(-1,statusHistory->data(statusHistory->index(idx,1)).toString() + QString(" ") + statusHistory->data(statusHistory->index(idx,2)).toString(),
+                                                                        statusHistory->data(statusHistory->index(idx,6)).toString(),QString("..."), QString("..."), false, false)));
                 else if (choosenDate == beginDate)
-                    blockVector.emplace_back(std::move(new BookingBlock(statusHistory->data(statusHistory->index(idx,1)).toString() + QString(" ") + statusHistory->data(statusHistory->index(idx,2)).toString(),
-                                                                               statusHistory->data(statusHistory->index(idx,3)).toDateTime().time().toString("hh:mm"), QString("..."), true, false)));
+                    blockVector.emplace_back(std::move(new BookingBlock(-1,statusHistory->data(statusHistory->index(idx,1)).toString() + QString(" ") + statusHistory->data(statusHistory->index(idx,2)).toString(),
+                                                                        statusHistory->data(statusHistory->index(idx,6)).toString() ,statusHistory->data(statusHistory->index(idx,3)).toDateTime().time().toString("hh:mm"), QString("..."), true, false)));
                 else if(choosenDate == endDate)
-                    blockVector.emplace_back(std::move(new BookingBlock(statusHistory->data(statusHistory->index(idx,1)).toString() + QString(" ") + statusHistory->data(statusHistory->index(idx,2)).toString(),
-                                                                               QString("..."), statusHistory->data(statusHistory->index(idx,4)).toDateTime().time().toString("hh:mm"), true, false)));
+                    blockVector.emplace_back(std::move(new BookingBlock(-1,statusHistory->data(statusHistory->index(idx,1)).toString() + QString(" ") + statusHistory->data(statusHistory->index(idx,2)).toString(),
+                                                                        statusHistory->data(statusHistory->index(idx,6)).toString(),QString("..."), statusHistory->data(statusHistory->index(idx,4)).toDateTime().time().toString("hh:mm"), true, false)));
             }
             else
-                blockVector.emplace_back(std::move(new BookingBlock(statusHistory->data(statusHistory->index(idx,1)).toString() + QString(" ") + statusHistory->data(statusHistory->index(idx,2)).toString(),
-                                                                           statusHistory->data(statusHistory->index(idx,3)).toDateTime().time().toString("hh:mm"), statusHistory->data(statusHistory->index(idx,4)).toDateTime().time().toString("hh:mm"), true, false)));
+                blockVector.emplace_back(std::move(new BookingBlock(-1,statusHistory->data(statusHistory->index(idx,1)).toString() + QString(" ") + statusHistory->data(statusHistory->index(idx,2)).toString(),
+                                                                    statusHistory->data(statusHistory->index(idx,6)).toString(),statusHistory->data(statusHistory->index(idx,3)).toDateTime().time().toString("hh:mm"), statusHistory->data(statusHistory->index(idx,4)).toDateTime().time().toString("hh:mm"), true, false)));
 
         }
 
@@ -162,7 +165,6 @@ void BookingDialog::setCalendarColor(QCalendarWidget *calendarWidget,QColor colo
         QPalette pal = calendarNavBar->palette();
         pal.setColor(calendarNavBar->backgroundRole(), color);
         calendarNavBar->setPalette(pal);
-        //calendarNavBar->
     }
 }
 
@@ -269,14 +271,15 @@ void BookingDialog::on_btnReserve_clicked()
             if(n.exec() == NameDialog::Accepted) {
                 if(isDateFree()) {
                     QSqlQuery qry;
-                    qry.prepare("INSERT INTO booking(Name,Surname,Begin,End,idCar)"
-                             "VALUES(:_Name,:_Surname,:_Begin,:_End,:_idCar)");
+                    qry.prepare("INSERT INTO booking(Name,Surname,Begin,End,idCar,Destination)"
+                             "VALUES(:_Name,:_Surname,:_Begin,:_End,:_idCar,:_Destination)");
 
                     qry.bindValue(":_Name", n.getName());
                     qry.bindValue(":_Surname", n.getSurname());
                     qry.bindValue(":_Begin", ui->dateTimeEditBegin->dateTime());
                     qry.bindValue(":_End", ui->dateTimeEditEnd->dateTime());
                     qry.bindValue(":_idCar",idCar);
+                    qry.bindValue(":_Destination",n.getDestination());
                     bool isExecuted = qry.exec();
                     if( !isExecuted )
                         QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");

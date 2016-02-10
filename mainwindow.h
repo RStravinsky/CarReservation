@@ -14,6 +14,7 @@
 #include <memory>
 #include "carblock.h"
 #include "database.h"
+#include "helpdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -57,7 +58,6 @@ private:
     std::vector<CarBlock*> carBlockVector{nullptr};
     QString login;
     QString password;
-    bool isAdmin{false};
     bool copyEnable{false};
 
     QSystemTrayIcon * trayIcon{nullptr};
@@ -78,6 +78,7 @@ private:
 
     void createLoginOption();
     void createUpdateButton();
+    void createHelpButton();
 };
 
 #endif // MAINWINDOW_H
