@@ -27,7 +27,6 @@ MainWindow::MainWindow(QWidget *parent) :
     onTimerOverflow();
     loadTrayIcon();
 
-
     ui->lblHoliday->setPixmap(QPixmap("//k1/DBIR/Programowanie/Aplikacja REZERWACJA/lblHoliday/holiday.png"));
 }
 
@@ -77,7 +76,8 @@ void MainWindow::updateView(bool isCopyEnable)
                                                                    carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
                                                                    carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
                                                                    carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
-                                                                   static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString()
+                                                                   static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString(),
+                                                                   carTable->data(carTable->index(i,9)).toBool()
                                                                   )
                                                       ));
                lastCarBlock = carBlockVector.back();

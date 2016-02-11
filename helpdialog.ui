@@ -14,7 +14,34 @@
    <string>Jak wypożyczyć ?</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: &quot;white&quot;;</string>
+   <string notr="true">QDialog {background-color: &quot;white&quot;;}
+
+QScrollBar:vertical {
+  border: none;
+  background: &quot;transparent&quot;;
+  width: 15px;
+  margin: 20px 0px 20px 0px;
+}
+
+QScrollBar::handle:vertical {
+  background: rgb(107,124,140);
+  min-height: 20px;
+  border-radius: 2px;
+}
+
+QScrollBar::add-line:vertical {
+   border: none;
+      background: none;
+width: 0px;
+height: 0px;
+}
+
+QScrollBar::sub-line:vertical {
+   border: none;
+      background: none;
+width: 0px;
+height: 0px;
+}</string>
   </property>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
@@ -57,6 +84,9 @@
    </property>
    <property name="frameShape">
     <enum>QFrame::NoFrame</enum>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
    <property name="html">
     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;

@@ -47,10 +47,10 @@ private slots:
     void on_btnRemove_clicked();
     void on_btnViewNotes_clicked();
     void on_btnAddImage_clicked();
-
     void on_btnAddLicensePlate_clicked();
-
     void on_btnAddMileage_clicked();
+
+    void on_btnIsVisible_clicked(bool checked);
 
 signals:
     void carDeleted(bool isCopyEnable);
@@ -69,13 +69,15 @@ private:
     int idNotes;
     QString carNotes;
     bool isAddBlock;
-    QString addedCarImagePath;
+    QString carPhotoPath;
     QString getCarName();
     QString getMileage();
     QString getLicensePlate();
     QPair<QDate,QDate> getDates();
     bool isAdmin;
+    QString prevPhotoPath;
 
+    void updateImagePath();
 };
 
 #endif // CARBLOCK_H
