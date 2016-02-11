@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Podaj imię i nazwisko</string>
+   <string>Podaj dane</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
@@ -56,8 +56,7 @@ QMessageBox QPushButton:pressed {
 color: white;
 border-radius: 5px;
 background: rgb(255,105,0);
-}
-</string>
+}</string>
   </property>
   <widget class="QLabel" name="label">
    <property name="geometry">

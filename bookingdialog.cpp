@@ -75,7 +75,7 @@ void BookingDialog::fillCalendar()
 
             itDate = carReservations->data(carReservations->index(i,3)).toDate();
 
-            while(itDate <= carReservations->data(carReservations->index(i,4)).toDate() && itDate >= QDate::currentDate()) {
+            while(itDate <= carReservations->data(carReservations->index(i,4)).toDate()) {
                 ui->calendarWidget->setDateTextFormat(itDate, format);
                 itDate = itDate.addDays(1);
             }

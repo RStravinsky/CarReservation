@@ -3,6 +3,10 @@
 
 #include <QDialog>
 #include <QMessageBox>
+#include <QCompleter>
+#include <QtSql>
+#include <QStringList>
+#include "database.h"
 
 namespace Ui {
 class NameDialog;
@@ -24,6 +28,18 @@ private slots:
 
 private:
     Ui::NameDialog *ui;
+    QSqlQueryModel * bookingTable{nullptr};
+    QStringList nameList;
+    QStringList surnameList;
+    QStringList destinationList;
+    QCompleter * nameCompleter{nullptr};
+    QCompleter * surnameCompleter{nullptr};
+    QCompleter * destinationCompleter{nullptr};
+
+    void setCompleterLists();
+    void setCompleters();
+    QString scrollBarStylesheet();
+
 };
 
 #endif // NAMEDIALOG_H
