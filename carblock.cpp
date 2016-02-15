@@ -47,7 +47,7 @@ CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString lice
     ui->dateEditInspection->setDate(inspectionDate);
     ui->dateEditInsurance->setDate(insuranceDate);
     setStatus(status);
-    if(status) {
+    if(status && isVisible) {
 
         ui->lblPersonImage->setVisible(true);
         ui->lblPerson->setVisible(true);
@@ -57,7 +57,7 @@ CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString lice
 
         ui->lblPerson->setText(
                     historyTable->data(historyTable->index(historyTable->rowCount()-1,0)).toString() + QString(" ") +
-                    historyTable->data(historyTable->index(historyTable->rowCount()-1,1)).toString() + QString(", ") +
+                    historyTable->data(historyTable->index(historyTable->rowCount()-1,1)).toString() + QString(" ") +
                     historyTable->data(historyTable->index(historyTable->rowCount()-1,2)).toString()
                     );
 
