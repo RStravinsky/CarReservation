@@ -47,6 +47,27 @@ CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString lice
     ui->dateEditInspection->setDate(inspectionDate);
     ui->dateEditInsurance->setDate(insuranceDate);
     setStatus(status);
+    if(status) {
+
+        ui->lblPersonImage->setVisible(true);
+        ui->lblPerson->setVisible(true);
+
+        QSqlQueryModel * historyTable = new QSqlQueryModel(this);
+        historyTable->setQuery(QString("SELECT Name, Surname, Destination FROM sigmacars.history WHERE idCar = %1 AND End IS NULL").arg(idCar));
+
+        ui->lblPerson->setText(
+                    historyTable->data(historyTable->index(historyTable->rowCount()-1,0)).toString() + QString(" ") +
+                    historyTable->data(historyTable->index(historyTable->rowCount()-1,1)).toString() + QString(", ") +
+                    historyTable->data(historyTable->index(historyTable->rowCount()-1,2)).toString()
+                    );
+
+        delete historyTable;
+    }
+    else {
+        ui->lblPersonImage->setVisible(false);
+        ui->lblPerson->setVisible(false);
+
+    }
 
     if(!isVisible)
         ui->btnReserve->setVisible(false);

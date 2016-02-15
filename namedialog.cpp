@@ -15,6 +15,10 @@ NameDialog::NameDialog(QWidget *parent) :
     setCompleterLists();
     setCompleters();
 
+    QRegExp rx("^\\w+$");
+    ui->lineEditName->setValidator(new QRegExpValidator(rx, this));
+    ui->lineEditSurname->setValidator(new QRegExpValidator(rx, this));
+
 }
 
 NameDialog::~NameDialog()
