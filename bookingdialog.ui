@@ -82,9 +82,9 @@ background: rgb(255,105,0);
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>70</y>
+     <y>140</y>
      <width>431</width>
-     <height>321</height>
+     <height>251</height>
     </rect>
    </property>
    <property name="font">
@@ -116,9 +116,9 @@ background: rgb(255,105,0);
    <property name="geometry">
     <rect>
      <x>460</x>
-     <y>70</y>
+     <y>140</y>
      <width>365</width>
-     <height>321</height>
+     <height>251</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -272,7 +272,7 @@ background: rgb(255,105,0);
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>55</y>
+     <y>90</y>
      <width>841</width>
      <height>20</height>
     </rect>
@@ -323,6 +323,123 @@ background: rgb(255,105,0);
    </property>
    <property name="text">
     <string>Historia</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnReserve_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>110</y>
+     <width>131</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(255,140,0);
+}
+
+QPushButton{
+color: white;
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(255,105,0);
+}
+</string>
+   </property>
+   <property name="text">
+    <string>Rezerwacje</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnReserve_3">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>110</y>
+     <width>131</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(255,140,0);
+}
+
+QPushButton{
+color: white;
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(255,105,0);
+}
+</string>
+   </property>
+   <property name="text">
+    <string>Historia</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnReserve_4">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>110</y>
+     <width>131</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(255,140,0);
+}
+
+QPushButton{
+color: white;
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(255,105,0);
+}
+</string>
+   </property>
+   <property name="text">
+    <string>Naprawy</string>
    </property>
   </widget>
  </widget>

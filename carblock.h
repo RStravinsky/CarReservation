@@ -36,6 +36,7 @@ public:
     void setBookingTable(QSqlQueryModel * bookTable) {bookingTable = bookTable;}
     void setCarTable(QSqlQueryModel * cTable) {carTable = cTable;}
     void setAdminPermissions(bool isAdmin);
+    bool getCarVisible();
 
 public slots:
     void showNotesDialog(int _idNotes, int _idCar);
@@ -49,8 +50,7 @@ private slots:
     void on_btnAddImage_clicked();
     void on_btnAddLicensePlate_clicked();
     void on_btnAddMileage_clicked();
-
-    void on_btnIsVisible_clicked(bool checked);
+    void on_btnIsVisible_clicked();
 
 signals:
     void carDeleted(bool isCopyEnable);
@@ -78,6 +78,8 @@ private:
     QString prevPhotoPath;
 
     void updateImagePath();
+    void setVisibleButton(bool isVisible);
+    bool isCarVisible;
 };
 
 #endif // CARBLOCK_H

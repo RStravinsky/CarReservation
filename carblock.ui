@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>236</height>
+    <height>250</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>600</width>
-    <height>236</height>
+    <height>250</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>236</height>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -495,10 +495,10 @@ background-color:transparent</string>
   <widget class="QLineEdit" name="lblCarName">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>60</x>
      <y>0</y>
-     <width>401</width>
-     <height>51</height>
+     <width>650</width>
+     <height>50</height>
     </rect>
    </property>
    <property name="font">
@@ -527,9 +527,9 @@ background-color:transparent</string>
   <widget class="QPushButton" name="btnAddImage">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>140</x>
      <y>160</y>
-     <width>151</width>
+     <width>101</width>
      <height>27</height>
     </rect>
    </property>
@@ -560,48 +560,11 @@ background: rgb(230,230,230);
 </string>
    </property>
    <property name="text">
-    <string>Dodaj obrazek ...</string>
+    <string>Dodaj </string>
    </property>
-  </widget>
-  <widget class="QRadioButton" name="btnIsVisible">
-   <property name="geometry">
-    <rect>
-     <x>525</x>
-     <y>140</y>
-     <width>141</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>14</pointsize>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">color: rgb(70,70,70);</string>
-   </property>
-   <property name="text">
-    <string>Widoczny</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="lblisVisibleImage">
-   <property name="geometry">
-    <rect>
-     <x>478</x>
-     <y>133</y>
-     <width>40</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap resource="resources.qrc">:/images/images/visible.png</pixmap>
-   </property>
-   <property name="scaledContents">
-    <bool>true</bool>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/image.png</normaloff>:/images/images/image.png</iconset>
    </property>
   </widget>
   <widget class="QPushButton" name="btnAddMileage">
@@ -692,6 +655,113 @@ background: rgb(230,230,230);
    </property>
    <property name="text">
     <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblRepairImages">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>140</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/images/images/tools.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnViewRepairs">
+   <property name="geometry">
+    <rect>
+     <x>520</x>
+     <y>140</y>
+     <width>120</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(210,210,210);
+}
+
+QPushButton{
+color: rgb(70,70,70);
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(230,230,230), stop: 0.7 rgb(210,210,210));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(230,230,230);
+}
+</string>
+   </property>
+   <property name="text">
+    <string>Podglad</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnIsVisible">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>37</width>
+     <height>37</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(210,210,210);
+}
+
+QPushButton{
+color: rgb(70,70,70);
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(230,230,230), stop: 0.7 rgb(210,210,210));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(230,230,230);
+}
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/visible.png</normaloff>:/images/images/visible.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>35</width>
+     <height>35</height>
+    </size>
    </property>
   </widget>
  </widget>

@@ -32,5 +32,8 @@
         <file>images/lancer_graphite.png</file>
         <file>images/lancer_silver.png</file>
         <file>images/help.png</file>
+        <file>images/image.png</file>
+        <file>images/tools.png</file>
+        <file>images/notvisible.png</file>
     </qresource>
 </RCC>

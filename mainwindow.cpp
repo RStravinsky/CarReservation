@@ -43,7 +43,7 @@ void MainWindow::onTimerOverflow()
 
 void MainWindow::updateView(bool isCopyEnable)
 {  
-    //qDebug() << "Updating..." << endl;
+    qDebug() << "Updating..." << endl;
     if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
 
         ui->statusBar->showMessage("Połączono z bazą danych");
