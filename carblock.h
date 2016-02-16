@@ -13,6 +13,7 @@
 #include <QPair>
 #include <QRegExp>
 #include "database.h"
+#include "serviceblock.h"
 
 namespace Ui {
 class CarBlock;
@@ -51,6 +52,8 @@ private slots:
     void on_btnAddLicensePlate_clicked();
     void on_btnAddMileage_clicked();
     void on_btnIsVisible_clicked();
+
+    void on_btnViewRepairs_clicked();
 
 signals:
     void carDeleted(bool isCopyEnable);

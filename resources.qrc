@@ -35,5 +35,10 @@
         <file>images/image.png</file>
         <file>images/tools.png</file>
         <file>images/notvisible.png</file>
+        <file>images/inspection_warning.png</file>
+        <file>images/insurance_warning.png</file>
+        <file>images/cost.png</file>
+        <file>images/event.png</file>
+        <file>images/gurantee.png</file>
     </qresource>
 </RCC>

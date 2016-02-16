@@ -44,6 +44,20 @@ CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString lice
     carPhotoPath = photoPath;
     ui->dateEditInspection->setDate(inspectionDate);
     ui->dateEditInsurance->setDate(insuranceDate);
+
+    QDate tmp;
+    tmp = QDate::currentDate().addDays(7);
+
+    if(tmp >= inspectionDate)
+            ui->lblInspectionImage->setPixmap(QPixmap(":/images/images/inspection_warning.png"));
+        else
+            ui->lblInspectionImage->setPixmap(QPixmap(":/images/images/inspection.png"));
+
+        if(tmp >= insuranceDate)
+            ui->lblInsuranceImage->setPixmap(QPixmap(":/images/images/insurance_warning.png"));
+        else
+            ui->lblInsuranceImage->setPixmap(QPixmap(":/images/images/insurance.png"));
+
     setStatus(status);
     if(status && isVisible) {
         QSqlQueryModel * historyTable = new QSqlQueryModel(this);
@@ -448,4 +462,10 @@ void CarBlock::on_btnIsVisible_clicked()
         isVisible = !isVisible;
         setVisibleButton(isVisible);
     }
+}
+
+void CarBlock::on_btnViewRepairs_clicked()
+{
+    ServiceBlock ser(idCar);
+    ser.exec();
 }
