@@ -59,6 +59,7 @@ private:
     QString login;
     QString password;
     bool copyEnable{false};
+    QPushButton * backupButton{nullptr};
 
     QSystemTrayIcon * trayIcon{nullptr};
     QAction *minimizeAction{nullptr};
@@ -79,6 +80,10 @@ private:
     void createLoginOption();
     void createUpdateButton();
     void createHelpButton();
+    void createBackupButton();
+
+    void createBackup();
+    void setBackupButtonVisible();
 };
 
 #endif // MAINWINDOW_H

@@ -31,10 +31,11 @@ public:
 private slots:
     void on_calendarWidget_clicked(const QDate &date);
     void on_btnReserve_clicked();
-    void on_checkBoxBooking_clicked(bool checked);
-    void on_checkBoxHistory_clicked(bool checked);
     void updateView();
     void onTimerOverflow();
+    void on_btnShowHistory_clicked();
+    void on_btnShowReservation_clicked();
+    void on_pushButton_clicked();
 
 signals:
     void bookedCar();

@@ -76,10 +76,11 @@ private:
     QPair<QDate,QDate> getDates();
     bool isAdmin;
     QString prevPhotoPath;
+    bool isCarVisible;
 
     void updateImagePath();
     void setVisibleButton(bool isVisible);
-    bool isCarVisible;
+    bool showMsgBeforeDelete();
 };
 
 #endif // CARBLOCK_H

@@ -35,5 +35,9 @@
         <file>images/image.png</file>
         <file>images/tools.png</file>
         <file>images/notvisible.png</file>
+        <file>images/check.png</file>
+        <file>images/downArrow.png</file>
+        <file>images/backup.png</file>
+        <file>images/upArrow.png</file>
     </qresource>
 </RCC>
