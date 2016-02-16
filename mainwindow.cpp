@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     createHelpButton();
     createUpdateButton();
+    createBackupButton();
     ui->statusBar->setStyleSheet("background: white; color: gray; font-family: Calibri; font-size: 10pt;");
 
     createLoginOption();
@@ -40,6 +41,28 @@ void MainWindow::onTimerOverflow()
     updateView(true);
     timer->start(UPDATE_TIME);
 }
+
+void MainWindow::createBackup()
+{
+    QString currentTime=QTime::currentTime().toString();
+    QString fileName = QFileDialog::getExistingDirectory(this, tr("Ścieżka zapisu"), QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+    if(fileName.isEmpty())
+        return;
+
+    QString backUpPath= fileName +"/SigmaCars_"+QDate::currentDate().toString().replace(" ","_")+"_"+currentTime.replace(":","_")+".sql";
+    backUpPath.replace("file:","");
+
+    QString Cmd = QString("mysqldump.exe -u%1 -h%2 -p%3 --routines sigmacars").arg("rezerwacja","192.168.1.7","rezerwacja");
+    QString Path = QString("%1").arg(backUpPath);
+    QProcess poc;
+    poc.setStandardOutputFile(Path);
+    poc.start(Cmd);
+    poc.waitForFinished( 30000 );
+
+    QMessageBox::information(this,"Informacja", "Kopia zapasowa została zapisana w folderze \n"
+                                                +backUpPath);
+}
+
 
 void MainWindow::updateView(bool isCopyEnable)
 {  
@@ -135,8 +158,8 @@ void MainWindow::updateView(bool isCopyEnable)
         for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos)
             scrollLayout->addWidget(*pos);
         ui->scrollArea->setWidget(scrollWidget);
-
         ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
+
         Database::closeDatabase();
     }
 
@@ -178,6 +201,26 @@ void MainWindow::createHelpButton()
     connect(helpButton, &QPushButton::clicked,[=](){HelpDialog h; h.exec();});
 }
 
+void MainWindow::createBackupButton()
+{
+    backupButton = new QPushButton(this);
+    backupButton->setIcon(QIcon(":/images/images/backup.png"));
+    backupButton->setToolTip("Kopia bezpieczeństwa");
+    backupButton->setStyleSheet("border:none; color: gray");
+    ui->statusBar->addPermanentWidget(backupButton);
+    connect(backupButton, &QPushButton::clicked,[=](){createBackup();});
+
+    setBackupButtonVisible();
+}
+
+void MainWindow::setBackupButtonVisible()
+{
+    if(!isAdmin)
+        backupButton->setVisible(false);
+    if(isAdmin)
+        backupButton->setVisible(true);
+}
+
 void MainWindow::createLoginOption()
 {
     QPushButton * loginButton = new QPushButton(this);
@@ -213,6 +256,7 @@ void MainWindow::createLoginOption()
         if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
             if(adminPassword->text()==ADMIN_PASSWD) {
                     isAdmin = true;
+                    setBackupButtonVisible();
                     loginButton->click();
                     loginButton->setVisible(false);
                     logoutButton->setVisible(true);
@@ -231,6 +275,7 @@ void MainWindow::createLoginOption()
         if(Database::getDatabase().isOpen()) Database::closeDatabase();
         if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
             isAdmin = false;
+            setBackupButtonVisible();
             loginButton->setVisible(true);
             logoutButton->setVisible(false);
             updateView(true);
@@ -478,3 +523,4 @@ void MainWindow::setPopupMessage()
         trayIcon->showMessage(title, newNote, QSystemTrayIcon::Information, 10000);
     }
 }
+

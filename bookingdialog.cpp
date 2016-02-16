@@ -13,6 +13,12 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
 {
     ui->setupUi(this);
 
+    this->setFixedHeight(170);
+
+    QPalette* palette = new QPalette();
+     palette->setColor(QPalette::Highlight,Qt::cyan);
+     ui->calendarWidget->setPalette(*palette);
+
     setCalendarColor(ui->calendarWidget,QColor(255,140,0));
     setCalendarColor(ui->dateTimeEditBegin->calendarWidget(),QColor(255,140,0));
     setCalendarColor(ui->dateTimeEditEnd->calendarWidget(),QColor(255,140,0));
@@ -69,7 +75,7 @@ void BookingDialog::fillCalendar()
 
     if(viewMode == ViewMode::Booked) {
 
-        format.setBackground(QBrush(QColor(255,140,0), Qt::SolidPattern));
+        format.setBackground(QBrush(QColor(0,186,18), Qt::SolidPattern));
 
         for(int i = 0; i < carReservations->rowCount(); ++i) {
 
@@ -84,7 +90,8 @@ void BookingDialog::fillCalendar()
 
     else if(viewMode == ViewMode::History) {
 
-        format.setBackground(QBrush(QColor(100,149,237), Qt::SolidPattern));
+        format.setBackground(QBrush(QColor(80,90,210), Qt::SolidPattern));
+        format.setForeground(QBrush(QColor(255,255,255), Qt::SolidPattern));
 
         for(int i = 0; i < statusHistory->rowCount(); ++i) {
 
@@ -299,30 +306,6 @@ void BookingDialog::on_btnReserve_clicked()
     }
 }
 
-void BookingDialog::on_checkBoxBooking_clicked(bool checked)
-{
-    if(checked) {
-        viewMode = ViewMode::Booked;
-        ui->checkBoxHistory->setChecked(false);
-    }
-    else
-        viewMode = ViewMode::Nothing;
-
-    updateView();
-}
-
-void BookingDialog::on_checkBoxHistory_clicked(bool checked)
-{
-    if(checked) {
-        viewMode = ViewMode::History;
-        ui->checkBoxBooking->setChecked(false);
-    }
-    else
-        viewMode = ViewMode::Nothing;
-
-    updateView();
-}
-
 void BookingDialog::clearCalendarFormat()
 {
     QMap<QDate,QTextCharFormat>::iterator itr;
@@ -333,4 +316,33 @@ void BookingDialog::clearCalendarFormat()
         ui->calendarWidget->setDateTextFormat(itr, format);
 }
 
+void BookingDialog::on_btnShowHistory_clicked()
+{
+    ui->lblCheck->setGeometry(238,182,21,18);
+    viewMode = ViewMode::History;
+    updateView();
+}
 
+void BookingDialog::on_btnShowReservation_clicked()
+{
+    ui->lblCheck->setGeometry(12,182,21,18);
+    viewMode = ViewMode::Booked;
+    updateView();
+}
+
+
+void BookingDialog::on_pushButton_clicked()
+{
+    static bool isExpanded = false;
+    isExpanded = !isExpanded;
+
+    if(isExpanded) {
+        this->setFixedHeight(460);
+        ui->pushButton->setIcon(QIcon(":/images/images/upArrow.png"));
+    }
+
+    else {
+        this->setFixedHeight(170);
+        ui->pushButton->setIcon(QIcon(":/images/images/downArrow.png"));
+    }
+}

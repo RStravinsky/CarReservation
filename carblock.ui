@@ -206,12 +206,15 @@ background: rgb(255,105,0);
      <height>41</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string/>
+   </property>
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
    <property name="styleSheet">
-    <string notr="true">border: none;
-background-color: rgba(255, 255, 255, 0);</string>
+    <string notr="true">border:none;
+</string>
    </property>
    <property name="text">
     <string/>
@@ -382,6 +385,12 @@ color:gray;</string>
      <width>31</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>Uwagi</string>
+   </property>
+   <property name="statusTip">
+    <string/>
    </property>
    <property name="text">
     <string/>
@@ -628,6 +637,9 @@ background: rgb(230,230,230);
      <height>31</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>Wypożyczony przez ...</string>
+   </property>
    <property name="text">
     <string/>
    </property>
@@ -665,6 +677,12 @@ background: rgb(230,230,230);
      <width>31</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>Naprawy</string>
+   </property>
+   <property name="statusTip">
+    <string/>
    </property>
    <property name="text">
     <string/>
@@ -729,6 +747,9 @@ background: rgb(230,230,230);
      <family>Calibri</family>
      <pointsize>14</pointsize>
     </font>
+   </property>
+   <property name="toolTip">
+    <string>Widoczność samochodu</string>
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton:hover {

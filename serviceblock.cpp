@@ -22,7 +22,7 @@ ServiceBlock::ServiceBlock(int idC, QWidget *parent) :
         serviceTable->setQuery(QString("SELECT * FROM service WHERE idCar = %1 ORDER BY EventDate DESC;").arg(idCar));
         listModel = new QSqlQueryModel(this);
         listModel->setQuery(QString("SELECT Name FROM service WHERE idCar = %1 ORDER BY EventDate DESC;").arg(idCar));
-        ui->lvServices->setModel(serviceTable);
+        ui->lvServices->setModel(listModel);
     }
     else {
         QMessageBox::critical(this,"Błąd!", "Nie można połączyć z bazą danych!");

@@ -15,12 +15,12 @@ BookingBlock::BookingBlock(int idB, QString name, QString destination, QString t
     ui->lblDestination->setText(destination);
 
     if(isBooking) {
-        ui->lblStatus->setStyleSheet("background-color: rgb(255,140,0); border-radius: 5px");
+        ui->lblStatus->setStyleSheet("background-color: rgb(0,186,18); border-radius: 5px");
         if(isAdmin)ui->pushButtonDelete->setVisible(true);
         else ui->pushButtonDelete->setVisible(false);
     }
     else {
-        ui->lblStatus->setStyleSheet("background-color: rgb(100,149,237); border-radius: 5px");
+        ui->lblStatus->setStyleSheet("background-color: rgb(80,90,210); border-radius: 5px");
         ui->pushButtonDelete->setVisible(false);
     }
 

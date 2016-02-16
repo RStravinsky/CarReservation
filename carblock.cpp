@@ -31,6 +31,8 @@ CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString lice
         ui->btnAddLicensePlate->setVisible(false);
         ui->btnAddMileage->setVisible(false);
         ui->lblPersonImage->setVisible(false);
+        ui->lblRepairImages->setVisible(false);
+        ui->btnViewRepairs->setVisible(false);
         ui->lblMileage->setReadOnly(false);
         ui->lblCarName->setReadOnly(false);
         ui->lblLicensePlate->setReadOnly(false);
@@ -96,6 +98,8 @@ CarBlock::CarBlock(CarBlock &block, QWidget *parent):
     ui->lblNotesImage->setVisible(false);
     ui->btnAddLicensePlate->setVisible(false);
     ui->btnAddMileage->setVisible(false);
+    ui->lblRepairImages->setVisible(false);
+    ui->btnViewRepairs->setVisible(false);
     ui->lblMileage->setReadOnly(false);
     ui->lblCarName->setReadOnly(false);
     ui->lblPersonImage->setVisible(false);
@@ -305,6 +309,10 @@ void CarBlock::on_btnRemove_clicked()
 
     if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
         if(!isAddBlock) {
+
+            if(!showMsgBeforeDelete())
+                    return;
+
             QSqlQuery qry;
             qry.prepare("DELETE FROM car WHERE idCar=:_id");
             qry.bindValue(":_id", idCar);
@@ -431,6 +439,42 @@ void CarBlock::setVisibleButton(bool isVisible)
         ui->btnIsVisible->setIcon(QIcon(":/images/images/visible.png"));
     else
         ui->btnIsVisible->setIcon(QIcon(":/images/images/notvisible.png"));
+}
+
+bool CarBlock::showMsgBeforeDelete()
+{
+    QMessageBox msgBox(QMessageBox::Question, tr("Usuwanie!"), tr("<font face=""Calibri"" size=""3"" color=""gray"">Czy na pewno chcesz usunać samochód?</font>"), QMessageBox::Yes | QMessageBox::No );
+
+    msgBox.setStyleSheet("QMessageBox {background: white;}"
+                         "QPushButton:hover {"
+                         "border-radius: 5px;"
+                         "background: rgb(255,140,0);"
+                         "}"
+                         "QPushButton{"
+                         "color: white;"
+                         "border-radius: 5px;"
+                         "background: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+                         "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                         "min-width: 70px;"
+                         "min-height: 30px;"
+                         "font-family: Calibri;"
+                         "font-size: 12;"
+                         "font-weight: bold;"
+                         "}"
+                         "QPushButton:pressed {"
+                         "color: white;"
+                         "border-radius: 5px;"
+                         "background: rgb(255,105,0);"
+                         "}"
+                         );
+
+    msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
+    msgBox.setButtonText(QMessageBox::Yes, tr("Tak"));
+    msgBox.setButtonText(QMessageBox::No, tr("Nie"));
+    if (msgBox.exec() == QMessageBox::No)
+        return false;
+
+    return true;
 }
 
 void CarBlock::on_btnIsVisible_clicked()
