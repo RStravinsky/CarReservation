@@ -26,7 +26,12 @@ private:
     int idCar;
     QSqlQueryModel * serviceTable{nullptr};
     QSqlQueryModel * listModel{nullptr};
+    QSqlQueryModel sTCPY;
+    QSqlQueryModel lMCPY;
+    QStringList nameCompletionList;
+    QStringList categoryCompletionList;
 
+    void loadList();
 };
 
 #endif // SERVICEBLOCK_H

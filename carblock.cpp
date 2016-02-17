@@ -510,6 +510,17 @@ void CarBlock::on_btnIsVisible_clicked()
 
 void CarBlock::on_btnViewRepairs_clicked()
 {
-    ServiceBlock ser(idCar);
-    ser.exec();
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+        ServiceBlock * serviceBlock = new ServiceBlock(idCar);
+        emit inProgress();
+        if(serviceBlock->exec()== ServiceBlock::Rejected)
+            emit progressFinished();
+        delete serviceBlock;
+        Database::closeDatabase();
+    }
+    else {
+        Database::closeDatabase();
+        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        emit changeStatusBar("Nie można połączyć z bazą danych");
+    }
 }
