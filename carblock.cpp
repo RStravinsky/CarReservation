@@ -175,7 +175,7 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
                 notesDialogPointer = std::shared_ptr<NotesDialog>(new NotesDialog(_idNotes, _idCar));
                 if(notesDialogPointer.use_count() == 1 && notesDialogPointer.get()->exec() == NotesDialog::Rejected){
                     Database::closeDatabase();
-                    emit progressFinished();
+                    if(!(BookingDialog::isOpen || ServiceBlock::isOpen)) emit progressFinished();
                     emit noteClosed();
                 }
         }
@@ -510,6 +510,17 @@ void CarBlock::on_btnIsVisible_clicked()
 
 void CarBlock::on_btnViewRepairs_clicked()
 {
-    ServiceBlock ser(idCar);
-    ser.exec();
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+        serviceBlock = new ServiceBlock(idCar);
+        emit inProgress();
+        if(serviceBlock->exec()== ServiceBlock::Rejected)
+            emit progressFinished();
+        delete serviceBlock;
+        Database::closeDatabase();
+    }
+    else {
+        Database::closeDatabase();
+        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        emit changeStatusBar("Nie można połączyć z bazą danych");
+    }
 }

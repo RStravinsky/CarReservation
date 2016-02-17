@@ -27,6 +27,7 @@ class BookingDialog : public QDialog
 public:
     explicit BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, int id, int vMode = ViewMode::Booked, QWidget *parent = 0);
     ~BookingDialog();
+    static bool isOpen;
 
 private slots:
     void on_calendarWidget_clicked(const QDate &date);

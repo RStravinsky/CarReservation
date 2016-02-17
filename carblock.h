@@ -52,7 +52,6 @@ private slots:
     void on_btnAddLicensePlate_clicked();
     void on_btnAddMileage_clicked();
     void on_btnIsVisible_clicked();
-
     void on_btnViewRepairs_clicked();
 
 signals:
@@ -66,6 +65,7 @@ signals:
 private:
     Ui::CarBlock *ui;
     BookingDialog * bookingDialog{nullptr};
+    ServiceBlock * serviceBlock{nullptr};
     QSqlQueryModel * bookingTable{nullptr};
     QSqlQueryModel * carTable{nullptr};
     int idCar;

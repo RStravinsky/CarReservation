@@ -66,7 +66,7 @@ void MainWindow::createBackup()
 
 void MainWindow::updateView(bool isCopyEnable)
 {  
-    qDebug() << "Updating..." << endl;
+    //qDebug() << "Updating..." << endl;
     if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
 
         ui->statusBar->showMessage("Połączono z bazą danych");
@@ -110,11 +110,10 @@ void MainWindow::updateView(bool isCopyEnable)
                connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
                connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
                connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
-               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
+               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->stop();timer->start(UPDATE_TIME);});
                connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();}, Qt::QueuedConnection);
            }
         }
-
         if(isAdmin) {
             setPopupMessage();
 

@@ -17,6 +17,7 @@ class ServiceBlock : public QDialog
 public:
     explicit ServiceBlock(int idC, QWidget *parent = 0);
     ~ServiceBlock();
+    static bool isOpen;
 
 private slots:
     void on_lvServices_clicked(const QModelIndex &index);
@@ -26,7 +27,8 @@ private:
     int idCar;
     QSqlQueryModel * serviceTable{nullptr};
     QSqlQueryModel * listModel{nullptr};
-
+    QStringList nameList;
+    QStringListModel nameListModel;
 };
 
 #endif // SERVICEBLOCK_H
