@@ -10,6 +10,7 @@
 #include <QLineEdit>
 #include <QTimer>
 #include <QScrollBar>
+#include <QMovie>
 #include <vector>
 #include <memory>
 #include "carblock.h"

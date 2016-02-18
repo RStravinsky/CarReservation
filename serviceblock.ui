@@ -7,50 +7,40 @@
     <x>0</x>
     <y>0</y>
     <width>824</width>
-    <height>403</height>
+    <height>445</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Naprawy</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(255, 255, 255);</string>
+   <string notr="true">QDialog {background-color: rgb(255, 255, 255);}
+QLabel {color: gray;
+background-color:transparent}
+
+#ServiceBlock QScrollBar:vertical {
+  border: none;
+  background: &quot;transparent&quot;;
+  width: 8px;
+  margin: 20px 0px 20px 0px;
+}
+
+#ServiceBlock QScrollBar::handle:vertical {
+  background: rgb(107,124,140);
+  min-height: 20px; 
+  border-radius: 2px;
+}
+
+#ServiceBlock QScrollBar::add-line:vertical {
+   border: none;
+   background: none;
+}
+
+#ServiceBlock QScrollBar::sub-line:vertical {
+   border: none;
+   background: none;
+}</string>
   </property>
-  <widget class="QListView" name="lvServices">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>40</y>
-     <width>281</width>
-     <height>351</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>11</pointsize>
-    </font>
-   </property>
-   <property name="frameShape">
-    <enum>QFrame::NoFrame</enum>
-   </property>
-   <property name="modelColumn">
-    <number>0</number>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="cbName">
-   <property name="geometry">
-    <rect>
-     <x>310</x>
-     <y>40</y>
-     <width>241</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="editable">
-    <bool>true</bool>
-   </property>
-  </widget>
   <widget class="QDateEdit" name="deEvent">
    <property name="geometry">
     <rect>
@@ -65,6 +55,9 @@
      <family>Calibri</family>
      <pointsize>11</pointsize>
     </font>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::WheelFocus</enum>
    </property>
    <property name="calendarPopup">
     <bool>true</bool>
@@ -133,17 +126,21 @@
   <widget class="QTextEdit" name="teNotes">
    <property name="geometry">
     <rect>
-     <x>310</x>
+     <x>360</x>
      <y>300</y>
-     <width>501</width>
+     <width>451</width>
      <height>91</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Calibri</family>
-     <pointsize>11</pointsize>
+     <pointsize>12</pointsize>
     </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(131, 131, 131, 131);
+color: black;</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
@@ -177,8 +174,23 @@
      <height>31</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QComboBox {
+font-family: &quot;Calibri&quot;;
+font-size: 12pt
+}</string>
+   </property>
    <property name="editable">
     <bool>true</bool>
+   </property>
+   <property name="currentText">
+    <string>Wybierz kategorię</string>
    </property>
   </widget>
   <widget class="QLabel" name="lblBeginImage">
@@ -222,10 +234,10 @@
   <widget class="QLabel" name="lblEventImage">
    <property name="geometry">
     <rect>
-     <x>318</x>
-     <y>115</y>
-     <width>41</width>
-     <height>41</height>
+     <x>309</x>
+     <y>108</y>
+     <width>51</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
@@ -241,7 +253,7 @@
   <widget class="QLabel" name="lblGuranteeImage">
    <property name="geometry">
     <rect>
-     <x>580</x>
+     <x>570</x>
      <y>120</y>
      <width>31</width>
      <height>31</height>
@@ -260,16 +272,18 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>510</x>
+     <x>500</x>
      <y>160</y>
-     <width>151</width>
+     <width>251</width>
      <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Calibri</family>
-     <pointsize>11</pointsize>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="text">
@@ -281,14 +295,16 @@
     <rect>
      <x>320</x>
      <y>90</y>
-     <width>221</width>
+     <width>231</width>
      <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Calibri</family>
-     <pointsize>11</pointsize>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="text">
@@ -298,16 +314,18 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>580</x>
+     <x>570</x>
      <y>90</y>
-     <width>221</width>
+     <width>241</width>
      <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Calibri</family>
-     <pointsize>11</pointsize>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="text">
@@ -317,16 +335,18 @@
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>310</x>
+     <x>320</x>
      <y>10</y>
-     <width>221</width>
+     <width>241</width>
      <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Calibri</family>
-     <pointsize>11</pointsize>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="text">
@@ -338,37 +358,20 @@
     <rect>
      <x>570</x>
      <y>10</y>
-     <width>221</width>
+     <width>241</width>
      <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Calibri</family>
-     <pointsize>11</pointsize>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="text">
     <string>Kategoria</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_6">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>10</y>
-     <width>161</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>11</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Lista napraw</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_7">
@@ -376,14 +379,16 @@
     <rect>
      <x>690</x>
      <y>230</y>
-     <width>101</width>
+     <width>121</width>
      <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Calibri</family>
-     <pointsize>11</pointsize>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="text">
@@ -409,13 +414,13 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QLabel" name="label_8">
+  <widget class="QPushButton" name="pbSave">
    <property name="geometry">
     <rect>
-     <x>310</x>
-     <y>270</y>
-     <width>221</width>
-     <height>21</height>
+     <x>690</x>
+     <y>398</y>
+     <width>121</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="font">
@@ -424,8 +429,176 @@
      <pointsize>11</pointsize>
     </font>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(255,140,0);
+}
+
+QPushButton{
+color: white;
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(255,105,0);
+}
+</string>
+   </property>
    <property name="text">
-    <string>Uwagi</string>
+    <string>Zapisz</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblNotesImage">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>300</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/images/images/comments.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>301</width>
+     <height>445</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+border: none;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));
+border-top-right-radius: 10px;
+border-bottom-right-radius:10px;
+}
+
+</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>15</x>
+      <y>10</y>
+      <width>161</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Calibri</family>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: transparent;
+color: white;</string>
+    </property>
+    <property name="text">
+     <string>Lista napraw:</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="lvServices">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>281</width>
+      <height>381</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Calibri</family>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAsNeeded</enum>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QLineEdit" name="leName">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>39</y>
+     <width>241</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pbDelete">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>398</y>
+     <width>121</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(255,102,102);
+}
+
+QPushButton{
+color: white;
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(255,102,102), stop: 0.7 rgb(255,50,50));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(255,50,50);
+}
+</string>
+   </property>
+   <property name="text">
+    <string>Usuń</string>
    </property>
   </widget>
  </widget>

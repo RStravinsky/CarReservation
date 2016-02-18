@@ -1,7 +1,7 @@
 #include "bookingdialog.h"
 #include "ui_bookingdialog.h"
 
-#define UPDATE_TIME 30000
+#define UPDATE_TIME 2000
 
 BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, int id, int vMode,  QWidget *parent) :
     bookingTable(bookTable),
