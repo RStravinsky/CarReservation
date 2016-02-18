@@ -37,6 +37,7 @@ CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString lice
         ui->lblCarName->setReadOnly(false);
         ui->lblLicensePlate->setReadOnly(false);
         ui->btnRemove->setIcon(QIcon(":/images/images/add.png"));
+        ui->btnPDF->setVisible(false);
         QRegExp rx("^\\w+\\s\\w+$");
         ui->lblCarName->setValidator(new QRegExpValidator(rx, this));
         setVisibleButton(isVisible);
@@ -104,6 +105,7 @@ CarBlock::CarBlock(CarBlock &block, QWidget *parent):
     ui->lblCarName->setReadOnly(false);
     ui->lblPersonImage->setVisible(false);
     ui->lblLicensePlate->setReadOnly(false);
+    ui->btnPDF->setVisible(false);
 
     ui->lblPhoto->setPixmap(block.carPhotoPath);
     carPhotoPath = block.carPhotoPath;
@@ -151,6 +153,7 @@ void CarBlock::setAdminPermissions(bool isAdmin)
         ui->btnIsVisible->setVisible(false);
         ui->lblRepairImages->setVisible(false);
         ui->btnViewRepairs->setVisible(false);
+        ui->btnPDF->setVisible(false);
         ui->lblCarName->setGeometry(10,0,650,60);
     }
     else {
@@ -175,7 +178,7 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
                 notesDialogPointer = std::shared_ptr<NotesDialog>(new NotesDialog(_idNotes, _idCar));
                 if(notesDialogPointer.use_count() == 1 && notesDialogPointer.get()->exec() == NotesDialog::Rejected){
                     Database::closeDatabase();
-                    emit progressFinished();
+                    if(!(BookingDialog::isOpen || ServiceBlock::isOpen)) emit progressFinished();
                     emit noteClosed();
                 }
         }
@@ -511,11 +514,28 @@ void CarBlock::on_btnIsVisible_clicked()
 void CarBlock::on_btnViewRepairs_clicked()
 {
     if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
-        ServiceBlock * serviceBlock = new ServiceBlock(idCar);
+        serviceBlock = new ServiceBlock(idCar);
         emit inProgress();
         if(serviceBlock->exec()== ServiceBlock::Rejected)
             emit progressFinished();
         delete serviceBlock;
+        Database::closeDatabase();
+    }
+    else {
+        Database::closeDatabase();
+        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        emit changeStatusBar("Nie można połączyć z bazą danych");
+    }
+}
+
+void CarBlock::on_btnPDF_clicked()
+{
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+        reportDialog = new ReportDialog(idCar);
+        emit inProgress();
+        if(reportDialog->exec()== ReportDialog::Rejected)
+            emit progressFinished();
+        delete reportDialog;
         Database::closeDatabase();
     }
     else {

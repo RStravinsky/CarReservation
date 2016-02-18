@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#define UPDATE_TIME 2000
+#define UPDATE_TIME 20000
 #define ADMIN_PASSWD "Admin4q@"
 
 std::shared_ptr<NotesDialog> notesDialogPointer;
@@ -28,7 +28,10 @@ MainWindow::MainWindow(QWidget *parent) :
     onTimerOverflow();
     loadTrayIcon();
 
-    ui->lblHoliday->setPixmap(QPixmap("//k1/DBIR/Programowanie/Aplikacja REZERWACJA/lblHoliday/holiday.png"));
+
+//    QMovie *movie = new QMovie("//k1/DBIR/Programowanie/Aplikacja REZERWACJA/lblHoliday/holiday.gif");
+//    ui->lblHoliday->setMovie(movie);
+//    movie->start();
 }
 
 MainWindow::~MainWindow()
@@ -66,7 +69,7 @@ void MainWindow::createBackup()
 
 void MainWindow::updateView(bool isCopyEnable)
 {  
-    qDebug() << "Updating..." << endl;
+    //qDebug() << "Updating..." << endl;
     if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
 
         ui->statusBar->showMessage("Połączono z bazą danych");
@@ -110,11 +113,10 @@ void MainWindow::updateView(bool isCopyEnable)
                connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
                connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
                connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
-               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
+               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->stop();timer->start(UPDATE_TIME);});
                connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();}, Qt::QueuedConnection);
            }
         }
-
         if(isAdmin) {
             setPopupMessage();
 

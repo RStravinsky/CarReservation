@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     noteblock.cpp \
     database.cpp \
     helpdialog.cpp \
-    serviceblock.cpp
+    serviceblock.cpp \
+    reportdialog.cpp
 
 HEADERS  += mainwindow.h \
     carblock.h \
@@ -35,7 +36,8 @@ HEADERS  += mainwindow.h \
     noteblock.h \
     database.h \
     helpdialog.h \
-    serviceblock.h
+    serviceblock.h \
+    reportdialog.h
 
 FORMS    += mainwindow.ui \
     carblock.ui \
@@ -45,7 +47,8 @@ FORMS    += mainwindow.ui \
     notesdialog.ui \
     noteblock.ui \
     helpdialog.ui \
-    serviceblock.ui
+    serviceblock.ui \
+    reportdialog.ui
 
 RESOURCES += \
     resources.qrc

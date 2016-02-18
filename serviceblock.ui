@@ -222,10 +222,10 @@
   <widget class="QLabel" name="lblEventImage">
    <property name="geometry">
     <rect>
-     <x>320</x>
-     <y>120</y>
-     <width>31</width>
-     <height>31</height>
+     <x>318</x>
+     <y>115</y>
+     <width>41</width>
+     <height>41</height>
     </rect>
    </property>
    <property name="text">

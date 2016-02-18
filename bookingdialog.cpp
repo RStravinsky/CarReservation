@@ -15,10 +15,6 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
 
     this->setFixedHeight(170);
 
-    QPalette* palette = new QPalette();
-     palette->setColor(QPalette::Highlight,Qt::cyan);
-     ui->calendarWidget->setPalette(*palette);
-
     setCalendarColor(ui->calendarWidget,QColor(255,140,0));
     setCalendarColor(ui->dateTimeEditBegin->calendarWidget(),QColor(255,140,0));
     setCalendarColor(ui->dateTimeEditEnd->calendarWidget(),QColor(255,140,0));
@@ -41,11 +37,16 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
     connect(this, SIGNAL(bookedCar()), this, SLOT(updateView()),Qt::QueuedConnection);
     connect(ui->calendarWidget,SIGNAL(selectionChanged()),this,SLOT(updateView()));
     onTimerOverflow();
+
+    isOpen = true;
 }
+
+bool BookingDialog::isOpen;
 
 BookingDialog::~BookingDialog()
 {
     firstInit = true;
+    isOpen = false;
     delete ui;
 }
 

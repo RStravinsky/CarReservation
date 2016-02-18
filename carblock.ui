@@ -785,6 +785,52 @@ background: rgb(230,230,230);
     </size>
    </property>
   </widget>
+  <widget class="QPushButton" name="btnPDF">
+   <property name="geometry">
+    <rect>
+     <x>650</x>
+     <y>140</y>
+     <width>31</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Raport PDF</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(210,210,210);
+}
+
+QPushButton{
+color: rgb(70,70,70);
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(230,230,230), stop: 0.7 rgb(210,210,210));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(230,230,230);
+}
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/report.png</normaloff>:/images/images/report.png</iconset>
+   </property>
+  </widget>
  </widget>
  <resources>
   <include location="resources.qrc"/>
