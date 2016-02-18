@@ -27,6 +27,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimerOverflow()));
     onTimerOverflow();
     loadTrayIcon();
+
+//    QMovie *movie = new QMovie("//k1/DBIR/Programowanie/Aplikacja REZERWACJA/lblHoliday/holiday.gif");
+//    ui->lblHoliday->setMovie(movie);
+//    movie->start();
+
 }
 
 MainWindow::~MainWindow()

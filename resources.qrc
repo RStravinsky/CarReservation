@@ -44,5 +44,7 @@
         <file>images/downArrow.png</file>
         <file>images/backup.png</file>
         <file>images/upArrow.png</file>
+        <file>images/sigma.png</file>
+        <file>images/report.png</file>
     </qresource>
 </RCC>

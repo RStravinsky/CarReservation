@@ -9,7 +9,7 @@ ServiceBlock::ServiceBlock(int idC, QWidget *parent) :
     ui->setupUi(this);
 
     QSqlQueryModel * windTitle = new QSqlQueryModel(this);
-    windTitle->setQuery(QString("SELECT Brand, Model, LicensePlate FROM sigmacars.car WHERE idCar = %1").arg(idCar));
+    windTitle->setQuery(QString("SELECT Brand, Model, LicensePlate FROM car WHERE idCar = %1").arg(idCar));
     this->setWindowTitle( QString("Naprawy - ")
                           + windTitle->data(windTitle->index(windTitle->rowCount()-1,0)).toString() + QString(" ")
                           + windTitle->data(windTitle->index(windTitle->rowCount()-1,1)).toString() + QString(" - ")
@@ -19,13 +19,13 @@ ServiceBlock::ServiceBlock(int idC, QWidget *parent) :
     connect(this,SIGNAL(saved()),this,SLOT(updateView()),Qt::DirectConnection);
     connect(this,SIGNAL(deleted()),this,SLOT(updateView()));
 
-    updateView();
-
     // fill category combobox
     QStringList categoryList({QString("Silnik"),QString("Zawieszenie"),QString("Elektronika"),
                              QString("Elektyka"),QString("Układ napędowy"),QString("Układ hamulcowy"),
                              QString("Układ kierowniczy"),QString("Nadwozie")});
     ui->cbCategory->addItems(categoryList);
+
+    updateView();
 
     isOpen = true;
 }
@@ -79,10 +79,10 @@ void ServiceBlock::clearWidgets()
     ui->pbDelete->setVisible(false);
     ui->leName->clear();
     ui->cbCategory->setCurrentIndex(0);
-    ui->deEvent->setDate(QDate(2000,1,1));
-    ui->deGuarantee->setDate(QDate(2000,1,1));
-    ui->deBegin->setDate(QDate(2000,1,1));
-    ui->deEnd->setDate(QDate(2000,1,1));
+    ui->deEvent->setDate(QDate::currentDate());
+    ui->deGuarantee->setDate(QDate::currentDate());
+    ui->deBegin->setDate(QDate::currentDate());
+    ui->deEnd->setDate(QDate::currentDate());
     ui->leCost->clear();
     ui->teNotes->clear();
 }

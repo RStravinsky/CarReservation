@@ -14,6 +14,7 @@
 #include <QRegExp>
 #include "database.h"
 #include "serviceblock.h"
+#include "reportdialog.h"
 
 namespace Ui {
 class CarBlock;
@@ -54,6 +55,8 @@ private slots:
     void on_btnIsVisible_clicked();
     void on_btnViewRepairs_clicked();
 
+    void on_btnPDF_clicked();
+
 signals:
     void carDeleted(bool isCopyEnable);
     void carAdded(bool isCopyEnable);
@@ -66,6 +69,7 @@ private:
     Ui::CarBlock *ui;
     BookingDialog * bookingDialog{nullptr};
     ServiceBlock * serviceBlock{nullptr};
+    ReportDialog * reportDialog{nullptr};
     QSqlQueryModel * bookingTable{nullptr};
     QSqlQueryModel * carTable{nullptr};
     int idCar;
@@ -84,6 +88,7 @@ private:
     void updateImagePath();
     void setVisibleButton(bool isVisible);
     bool showMsgBeforeDelete();
+
 };
 
 #endif // CARBLOCK_H

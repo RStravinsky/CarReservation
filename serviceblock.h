@@ -36,6 +36,10 @@ private:
     int idService;
     QSqlQueryModel * serviceTable{nullptr};
     QSqlQueryModel * listModel{nullptr};
+    QStringList nameCompletionList;
+    QStringList categoryCompletionList;
+
+    void loadList();
     QStringList nameList;
     void loadData(const QModelIndex &index);
     void clearWidgets();
