@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#define UPDATE_TIME 20000
+#define UPDATE_TIME 2000
 #define ADMIN_PASSWD "Admin4q@"
 
 std::shared_ptr<NotesDialog> notesDialogPointer;
@@ -28,10 +28,10 @@ MainWindow::MainWindow(QWidget *parent) :
     onTimerOverflow();
     loadTrayIcon();
 
-
 //    QMovie *movie = new QMovie("//k1/DBIR/Programowanie/Aplikacja REZERWACJA/lblHoliday/holiday.gif");
 //    ui->lblHoliday->setMovie(movie);
 //    movie->start();
+
 }
 
 MainWindow::~MainWindow()
@@ -65,7 +65,6 @@ void MainWindow::createBackup()
     QMessageBox::information(this,"Informacja", "Kopia zapasowa została zapisana w folderze \n"
                                                 +backUpPath);
 }
-
 
 void MainWindow::updateView(bool isCopyEnable)
 {  
@@ -151,6 +150,10 @@ void MainWindow::updateView(bool isCopyEnable)
             connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
             connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(UPDATE_TIME);});
             copyEnable = true;
+
+//            QMovie *movie = new QMovie("//k1/DBIR/Programowanie/Aplikacja REZERWACJA/lblHoliday/holiday.gif");
+//            ui->lblHoliday->setMovie(movie);
+//            movie->start();
         }
 
         delete scrollLayout;

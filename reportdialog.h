@@ -10,6 +10,7 @@
 #include <QFileDialog>
 #include <QtSql>
 #include <QCalendarWidget>
+#include "database.h"
 
 namespace Ui {
 class ReportDialog;

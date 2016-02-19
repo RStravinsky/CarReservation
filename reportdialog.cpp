@@ -196,7 +196,12 @@ void ReportDialog::on_cancelButton_clicked()
 
 void ReportDialog::on_exportButton_clicked()
 {
-    populatePDF();
+    if(Database::connectToDatabase("rezerwacja","rezerwacja"))
+        populatePDF();
+    else {
+        Database::closeDatabase();
+        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+    }
 }
 
 void ReportDialog::setCalendarColor(QCalendarWidget *calendarWidget,QColor color)

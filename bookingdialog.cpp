@@ -1,7 +1,7 @@
 #include "bookingdialog.h"
 #include "ui_bookingdialog.h"
 
-#define UPDATE_TIME 30000
+#define UPDATE_TIME 2000
 
 BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, int id, int vMode,  QWidget *parent) :
     bookingTable(bookTable),
@@ -319,14 +319,14 @@ void BookingDialog::clearCalendarFormat()
 
 void BookingDialog::on_btnShowHistory_clicked()
 {
-    ui->lblCheck->setGeometry(238,182,21,18);
+    ui->lblCheck->setGeometry(239,187,21,18);
     viewMode = ViewMode::History;
     updateView();
 }
 
 void BookingDialog::on_btnShowReservation_clicked()
 {
-    ui->lblCheck->setGeometry(12,182,21,18);
+    ui->lblCheck->setGeometry(13,187,21,18);
     viewMode = ViewMode::Booked;
     updateView();
 }
@@ -338,7 +338,7 @@ void BookingDialog::on_pushButton_clicked()
     isExpanded = !isExpanded;
 
     if(isExpanded) {
-        this->setFixedHeight(460);
+        this->setFixedHeight(500);
         ui->pushButton->setIcon(QIcon(":/images/images/upArrow.png"));
     }
 
