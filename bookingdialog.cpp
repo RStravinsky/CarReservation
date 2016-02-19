@@ -25,7 +25,7 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
     statusHistory = new QSqlQueryModel(this);
 
     QSqlQueryModel * windTitle = new QSqlQueryModel(this);
-    windTitle->setQuery(QString("SELECT Brand, Model, LicensePlate FROM sigmacars.car WHERE idCar = %1").arg(idCar));
+    windTitle->setQuery(QString("SELECT Brand, Model, LicensePlate FROM car WHERE idCar = %1").arg(idCar));
     this->setWindowTitle( QString("Rezerwacja - ")
                           + windTitle->data(windTitle->index(windTitle->rowCount()-1,0)).toString() + QString(" ")
                           + windTitle->data(windTitle->index(windTitle->rowCount()-1,1)).toString() + QString(" - ")
@@ -185,8 +185,8 @@ void BookingDialog::on_calendarWidget_clicked(const QDate &date)
 
     if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
 
-        carReservations->setQuery(QString("SELECT * FROM sigmacars.booking WHERE idCar = %1").arg(idCar));
-        statusHistory->setQuery(QString("SELECT * FROM sigmacars.history WHERE idCar = %1").arg(idCar));
+        carReservations->setQuery(QString("SELECT * FROM booking WHERE idCar = %1").arg(idCar));
+        statusHistory->setQuery(QString("SELECT * FROM history WHERE idCar = %1").arg(idCar));
         int varticalPosition = ui->scrollArea->verticalScrollBar()->value(); // previous scrollBar position
 
         choosenDate = date;
@@ -227,7 +227,7 @@ void BookingDialog::clearScrollArea()
 bool BookingDialog::isDateFree()
 {
     QSqlQueryModel * bookedDates = new QSqlQueryModel(this);
-    bookedDates->setQuery(QString("SELECT Begin, End FROM sigmacars.booking WHERE idCar = %1").arg(idCar));
+    bookedDates->setQuery(QString("SELECT Begin, End FROM booking WHERE idCar = %1").arg(idCar));
 
     QDateTime modelBegin = QDateTime::currentDateTime(), modelEnd = QDateTime::currentDateTime();
 

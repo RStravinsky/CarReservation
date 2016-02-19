@@ -93,7 +93,7 @@ void ReportDialog::addHeaderToDocument(QTextDocument *document,QTextCursor *curs
     QTextCharFormat charFormat;
     charFormat.setFont(QFont("Calibri", 8, QFont::Bold));
 
-    reportTitle->setQuery(QString("SELECT Brand, Model, LicensePlate FROM sigmacars.car WHERE idCar = %1").arg(idCar));
+    reportTitle->setQuery(QString("SELECT Brand, Model, LicensePlate FROM car WHERE idCar = %1").arg(idCar));
 
     cursor->insertText(QString("Raport wypożyczeń - ")
                        + reportTitle->data(reportTitle->index(reportTitle->rowCount()-1,0)).toString() + QString(" ")

@@ -64,7 +64,7 @@ CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString lice
     setStatus(status);
     if(status && isVisible) {
         QSqlQueryModel * historyTable = new QSqlQueryModel(this);
-        historyTable->setQuery(QString("SELECT Name, Surname, Destination FROM sigmacars.history WHERE idCar = %1 AND End IS NULL").arg(idCar));
+        historyTable->setQuery(QString("SELECT Name, Surname, Destination FROM history WHERE idCar = %1 AND End IS NULL").arg(idCar));
 
         ui->lblPerson->setText(
                     historyTable->data(historyTable->index(historyTable->rowCount()-1,0)).toString() + QString(" ") +

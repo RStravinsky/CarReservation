@@ -9,7 +9,7 @@ ServiceBlock::ServiceBlock(int idC, QWidget *parent) :
     ui->setupUi(this);
 
     QSqlQueryModel * windTitle = new QSqlQueryModel(this);
-    windTitle->setQuery(QString("SELECT Brand, Model, LicensePlate FROM sigmacars.car WHERE idCar = %1").arg(idCar));
+    windTitle->setQuery(QString("SELECT Brand, Model, LicensePlate FROM car WHERE idCar = %1").arg(idCar));
     this->setWindowTitle( QString("Naprawy - ")
                           + windTitle->data(windTitle->index(windTitle->rowCount()-1,0)).toString() + QString(" ")
                           + windTitle->data(windTitle->index(windTitle->rowCount()-1,1)).toString() + QString(" - ")
