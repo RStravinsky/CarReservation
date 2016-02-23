@@ -11,6 +11,14 @@ ReportDialog::ReportDialog(int idC, QWidget *parent) :
     historyModel = new QSqlQueryModel(this);
     reportTitle = new QSqlQueryModel(this);
 
+    QSqlQueryModel * windTitle = new QSqlQueryModel(this);
+    windTitle->setQuery(QString("SELECT Brand, Model, LicensePlate,Oil FROM car WHERE idCar = %1").arg(idCar));
+    this->setWindowTitle( QString("Eksport PDF - ")
+                          + windTitle->data(windTitle->index(windTitle->rowCount()-1,0)).toString() + QString(" ")
+                          + windTitle->data(windTitle->index(windTitle->rowCount()-1,1)).toString() + QString(" - ")
+                          + windTitle->data(windTitle->index(windTitle->rowCount()-1,2)).toString()
+                          );
+
     QDate initDate;
     initDate.setDate(QDate::currentDate().year(), QDate::currentDate().month(), 1);
 

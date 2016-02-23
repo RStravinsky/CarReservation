@@ -46,5 +46,6 @@
         <file>images/upArrow.png</file>
         <file>images/sigma.png</file>
         <file>images/report.png</file>
+        <file>images/oil.png</file>
     </qresource>
 </RCC>

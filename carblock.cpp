@@ -27,11 +27,11 @@ CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString lice
         ui->btnAddMileage->setVisible(false);
         ui->lblStatus->setVisible(false);
         ui->btnViewNotes->setVisible(false);
-        ui->lblNotesImage->setVisible(false);
+        ui->btnOil->setVisible(false);
         ui->btnAddLicensePlate->setVisible(false);
         ui->btnAddMileage->setVisible(false);
         ui->lblPersonImage->setVisible(false);
-        ui->lblRepairImages->setVisible(false);
+        //ui->lblRepairImages->setVisible(false);
         ui->btnViewRepairs->setVisible(false);
         ui->lblMileage->setReadOnly(false);
         ui->lblCarName->setReadOnly(false);
@@ -96,10 +96,10 @@ CarBlock::CarBlock(CarBlock &block, QWidget *parent):
     ui->btnAddInsurance->setVisible(false);
     ui->lblStatus->setVisible(false);
     ui->btnViewNotes->setVisible(false);
-    ui->lblNotesImage->setVisible(false);
+    //ui->lblNotesImage->setVisible(false);
     ui->btnAddLicensePlate->setVisible(false);
     ui->btnAddMileage->setVisible(false);
-    ui->lblRepairImages->setVisible(false);
+    //ui->lblRepairImages->setVisible(false);
     ui->btnViewRepairs->setVisible(false);
     ui->lblMileage->setReadOnly(false);
     ui->lblCarName->setReadOnly(false);
@@ -140,7 +140,7 @@ void CarBlock::setAdminPermissions(bool isAdmin)
     if(!isAdmin) {
         ui->lblInspectionImage->setVisible(false);
         ui->lblInsuranceImage->setVisible(false);
-        ui->lblNotesImage->setVisible(false);
+        ui->btnOil->setVisible(false);
         ui->dateEditInspection->setVisible(false);
         ui->dateEditInsurance->setVisible(false);
         ui->btnAddInspection->setVisible(false);
@@ -151,7 +151,7 @@ void CarBlock::setAdminPermissions(bool isAdmin)
         ui->btnRemove->setVisible(false);
         ui->btnAddImage->setVisible(false);
         ui->btnIsVisible->setVisible(false);
-        ui->lblRepairImages->setVisible(false);
+        //ui->lblRepairImages->setVisible(false);
         ui->btnViewRepairs->setVisible(false);
         ui->btnPDF->setVisible(false);
         ui->lblCarName->setGeometry(10,0,650,60);
@@ -536,6 +536,23 @@ void CarBlock::on_btnPDF_clicked()
         if(reportDialog->exec()== ReportDialog::Rejected)
             emit progressFinished();
         delete reportDialog;
+        Database::closeDatabase();
+    }
+    else {
+        Database::closeDatabase();
+        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        emit changeStatusBar("Nie można połączyć z bazą danych");
+    }
+}
+
+void CarBlock::on_btnOil_clicked()
+{
+    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+        oilDialog = new OilDialog(idCar);
+        emit inProgress();
+        if(oilDialog->exec()== OilDialog::Rejected)
+            emit progressFinished();
+        delete oilDialog;
         Database::closeDatabase();
     }
     else {

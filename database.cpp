@@ -10,7 +10,7 @@ bool Database::connectToDatabase(QString login, QString password)
 {
     sqlDatabase = QSqlDatabase::addDatabase("QMYSQL");
     sqlDatabase.setHostName("192.168.1.7");
-    sqlDatabase.setDatabaseName("sigmacarstest");
+    sqlDatabase.setDatabaseName("sigmacars");
     sqlDatabase.setUserName(login);
     sqlDatabase.setPassword(password);
     if (!sqlDatabase.open()) return false;

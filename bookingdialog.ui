@@ -57,6 +57,7 @@ background-color: white;
    background: none;
 }
 
+
 QMessageBox QPushButton:hover {
 border-radius: 5px;
 background: rgb(255,140,0);
@@ -76,6 +77,7 @@ color: white;
 border-radius: 5px;
 background: rgb(255,105,0);
 }
+
 </string>
   </property>
   <widget class="QCalendarWidget" name="calendarWidget">

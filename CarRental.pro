@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     database.cpp \
     helpdialog.cpp \
     serviceblock.cpp \
-    reportdialog.cpp
+    reportdialog.cpp \
+    oildialog.cpp
 
 HEADERS  += mainwindow.h \
     carblock.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     database.h \
     helpdialog.h \
     serviceblock.h \
-    reportdialog.h
+    reportdialog.h \
+    oildialog.h
 
 FORMS    += mainwindow.ui \
     carblock.ui \
@@ -48,7 +50,8 @@ FORMS    += mainwindow.ui \
     noteblock.ui \
     helpdialog.ui \
     serviceblock.ui \
-    reportdialog.ui
+    reportdialog.ui \
+    oildialog.ui
 
 RESOURCES += \
     resources.qrc
