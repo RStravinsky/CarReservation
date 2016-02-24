@@ -120,7 +120,7 @@ void ReportDialog::populateTable(QTextCursor *cursor)
     QTextBlockFormat blockFormat;
     cursor->insertHtml("<hr>");
 
-    historyModel->setQuery(QString("SELECT idHistory, Name, Surname, Begin, End, Destination, Target, Distance FROM sigmacarstest.history WHERE idCar = %1 AND "
+    historyModel->setQuery(QString("SELECT idHistory, Name, Surname, Begin, End, Destination, Target, Distance FROM history WHERE idCar = %1 AND "
                                    "End >= \"%2\" AND End <= \"%3\" ORDER BY End ASC;").arg(idCar).arg(ui->beginDateTimeEdit->dateTime().toString("yyyy-MM-dd hh:mm:ss")).arg(ui->endDateTimeEdit->dateTime().toString("yyyy-MM-dd hh:mm:ss"))
                             );
 
