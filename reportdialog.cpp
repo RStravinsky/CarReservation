@@ -11,6 +11,15 @@ ReportDialog::ReportDialog(int idC, QWidget *parent) :
     historyModel = new QSqlQueryModel(this);
     reportTitle = new QSqlQueryModel(this);
 
+    QSqlQueryModel * windTitle = new QSqlQueryModel(this);
+    windTitle->setQuery(QString("SELECT Brand, Model, LicensePlate,Oil FROM car WHERE idCar = %1").arg(idCar));
+    this->setWindowTitle( QString("Eksport PDF - ")
+                          + windTitle->data(windTitle->index(windTitle->rowCount()-1,0)).toString() + QString(" ")
+                          + windTitle->data(windTitle->index(windTitle->rowCount()-1,1)).toString() + QString(" - ")
+                          + windTitle->data(windTitle->index(windTitle->rowCount()-1,2)).toString()
+                          );
+    delete windTitle;
+
     QDate initDate;
     initDate.setDate(QDate::currentDate().year(), QDate::currentDate().month(), 1);
 
@@ -45,8 +54,6 @@ QTextTableFormat ReportDialog::tableFormat(TabFormat format)
                << QTextLength(QTextLength::PercentageLength, 18) << QTextLength(QTextLength::PercentageLength, 4);
 
         tableFormat.setColumnWidthConstraints(widths);
-
-
     }
 
     if(format == TabFormat::Header) {
@@ -57,7 +64,6 @@ QTextTableFormat ReportDialog::tableFormat(TabFormat format)
         tableFormat.setTopMargin(10);
         tableFormat.setBottomMargin(0);
         tableFormat.setBorder(0);
-
 
         QVector<QTextLength> widths;
         widths << QTextLength(QTextLength::PercentageLength, 10) << QTextLength(QTextLength::PercentageLength, 45) << QTextLength(QTextLength::PercentageLength, 45);
@@ -108,7 +114,6 @@ void ReportDialog::addHeaderToDocument(QTextDocument *document,QTextCursor *curs
     QTextCharFormat charFormat2;
     charFormat2.setFont(QFont("Calibri", 8));
     cursor->insertText(headerText, charFormat2);
-
 }
 
 void ReportDialog::populateTable(QTextCursor *cursor)
@@ -186,7 +191,6 @@ void ReportDialog::populatePDF()
     document.print(&printer);
     QMessageBox::information( this, "Informacja", "Wyeksportowano do pliku:\n" + pdfFile );
     QDesktopServices::openUrl(pdfFile);
-
 }
 
 void ReportDialog::on_cancelButton_clicked()
@@ -196,12 +200,9 @@ void ReportDialog::on_cancelButton_clicked()
 
 void ReportDialog::on_exportButton_clicked()
 {
-    if(Database::connectToDatabase("rezerwacja","rezerwacja"))
+    if(Database::connectToDatabase())
         populatePDF();
-    else {
-        Database::closeDatabase();
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-    }
+    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
 }
 
 void ReportDialog::setCalendarColor(QCalendarWidget *calendarWidget,QColor color)

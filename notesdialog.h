@@ -7,6 +7,7 @@
 #include <QtSql>
 #include <QScrollBar>
 #include <QDebug>
+#include "database.h"
 
 namespace Ui {
 class NotesDialog;

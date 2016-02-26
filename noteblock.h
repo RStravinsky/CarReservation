@@ -5,6 +5,7 @@
 #include <QDateTime>
 #include <QtSql>
 #include <QMessageBox>
+#include "database.h"
 
 namespace Ui {
 class NoteBlock;
@@ -27,6 +28,7 @@ private:
     bool isAdded;
     bool isRead;
     bool eventFilter(QObject *obj, QEvent *event);
+    bool showMsgBeforeDelete();
 
 signals:
     void noteDeleted();

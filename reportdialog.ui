@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>266</width>
+    <width>350</width>
     <height>177</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>266</width>
+    <width>350</width>
     <height>177</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>266</width>
+    <width>350</width>
     <height>177</height>
    </size>
   </property>
@@ -32,12 +32,34 @@
   <property name="styleSheet">
    <string notr="true">QDialog {
 background-color: rgb(255, 255, 255);
-}</string>
+}
+
+
+QMessageBox QPushButton:hover {
+border-radius: 5px;
+background: rgb(255,140,0);
+}
+
+QMessageBox QPushButton{
+color: white;
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));
+min-height: 30px;
+min-width: 70px;
+}
+
+QMessageBox QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(255,105,0);
+}
+</string>
   </property>
   <widget class="QPushButton" name="exportButton">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>230</x>
      <y>130</y>
      <width>105</width>
      <height>35</height>
@@ -76,7 +98,7 @@ background: rgb(0,150,0);
   <widget class="QPushButton" name="cancelButton">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>120</x>
      <y>130</y>
      <width>105</width>
      <height>35</height>
@@ -115,9 +137,9 @@ background: rgb(255,50,50);
   <widget class="QDateTimeEdit" name="beginDateTimeEdit">
    <property name="geometry">
     <rect>
-     <x>50</x>
+     <x>60</x>
      <y>45</y>
-     <width>205</width>
+     <width>271</width>
      <height>31</height>
     </rect>
    </property>
@@ -134,9 +156,9 @@ background: rgb(255,50,50);
   <widget class="QDateTimeEdit" name="endDateTimeEdit">
    <property name="geometry">
     <rect>
-     <x>50</x>
+     <x>60</x>
      <y>85</y>
-     <width>205</width>
+     <width>271</width>
      <height>31</height>
     </rect>
    </property>

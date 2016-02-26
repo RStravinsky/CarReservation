@@ -32,7 +32,8 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QMessageBox QPushButton:hover {
+   <string notr="true">
+QMessageBox QPushButton:hover {
 border-radius: 5px;
 background: rgb(255,140,0);
 }
@@ -50,7 +51,8 @@ QMessageBox QPushButton:pressed {
 color: white;
 border-radius: 5px;
 background: rgb(255,105,0);
-}</string>
+}
+</string>
   </property>
   <widget class="QLabel" name="lblStatus">
    <property name="geometry">

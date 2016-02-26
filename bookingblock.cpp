@@ -41,12 +41,15 @@ QString BookingBlock::getName()
 
 void BookingBlock::on_pushButtonDelete_clicked()
 {
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+    if(Database::connectToDatabase()) {
+
+        if(!showMsgBeforeDelete())
+                return;
+
         QSqlQuery qry;
         qry.prepare("DELETE FROM booking WHERE idBooking=:_idBooking");
         qry.bindValue(":_idBooking", idBooking);
         bool isExecuted = qry.exec();
-        Database::closeDatabase();
         if( !isExecuted )
             QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
         else {
@@ -54,8 +57,41 @@ void BookingBlock::on_pushButtonDelete_clicked()
             emit refresh();
         }
     }
-    else {
-        Database::closeDatabase();
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-    }
+    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+}
+
+bool BookingBlock::showMsgBeforeDelete()
+{
+    QMessageBox msgBox(QMessageBox::Question, tr("Usuwanie!"), tr("<font face=""Calibri"" size=""3"" color=""gray"">Czy na pewno chcesz anulować rezerwację?</font>"), QMessageBox::Yes | QMessageBox::No );
+
+    msgBox.setStyleSheet("QMessageBox {background: white;}"
+                         "QPushButton:hover {"
+                         "border-radius: 5px;"
+                         "background: rgb(255,140,0);"
+                         "}"
+                         "QPushButton{"
+                         "color: white;"
+                         "border-radius: 5px;"
+                         "background: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+                         "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                         "min-width: 70px;"
+                         "min-height: 30px;"
+                         "font-family: Calibri;"
+                         "font-size: 12;"
+                         "font-weight: bold;"
+                         "}"
+                         "QPushButton:pressed {"
+                         "color: white;"
+                         "border-radius: 5px;"
+                         "background: rgb(255,105,0);"
+                         "}"
+                         );
+
+    msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
+    msgBox.setButtonText(QMessageBox::Yes, tr("Tak"));
+    msgBox.setButtonText(QMessageBox::No, tr("Nie"));
+    if (msgBox.exec() == QMessageBox::No)
+        return false;
+
+    return true;
 }

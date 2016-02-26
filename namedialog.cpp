@@ -18,7 +18,6 @@ NameDialog::NameDialog(QWidget *parent) :
     QRegExp rx("^\\w+$");
     ui->lineEditName->setValidator(new QRegExpValidator(rx, this));
     ui->lineEditSurname->setValidator(new QRegExpValidator(rx, this));
-
 }
 
 NameDialog::~NameDialog()
@@ -91,9 +90,7 @@ void NameDialog::setCompleters()
     ui->lineEditName->setCompleter(nameCompleter);
     ui->lineEditSurname->setCompleter(surnameCompleter);
     ui->lineEditDestination->setCompleter(destinationCompleter);
-
 }
-
 
 QString NameDialog::scrollBarStylesheet()
 {

@@ -14,13 +14,10 @@ private:
 public:
     explicit Database(QObject *parent = 0);
     static QSqlDatabase getDatabase() {return sqlDatabase;}
-    static bool connectToDatabase(QString login, QString password);
-    static void closeDatabase();
-
-signals:
-
-public slots:
-
+    static bool connectToDatabase();
+    static void purgeDatabase();
+    static void setParameters(const QString &hostname, int port, const QString &database, const QString &user, const QString &password);
+    static QString returnHostname() {return sqlDatabase.hostName();}
 };
 
 #endif // DATABASE_H

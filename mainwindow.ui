@@ -57,6 +57,7 @@ width: 0px;
 height: 0px;
 }
 
+
 QMessageBox QPushButton:hover {
 border-radius: 5px;
 background: rgb(255,140,0);
@@ -76,7 +77,6 @@ color: white;
 border-radius: 5px;
 background: rgb(255,105,0);
 }
-
 
 
 </string>
@@ -115,7 +115,7 @@ border-bottom-left-radius:10px;
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>16</y>
+       <y>20</y>
        <width>791</width>
        <height>61</height>
       </rect>
@@ -201,7 +201,16 @@ color: white</string>
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
+  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

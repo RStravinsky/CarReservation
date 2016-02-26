@@ -15,6 +15,7 @@
 #include "database.h"
 #include "serviceblock.h"
 #include "reportdialog.h"
+#include "oildialog.h"
 
 namespace Ui {
 class CarBlock;
@@ -57,6 +58,8 @@ private slots:
 
     void on_btnPDF_clicked();
 
+    void on_btnOil_clicked();
+
 signals:
     void carDeleted(bool isCopyEnable);
     void carAdded(bool isCopyEnable);
@@ -66,10 +69,12 @@ signals:
     void changeStatusBar(QString,int timeout = 0);
 
 private:
+    int * wsk;
     Ui::CarBlock *ui;
     BookingDialog * bookingDialog{nullptr};
     ServiceBlock * serviceBlock{nullptr};
     ReportDialog * reportDialog{nullptr};
+    OilDialog * oilDialog{nullptr};
     QSqlQueryModel * bookingTable{nullptr};
     QSqlQueryModel * carTable{nullptr};
     int idCar;

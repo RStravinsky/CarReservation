@@ -3,9 +3,7 @@
 
 #define UPDATE_TIME 30000
 
-BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, int id, int vMode,  QWidget *parent) :
-    bookingTable(bookTable),
-    carTable(cTable),
+BookingDialog::BookingDialog(int id, int vMode,  QWidget *parent) :
     idCar(id),
     viewMode(static_cast<ViewMode>(vMode)),
     QDialog(parent),
@@ -31,11 +29,11 @@ BookingDialog::BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, 
                           + windTitle->data(windTitle->index(windTitle->rowCount()-1,1)).toString() + QString(" - ")
                           + windTitle->data(windTitle->index(windTitle->rowCount()-1,2)).toString()
                           );
+    delete windTitle;
 
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(onTimerOverflow()));
     connect(this, SIGNAL(bookedCar()), this, SLOT(updateView()),Qt::QueuedConnection);
-    connect(ui->calendarWidget,SIGNAL(selectionChanged()),this,SLOT(updateView()));
     onTimerOverflow();
 
     isOpen = true;
@@ -135,7 +133,6 @@ void BookingDialog::loadBlock(int idx)
                                                                     carReservations->data(carReservations->index(idx,6)).toString() , carReservations->data(carReservations->index(idx,3)).toDateTime().time().toString("hh:mm"), carReservations->data(carReservations->index(idx,4)).toDateTime().time().toString("hh:mm"))));
 
             connect(blockVector.back(),SIGNAL(refresh()),this,SLOT(updateView()));
-
         }
     }
     else if(viewMode == ViewMode::History) {
@@ -160,7 +157,6 @@ void BookingDialog::loadBlock(int idx)
             else
                 blockVector.emplace_back(std::move(new BookingBlock(-1,statusHistory->data(statusHistory->index(idx,1)).toString() + QString(" ") + statusHistory->data(statusHistory->index(idx,2)).toString(),
                                                                     statusHistory->data(statusHistory->index(idx,6)).toString(),statusHistory->data(statusHistory->index(idx,3)).toDateTime().time().toString("hh:mm"), statusHistory->data(statusHistory->index(idx,4)).toDateTime().time().toString("hh:mm"), true, false)));
-
         }
 
     }
@@ -178,12 +174,7 @@ void BookingDialog::setCalendarColor(QCalendarWidget *calendarWidget,QColor colo
 
 void BookingDialog::on_calendarWidget_clicked(const QDate &date)
 {
-    if(Database::getDatabase().isOpen()) {
-        Database::closeDatabase();
-        //qDebug() << "Close database" << endl;
-    }
-
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+    if(Database::connectToDatabase()) {
 
         carReservations->setQuery(QString("SELECT * FROM booking WHERE idCar = %1").arg(idCar));
         statusHistory->setQuery(QString("SELECT * FROM history WHERE idCar = %1").arg(idCar));
@@ -206,14 +197,11 @@ void BookingDialog::on_calendarWidget_clicked(const QDate &date)
         for(auto pos = blockVector.begin(); pos != blockVector.end(); ++pos)
             scrollLayout->addWidget(*pos);
         ui->scrollArea->setWidget(scrollWidget);
+        ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
 
         fillCalendar();
-        Database::closeDatabase();
     }
-    else {
-        Database::closeDatabase();
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-    }
+    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
 }
 
 void BookingDialog::clearScrollArea()
@@ -247,22 +235,22 @@ bool BookingDialog::isDateFree()
         modelEnd = bookedDates->data(bookedDates->index(i,1)).toDateTime();
 
         if(ui->dateTimeEditBegin->dateTime() >= modelBegin && ui->dateTimeEditEnd->dateTime() <= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany1.");
             return false;
         }
 
         if(ui->dateTimeEditBegin->dateTime() <= modelBegin && ui->dateTimeEditEnd->dateTime() >= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany2.");
             return false;
         }
 
-        if(ui->dateTimeEditBegin->dateTime() <= modelBegin && ui->dateTimeEditEnd->dateTime() >= modelBegin && ui->dateTimeEditEnd->dateTime() <= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
+        if(ui->dateTimeEditBegin->dateTime()<= modelBegin && ui->dateTimeEditEnd->dateTime() >= modelBegin && ui->dateTimeEditEnd->dateTime() <= modelEnd) {
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany3.");
             return false;
         }
 
         if(ui->dateTimeEditBegin->dateTime() >= modelBegin && ui->dateTimeEditBegin->dateTime() <= modelEnd && ui->dateTimeEditEnd->dateTime() >= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany4.");
             return false;
         }
     }
@@ -271,9 +259,9 @@ bool BookingDialog::isDateFree()
 
 void BookingDialog::on_btnReserve_clicked()
 {
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
-        if(isDateFree()) {
+    if(Database::connectToDatabase()) {
 
+        if(isDateFree()) {
             NameDialog n;
             timer->stop();
             if(n.exec() == NameDialog::Accepted) {
@@ -288,8 +276,7 @@ void BookingDialog::on_btnReserve_clicked()
                     qry.bindValue(":_End", ui->dateTimeEditEnd->dateTime());
                     qry.bindValue(":_idCar",idCar);
                     qry.bindValue(":_Destination",n.getDestination());
-                    bool isExecuted = qry.exec();
-                    if( !isExecuted )
+                    if(!qry.exec())
                         QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
                     else
                         QMessageBox::information(this,"Informacja","Dodano!");
@@ -299,38 +286,39 @@ void BookingDialog::on_btnReserve_clicked()
                 emit bookedCar();
             }
         }       
-        Database::closeDatabase();
     }
-    else {
-        Database::closeDatabase();
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-    }
+    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+
 }
 
 void BookingDialog::clearCalendarFormat()
 {
-    QMap<QDate,QTextCharFormat>::iterator itr;
     QTextCharFormat format;
     format.setBackground(QBrush(QColor(255,255,255,255), Qt::SolidPattern));
 
-   for(auto itr : ui->calendarWidget->dateTextFormat().keys())
+    for(auto itr : ui->calendarWidget->dateTextFormat().keys())
         ui->calendarWidget->setDateTextFormat(itr, format);
 }
 
 void BookingDialog::on_btnShowHistory_clicked()
 {
-    ui->lblCheck->setGeometry(239,187,21,18);
-    viewMode = ViewMode::History;
-    updateView();
+    if(Database::connectToDatabase()) {
+        ui->lblCheck->setGeometry(239,187,21,18);
+        viewMode = ViewMode::History;
+        updateView();
+    }
+    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
 }
 
 void BookingDialog::on_btnShowReservation_clicked()
 {
-    ui->lblCheck->setGeometry(13,187,21,18);
-    viewMode = ViewMode::Booked;
-    updateView();
+    if(Database::connectToDatabase()) {
+        ui->lblCheck->setGeometry(13,187,21,18);
+        viewMode = ViewMode::Booked;
+        updateView();
+    }
+    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
 }
-
 
 void BookingDialog::on_pushButton_clicked()
 {

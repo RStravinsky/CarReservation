@@ -16,6 +16,7 @@
 #include "carblock.h"
 #include "database.h"
 #include "helpdialog.h"
+#include "dbconfigdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -61,6 +62,7 @@ private:
     QString password;
     bool copyEnable{false};
     QPushButton * backupButton{nullptr};
+    QPushButton * dbConfigButton{nullptr};
 
     QSystemTrayIcon * trayIcon{nullptr};
     QAction *minimizeAction{nullptr};
@@ -82,6 +84,7 @@ private:
     void createUpdateButton();
     void createHelpButton();
     void createBackupButton();
+    void createDBConfigButton();
 
     void createBackup();
     void setBackupButtonVisible();

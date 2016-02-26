@@ -233,7 +233,7 @@ background: rgb(255,105,0);
   <widget class="QLabel" name="lblInsuranceImage">
    <property name="geometry">
     <rect>
-     <x>483</x>
+     <x>500</x>
      <y>50</y>
      <width>31</width>
      <height>31</height>
@@ -255,7 +255,7 @@ background: rgb(255,105,0);
   <widget class="QLabel" name="lblInspectionImage">
    <property name="geometry">
     <rect>
-     <x>483</x>
+     <x>500</x>
      <y>95</y>
      <width>31</width>
      <height>31</height>
@@ -277,145 +277,11 @@ background: rgb(255,105,0);
   <widget class="QPushButton" name="btnAddInsurance">
    <property name="geometry">
     <rect>
-     <x>653</x>
-     <y>55</y>
-     <width>31</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">border:none;</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/images/images/savetodb.png</normaloff>:/images/images/savetodb.png</iconset>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>32</width>
-     <height>32</height>
-    </size>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnAddInspection">
-   <property name="geometry">
-    <rect>
-     <x>653</x>
-     <y>100</y>
-     <width>31</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">border: none;</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/images/images/savetodb.png</normaloff>:/images/images/savetodb.png</iconset>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>32</width>
-     <height>32</height>
-    </size>
-   </property>
-  </widget>
-  <widget class="QDateEdit" name="dateEditInsurance">
-   <property name="geometry">
-    <rect>
-     <x>523</x>
+     <x>673</x>
      <y>52</y>
-     <width>131</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>14</pointsize>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">border: none;
-border-radius: 5px;
-color: gray</string>
-   </property>
-   <property name="buttonSymbols">
-    <enum>QAbstractSpinBox::NoButtons</enum>
-   </property>
-   <property name="showGroupSeparator" stdset="0">
-    <bool>false</bool>
-   </property>
-  </widget>
-  <widget class="QDateEdit" name="dateEditInspection">
-   <property name="geometry">
-    <rect>
-     <x>523</x>
-     <y>97</y>
-     <width>131</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>14</pointsize>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">border: none;
-border-radius: 5px;
-color:gray;</string>
-   </property>
-   <property name="buttonSymbols">
-    <enum>QAbstractSpinBox::NoButtons</enum>
-   </property>
-  </widget>
-  <widget class="QLabel" name="lblNotesImage">
-   <property name="geometry">
-    <rect>
-     <x>270</x>
-     <y>140</y>
      <width>31</width>
-     <height>31</height>
+     <height>27</height>
     </rect>
-   </property>
-   <property name="toolTip">
-    <string>Uwagi</string>
-   </property>
-   <property name="statusTip">
-    <string/>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap resource="resources.qrc">:/images/images/comments.png</pixmap>
-   </property>
-   <property name="scaledContents">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnViewNotes">
-   <property name="geometry">
-    <rect>
-     <x>310</x>
-     <y>140</y>
-     <width>120</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>14</pointsize>
-    </font>
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton:hover {
@@ -438,7 +304,163 @@ background: rgb(230,230,230);
 </string>
    </property>
    <property name="text">
-    <string>Podglad</string>
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/savetodb.png</normaloff>:/images/images/savetodb.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnAddInspection">
+   <property name="geometry">
+    <rect>
+     <x>673</x>
+     <y>97</y>
+     <width>31</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(210,210,210);
+}
+
+QPushButton{
+color: rgb(70,70,70);
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(230,230,230), stop: 0.7 rgb(210,210,210));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(230,230,230);
+}
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/savetodb.png</normaloff>:/images/images/savetodb.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QDateEdit" name="dateEditInsurance">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>52</y>
+     <width>131</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border: none;
+border-radius: 5px;
+color:gray;</string>
+   </property>
+   <property name="buttonSymbols">
+    <enum>QAbstractSpinBox::NoButtons</enum>
+   </property>
+   <property name="showGroupSeparator" stdset="0">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QDateEdit" name="dateEditInspection">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>97</y>
+     <width>131</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border: none;
+border-radius: 5px;
+color:gray;</string>
+   </property>
+   <property name="buttonSymbols">
+    <enum>QAbstractSpinBox::NoButtons</enum>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnViewNotes">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>140</y>
+     <width>71</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Uwagi</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(210,210,210);
+}
+
+QPushButton{
+color: rgb(70,70,70);
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(230,230,230), stop: 0.7 rgb(210,210,210));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(230,230,230);
+}
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/comments.png</normaloff>:/images/images/comments.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>26</width>
+     <height>26</height>
+    </size>
    </property>
   </widget>
   <widget class="QLineEdit" name="lblLicensePlate">
@@ -580,13 +602,30 @@ background: rgb(230,230,230);
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>100</y>
+     <y>97</y>
      <width>31</width>
      <height>27</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">border:none;</string>
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(210,210,210);
+}
+
+QPushButton{
+color: rgb(70,70,70);
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(230,230,230), stop: 0.7 rgb(210,210,210));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(230,230,230);
+}
+</string>
    </property>
    <property name="text">
     <string/>
@@ -606,13 +645,30 @@ background: rgb(230,230,230);
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>55</y>
+     <y>52</y>
      <width>31</width>
      <height>27</height>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">border:none;</string>
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(210,210,210);
+}
+
+QPushButton{
+color: rgb(70,70,70);
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(230,230,230), stop: 0.7 rgb(210,210,210));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(230,230,230);
+}
+</string>
    </property>
    <property name="text">
     <string/>
@@ -669,37 +725,12 @@ background: rgb(230,230,230);
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="lblRepairImages">
-   <property name="geometry">
-    <rect>
-     <x>480</x>
-     <y>140</y>
-     <width>31</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>Naprawy</string>
-   </property>
-   <property name="statusTip">
-    <string/>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap resource="resources.qrc">:/images/images/tools.png</pixmap>
-   </property>
-   <property name="scaledContents">
-    <bool>true</bool>
-   </property>
-  </widget>
   <widget class="QPushButton" name="btnViewRepairs">
    <property name="geometry">
     <rect>
-     <x>520</x>
+     <x>430</x>
      <y>140</y>
-     <width>120</width>
+     <width>71</width>
      <height>30</height>
     </rect>
    </property>
@@ -708,6 +739,9 @@ background: rgb(230,230,230);
      <family>Calibri</family>
      <pointsize>14</pointsize>
     </font>
+   </property>
+   <property name="toolTip">
+    <string>Naprawy</string>
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton:hover {
@@ -730,7 +764,17 @@ background: rgb(230,230,230);
 </string>
    </property>
    <property name="text">
-    <string>Podglad</string>
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/tools.png</normaloff>:/images/images/tools.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>26</width>
+     <height>26</height>
+    </size>
    </property>
   </widget>
   <widget class="QPushButton" name="btnIsVisible">
@@ -788,9 +832,9 @@ background: rgb(230,230,230);
   <widget class="QPushButton" name="btnPDF">
    <property name="geometry">
     <rect>
-     <x>650</x>
+     <x>510</x>
      <y>140</y>
-     <width>31</width>
+     <width>71</width>
      <height>30</height>
     </rect>
    </property>
@@ -829,6 +873,64 @@ background: rgb(230,230,230);
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/images/images/report.png</normaloff>:/images/images/report.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>23</width>
+     <height>23</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnOil">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>140</y>
+     <width>70</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="toolTip">
+    <string>Olej</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(210,210,210);
+}
+
+QPushButton{
+color: rgb(70,70,70);
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(230,230,230), stop: 0.7 rgb(210,210,210));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(230,230,230);
+}
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/oil.png</normaloff>:/images/images/oil.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>27</width>
+     <height>27</height>
+    </size>
    </property>
   </widget>
  </widget>

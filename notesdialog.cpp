@@ -9,9 +9,7 @@ NotesDialog::NotesDialog(int idN, int idC, QWidget *parent) :
 {
     ui->setupUi(this);
     updateView();
-
     if(idNotes >= 0) selectNote();
-
 }
 
 NotesDialog::~NotesDialog()
@@ -52,7 +50,7 @@ void NotesDialog::updateView()
        connect(noteBlockVector[i], SIGNAL(noteDblClicked()), this, SLOT(updateView()));
     }
 
-    noteBlockVector.emplace_back(std::move(new NoteBlock(idCar,0, QString("Wpisz treść uwagi"), QString("Admin"), QString("Admin"), QDateTime::currentDateTime(), false, true)));
+    noteBlockVector.emplace_back(std::move(new NoteBlock(idCar,0, QString(""), QString("Admin"), QString("Admin"), QDateTime::currentDateTime(), false, true)));
     connect(noteBlockVector.back(),SIGNAL(noteAdded()),this,SLOT(updateView()));
 
     scrollWidget = new QWidget(ui->scrollArea);
@@ -73,5 +71,4 @@ void NotesDialog::selectNote()
                                                                                             ui->scrollArea->verticalScrollBar()->setValue(n->y());
                                                                                         }
                                                                                       });
-
 }

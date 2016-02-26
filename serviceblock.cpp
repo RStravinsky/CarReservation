@@ -40,20 +40,12 @@ bool ServiceBlock::isOpen;
 
 void ServiceBlock::on_lvServices_clicked(const QModelIndex &index)
 {
-    if(Database::getDatabase().isOpen())
+    if(Database::connectToDatabase()) {
+        serviceTable = new QSqlQueryModel(this);
+        serviceTable->setQuery(QString("SELECT * FROM service WHERE idCar = %1 ORDER BY EventDate DESC;").arg(idCar));
         loadData(index);
-    else {
-        if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
-            serviceTable = new QSqlQueryModel(this);
-            serviceTable->setQuery(QString("SELECT * FROM service WHERE idCar = %1 ORDER BY EventDate DESC;").arg(idCar));
-            loadData(index);
-            Database::closeDatabase();
-        }
-        else {
-            Database::closeDatabase();
-            QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-        }
     }
+    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
 }
 
 void ServiceBlock::loadData(const QModelIndex &index)
@@ -89,9 +81,7 @@ void ServiceBlock::clearWidgets()
 
 void ServiceBlock::updateView()
 {
-    if(Database::getDatabase().isOpen()) Database::closeDatabase();
-
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+    if(Database::connectToDatabase()) {
         nameList.clear();
         ui->lvServices->clear();
 
@@ -107,18 +97,14 @@ void ServiceBlock::updateView()
         ui->lvServices->item(0)->setSelected(true);
         ui->lvServices->setFocus();
         ui->pbDelete->setVisible(false);
+    }
 
-        Database::closeDatabase();
-    }
-    else {
-        Database::closeDatabase();
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-    }
+    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
 }
 
 void ServiceBlock::on_pbSave_clicked()
 {
-     if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+     if(Database::connectToDatabase()) {
          // insert new repair
          if(ui->lvServices->currentIndex().data(Qt::DisplayRole ).toString() == "Dodaj naprawę ...") {
              QSqlQuery qry;
@@ -126,7 +112,8 @@ void ServiceBlock::on_pbSave_clicked()
                                          "BeginDate,EndDate,Cost,Notes,idCar)"
                           "VALUES(:_Name,:_ComponentCategory,:_EventDate,:_GuaranteeDate,"
                           ":_BeginDate,:_EndDate,:_Cost,:_Notes,:_idCar)");
-             qry.bindValue(":_Name", ui->leName->text());
+
+             if(ui->leName->text()!="") qry.bindValue(":_Name", ui->leName->text());
              qry.bindValue(":_ComponentCategory", ui->cbCategory->currentText());
              qry.bindValue(":_EventDate", ui->deEvent->date());
              qry.bindValue(":_GuaranteeDate", ui->deGuarantee->date());
@@ -135,9 +122,7 @@ void ServiceBlock::on_pbSave_clicked()
              qry.bindValue(":_Cost", ui->leCost->text() );
              qry.bindValue(":_Notes", ui->teNotes->toPlainText());
              qry.bindValue(":_idCar", idCar);
-             bool isExecuted = qry.exec();
-             Database::closeDatabase();
-             if( !isExecuted )
+             if(!qry.exec())
                  QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
              else {
                  QMessageBox::information(this,"Informacja","Dodano!");
@@ -153,7 +138,7 @@ void ServiceBlock::on_pbSave_clicked()
              qry.prepare("UPDATE service SET Name=:_Name,ComponentCategory=:_ComponentCategory,"
                          "EventDate=:_EventDate,GuaranteeDate=:_GuaranteeDate,"
                          "BeginDate=:_BeginDate,EndDate=:_EndDate,Cost=:_Cost,Notes=:_Notes WHERE idService=:_idS");
-             qry.bindValue(":_Name", ui->leName->text());
+             if(ui->leName->text()!="") qry.bindValue(":_Name", ui->leName->text());
              qry.bindValue(":_ComponentCategory", ui->cbCategory->currentText());
              qry.bindValue(":_EventDate", ui->deEvent->date());
              qry.bindValue(":_GuaranteeDate", ui->deGuarantee->date());
@@ -162,9 +147,7 @@ void ServiceBlock::on_pbSave_clicked()
              qry.bindValue(":_Cost", ui->leCost->text() );
              qry.bindValue(":_Notes", ui->teNotes->toPlainText());
              qry.bindValue(":_idS", idService);
-             bool isExecuted = qry.exec();
-             Database::closeDatabase();
-             if( !isExecuted )
+             if( !qry.exec() )
                  QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
              else {
                  QMessageBox::information(this,"Informacja","Zaktualizowano!");
@@ -173,21 +156,16 @@ void ServiceBlock::on_pbSave_clicked()
              }
          }
      }
-     else {
-         Database::closeDatabase();
-         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-     }
+     else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
 }
 
 void ServiceBlock::on_pbDelete_clicked()
 {
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+    if(Database::connectToDatabase()) {
         QSqlQuery qry;
         qry.prepare("DELETE FROM service WHERE idService=:_idS");
         qry.bindValue(":_idS", idService);
-        bool isExecuted = qry.exec();
-        Database::closeDatabase();
-        if( !isExecuted )
+        if( !qry.exec() )
             QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
         else {
             QMessageBox::information(this,"Informacja","Usunieto!");
@@ -195,9 +173,6 @@ void ServiceBlock::on_pbDelete_clicked()
             emit deleted();
         }
     }
-    else {
-        Database::closeDatabase();
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-    }
+    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
 }
 

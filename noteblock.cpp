@@ -33,7 +33,6 @@ NoteBlock::NoteBlock(int idC, int idN, QString contents, QString name, QString s
         ui->btnRemove->setIcon(QIcon(":/images/images/add.png"));
         ui->txtEditContents->setFocus();
     }
-
 }
 
 NoteBlock::~NoteBlock()
@@ -43,26 +42,26 @@ NoteBlock::~NoteBlock()
 
 bool NoteBlock::eventFilter(QObject *obj, QEvent *event)
 {
-
     if(obj == ui->lblIsRead) {
 
         if (event->type() == QEvent::MouseButtonDblClick) {
 
-            QSqlQuery qry;
-            qry.prepare("UPDATE notes SET isRead=1 WHERE idNotes = :_idNotes;");
-            qry.bindValue(":_idNotes", idNotes);
+            if(Database::connectToDatabase()) {
+                QSqlQuery qry;
+                qry.prepare("UPDATE notes SET isRead=1 WHERE idNotes = :_idNotes;");
+                qry.bindValue(":_idNotes", idNotes);
 
-            if(!qry.exec()) {
-                return false;
+                if(!qry.exec()) {
+                    return false;
+                }
+                else {
+                    emit noteDblClicked();
+                    return true;;
+                }
             }
-            else {
-                emit noteDblClicked();
-                return true;;
-            }
+            else  QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         }
-
     }
-
     return false;
 }
 
@@ -73,40 +72,81 @@ void NoteBlock::setSelection()
 
 void NoteBlock::on_btnRemove_clicked()
 {
+    if(Database::connectToDatabase()) {
+        if(!isAdded) {
 
-    if(!isAdded) {
-        QSqlQuery qry;
-        qry.prepare("DELETE FROM notes WHERE idNotes=:_id");
-        qry.bindValue(":_id", idNotes);
-        if( !qry.exec() )
-            QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodła się.\nERROR: "+qry.lastError().text()+"");
+            if(!showMsgBeforeDelete())
+                    return;
+
+            QSqlQuery qry;
+            qry.prepare("DELETE FROM notes WHERE idNotes=:_id");
+            qry.bindValue(":_id", idNotes);
+            if(!qry.exec())
+                QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodła się.\nERROR: "+qry.lastError().text()+"");
+            else {
+                QMessageBox::information(this,"Informacja","Usunieto!");
+                emit noteDeleted();
+            }
+        }
         else {
-            QMessageBox::information(this,"Informacja","Usunieto!");
-            emit noteDeleted();
+            QSqlQuery qry;
+            QDateTime dateOfAdd = QDateTime::currentDateTime();
+            ui->lblDate->setText(dateOfAdd.toString());
+
+            qry.prepare("INSERT INTO notes(Contents,Name,Surname,Datetime,isRead,idCar)"
+                         "VALUES(:_Contents,:_Name,:_Surname,:_Datetime,:_isRead,:_idCar)"
+                        );
+
+            qry.bindValue(":_Contents", ui->txtEditContents->toPlainText());
+            qry.bindValue(":_Name", ui->lblNameSurname->text());
+            qry.bindValue(":_Surname", ui->lblNameSurname->text());
+            qry.bindValue(":_Datetime", dateOfAdd);
+            qry.bindValue(":_isRead", 1);
+            qry.bindValue(":_idCar", idCar);
+
+            if(!qry.exec())
+                QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR "+qry.lastError().text()+"");
+            else {
+                QMessageBox::information(this,"Informacja","Dodano!");
+                emit noteAdded();
+            }
         }
     }
-    else {
-        QSqlQuery qry;
-        QDateTime dateOfAdd = QDateTime::currentDateTime();
-        ui->lblDate->setText(dateOfAdd.toString());
+    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+}
 
-        qry.prepare("INSERT INTO notes(Contents,Name,Surname,Datetime,isRead,idCar)"
-                     "VALUES(:_Contents,:_Name,:_Surname,:_Datetime,:_isRead,:_idCar)"
-                    );
+bool NoteBlock::showMsgBeforeDelete()
+{
+    QMessageBox msgBox(QMessageBox::Question, tr("Usuwanie!"), tr("<font face=""Calibri"" size=""3"" color=""gray"">Czy na pewno chcesz usunąć wiadomość?</font>"), QMessageBox::Yes | QMessageBox::No );
 
-        qry.bindValue(":_Contents", ui->txtEditContents->toPlainText());
-        qry.bindValue(":_Name", ui->lblNameSurname->text());
-        qry.bindValue(":_Surname", ui->lblNameSurname->text());
-        qry.bindValue(":_Datetime", dateOfAdd);
-        qry.bindValue(":_isRead", 1);
-        qry.bindValue(":_idCar", idCar);
+    msgBox.setStyleSheet("QMessageBox {background: white;}"
+                         "QPushButton:hover {"
+                         "border-radius: 5px;"
+                         "background: rgb(255,140,0);"
+                         "}"
+                         "QPushButton{"
+                         "color: white;"
+                         "border-radius: 5px;"
+                         "background: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+                         "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                         "min-width: 70px;"
+                         "min-height: 30px;"
+                         "font-family: Calibri;"
+                         "font-size: 12;"
+                         "font-weight: bold;"
+                         "}"
+                         "QPushButton:pressed {"
+                         "color: white;"
+                         "border-radius: 5px;"
+                         "background: rgb(255,105,0);"
+                         "}"
+                         );
 
+    msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
+    msgBox.setButtonText(QMessageBox::Yes, tr("Tak"));
+    msgBox.setButtonText(QMessageBox::No, tr("Nie"));
+    if (msgBox.exec() == QMessageBox::No)
+        return false;
 
-        if( !qry.exec() )
-            QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR "+qry.lastError().text()+"");
-        else {
-            QMessageBox::information(this,"Informacja","Dodano!");
-            emit noteAdded();
-        }
-    }
+    return true;
 }

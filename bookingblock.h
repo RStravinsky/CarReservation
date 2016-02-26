@@ -29,6 +29,7 @@ signals:
 private:
     Ui::BookingBlock *ui;
     int idBooking;
+    bool showMsgBeforeDelete();
 };
 
 #endif // BOOKINGBLOCK_H

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OilDialog</class>
+ <widget class="QDialog" name="OilDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>372</width>
+    <height>72</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>372</width>
+    <height>72</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>372</width>
+    <height>72</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string/>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/images/images/oil.png</normaloff>:/images/images/oil.png</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QDialog {background: white;}
+
+
+QMessageBox QPushButton:hover {
+border-radius: 5px;
+background: rgb(255,140,0);
+}
+
+QMessageBox QPushButton{
+color: white;
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));
+min-height: 30px;
+min-width: 70px;
+}
+
+QMessageBox QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(255,105,0);
+}
+</string>
+  </property>
+  <widget class="QLineEdit" name="leOil">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>20</y>
+     <width>261</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::ClickFocus</enum>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="placeholderText">
+    <string>Kolejna wymiana oleju</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnAddOil">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>23</y>
+     <width>31</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(210,210,210);
+}
+
+QPushButton{
+color: rgb(70,70,70);
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(230,230,230), stop: 0.7 rgb(210,210,210));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(230,230,230);
+}
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/images/savetodb.png</normaloff>:/images/images/savetodb.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>32</width>
+     <height>32</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblOilImage">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::StrongFocus</enum>
+   </property>
+   <property name="toolTip">
+    <string>Przebieg</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/images/images/oil.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+ </widget>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

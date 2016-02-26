@@ -25,18 +25,18 @@ class BookingDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit BookingDialog(QSqlQueryModel *bookTable, QSqlQueryModel *cTable, int id, int vMode = ViewMode::Booked, QWidget *parent = 0);
+    explicit BookingDialog(int id, int vMode = ViewMode::Booked, QWidget *parent = 0);
     ~BookingDialog();
     static bool isOpen;
 
 private slots:
-    void on_calendarWidget_clicked(const QDate &date);
     void on_btnReserve_clicked();
     void updateView();
     void onTimerOverflow();
     void on_btnShowHistory_clicked();
     void on_btnShowReservation_clicked();
     void on_pushButton_clicked();
+    void on_calendarWidget_clicked(const QDate &date);
 
 signals:
     void bookedCar();

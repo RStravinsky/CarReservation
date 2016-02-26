@@ -27,11 +27,10 @@ CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString lice
         ui->btnAddMileage->setVisible(false);
         ui->lblStatus->setVisible(false);
         ui->btnViewNotes->setVisible(false);
-        ui->lblNotesImage->setVisible(false);
+        ui->btnOil->setVisible(false);
         ui->btnAddLicensePlate->setVisible(false);
         ui->btnAddMileage->setVisible(false);
         ui->lblPersonImage->setVisible(false);
-        ui->lblRepairImages->setVisible(false);
         ui->btnViewRepairs->setVisible(false);
         ui->lblMileage->setReadOnly(false);
         ui->lblCarName->setReadOnly(false);
@@ -52,14 +51,12 @@ CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString lice
     tmp = QDate::currentDate().addDays(7);
 
     if(tmp >= inspectionDate)
-            ui->lblInspectionImage->setPixmap(QPixmap(":/images/images/inspection_warning.png"));
-        else
-            ui->lblInspectionImage->setPixmap(QPixmap(":/images/images/inspection.png"));
+        ui->lblInspectionImage->setPixmap(QPixmap(":/images/images/inspection_warning.png"));
+    else ui->lblInspectionImage->setPixmap(QPixmap(":/images/images/inspection.png"));
 
-        if(tmp >= insuranceDate)
-            ui->lblInsuranceImage->setPixmap(QPixmap(":/images/images/insurance_warning.png"));
-        else
-            ui->lblInsuranceImage->setPixmap(QPixmap(":/images/images/insurance.png"));
+    if(tmp >= insuranceDate)
+        ui->lblInsuranceImage->setPixmap(QPixmap(":/images/images/insurance_warning.png"));
+    else ui->lblInsuranceImage->setPixmap(QPixmap(":/images/images/insurance.png"));
 
     setStatus(status);
     if(status && isVisible) {
@@ -96,15 +93,14 @@ CarBlock::CarBlock(CarBlock &block, QWidget *parent):
     ui->btnAddInsurance->setVisible(false);
     ui->lblStatus->setVisible(false);
     ui->btnViewNotes->setVisible(false);
-    ui->lblNotesImage->setVisible(false);
     ui->btnAddLicensePlate->setVisible(false);
     ui->btnAddMileage->setVisible(false);
-    ui->lblRepairImages->setVisible(false);
     ui->btnViewRepairs->setVisible(false);
     ui->lblMileage->setReadOnly(false);
     ui->lblCarName->setReadOnly(false);
     ui->lblPersonImage->setVisible(false);
     ui->lblLicensePlate->setReadOnly(false);
+    ui->btnOil->setVisible(false);
     ui->btnPDF->setVisible(false);
 
     ui->lblPhoto->setPixmap(block.carPhotoPath);
@@ -140,7 +136,7 @@ void CarBlock::setAdminPermissions(bool isAdmin)
     if(!isAdmin) {
         ui->lblInspectionImage->setVisible(false);
         ui->lblInsuranceImage->setVisible(false);
-        ui->lblNotesImage->setVisible(false);
+        ui->btnOil->setVisible(false);
         ui->dateEditInspection->setVisible(false);
         ui->dateEditInsurance->setVisible(false);
         ui->btnAddInspection->setVisible(false);
@@ -151,7 +147,6 @@ void CarBlock::setAdminPermissions(bool isAdmin)
         ui->btnRemove->setVisible(false);
         ui->btnAddImage->setVisible(false);
         ui->btnIsVisible->setVisible(false);
-        ui->lblRepairImages->setVisible(false);
         ui->btnViewRepairs->setVisible(false);
         ui->btnPDF->setVisible(false);
         ui->lblCarName->setGeometry(10,0,650,60);
@@ -171,19 +166,15 @@ bool CarBlock::getCarVisible()
 void CarBlock::showNotesDialog(int _idNotes, int _idCar)
 {
     if(_idCar == idCar) {
-        if(Database::getDatabase().isOpen())
-            Database::closeDatabase();
-        if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+        if(Database::connectToDatabase()) {
             emit inProgress();
                 notesDialogPointer = std::shared_ptr<NotesDialog>(new NotesDialog(_idNotes, _idCar));
                 if(notesDialogPointer.use_count() == 1 && notesDialogPointer.get()->exec() == NotesDialog::Rejected){
-                    Database::closeDatabase();
                     if(!(BookingDialog::isOpen || ServiceBlock::isOpen)) emit progressFinished();
                     emit noteClosed();
                 }
         }
         else {
-            Database::closeDatabase();
             QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         }
     }
@@ -191,16 +182,14 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
 
 void CarBlock::on_btnReserve_clicked()
 {
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
-        bookingDialog = new BookingDialog(bookingTable, carTable, idCar);
+    if(Database::connectToDatabase()) {
+        bookingDialog = new BookingDialog(idCar);
         emit inProgress();
         if(bookingDialog->exec()== BookingDialog::Rejected)
             emit progressFinished();
         delete bookingDialog;
-        Database::closeDatabase();
     }
     else {
-        Database::closeDatabase();
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
@@ -210,20 +199,17 @@ void CarBlock::on_btnAddMileage_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+    if(Database::connectToDatabase()) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET Mileage=:_Mileage WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
         qry.bindValue(":_Mileage", ui->lblMileage->text());
-        bool isExecuted = qry.exec();
-        Database::closeDatabase();
-        if( !isExecuted )
-            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się./nERROR: "+qry.lastError().text()+"");
+        if(!qry.exec())
+            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
         else
             QMessageBox::information(this,"Informacja","Zaktualizowano!");
     }
     else {
-        Database::closeDatabase();
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
@@ -235,20 +221,17 @@ void CarBlock::on_btnAddLicensePlate_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+    if(Database::connectToDatabase()) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET LicensePlate=:_LicensePlate WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
         qry.bindValue(":_LicensePlate", ui->lblLicensePlate->text());
-        bool isExecuted = qry.exec();
-        Database::closeDatabase();
-        if( !isExecuted )
-            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się./nERROR: "+qry.lastError().text()+"");
+        if(!qry.exec())
+            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
         else
             QMessageBox::information(this,"Informacja","Zaktualizowano!");
     }
     else {
-        Database::closeDatabase();
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
@@ -260,20 +243,17 @@ void CarBlock::on_btnAddInsurance_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+    if(Database::connectToDatabase()) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET InsuranceDate=:_insuranceDate WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
         qry.bindValue(":_insuranceDate", ui->dateEditInsurance->date());
-        bool isExecuted = qry.exec();
-        Database::closeDatabase();
-        if( !isExecuted )
-            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się./nERROR: "+qry.lastError().text()+"");
+        if(!qry.exec())
+            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
         else
             QMessageBox::information(this,"Informacja","Zaktualizowano!");
     }
     else {
-        Database::closeDatabase();
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
@@ -285,20 +265,17 @@ void CarBlock::on_btnAddInspection_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+    if(Database::connectToDatabase()) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET InspectionDate=:_inspectionDate WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
         qry.bindValue(":_inspectionDate", ui->dateEditInspection->date());
-        bool isExecuted = qry.exec();
-        Database::closeDatabase();
-        if( !isExecuted )
+        if(!qry.exec())
             QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powidoła się.\nERROR: "+qry.lastError().text()+"");
         else
             QMessageBox::information(this,"Informacja","Zaktualizowano!");
     }
     else {
-        Database::closeDatabase();
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
@@ -310,7 +287,7 @@ void CarBlock::on_btnRemove_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+    if(Database::connectToDatabase()) {
         if(!isAddBlock) {
 
             if(!showMsgBeforeDelete())
@@ -319,9 +296,7 @@ void CarBlock::on_btnRemove_clicked()
             QSqlQuery qry;
             qry.prepare("DELETE FROM car WHERE idCar=:_id");
             qry.bindValue(":_id", idCar);
-            bool isExecuted = qry.exec();
-            Database::closeDatabase();
-            if( !isExecuted )
+            if(!qry.exec())
                 QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
             else {
                 QMessageBox::information(this,"Informacja","Usunieto!");
@@ -344,7 +319,6 @@ void CarBlock::on_btnRemove_clicked()
                 qry.bindValue(":_Model", ui->lblCarName->text());
             }
 
-
             qry.bindValue(":_LicensePlate", ui->lblLicensePlate->text());
             qry.bindValue(":_InspectionDate",ui->dateEditInspection->date());
             qry.bindValue(":_InsuranceDate",ui->dateEditInsurance->date());
@@ -354,9 +328,7 @@ void CarBlock::on_btnRemove_clicked()
             if(!carPhotoPath.isEmpty())qry.bindValue(":_PhotoPath",carPhotoPath);
             else qry.bindValue(":_PhotoPath", QString(":/images/images/car.png"));
             qry.bindValue(":_IsVisible", getCarVisible());
-            bool isExecuted = qry.exec();
-            Database::closeDatabase();
-            if( !isExecuted )
+            if(!qry.exec())
                 QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR "+qry.lastError().text()+"");
             else {
                 QMessageBox::information(this,"Informacja","Dodano!");
@@ -365,7 +337,6 @@ void CarBlock::on_btnRemove_clicked()
         }
     }
     else {
-        Database::closeDatabase();
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
@@ -382,7 +353,7 @@ void CarBlock::on_btnAddImage_clicked()
 {
     emit inProgress();
     QString choosenPhotoPath = QFileDialog::getOpenFileName(this, tr("Plik z obrazkiem"),
-                               QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)+"/bez_tytułu.png",
+                               QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),
                                tr("Pliki PNG, JPG (*.jpg *.png)"));
 
     if(choosenPhotoPath.isEmpty())
@@ -418,18 +389,15 @@ QPair<QDate,QDate> CarBlock::getDates()
 
 void CarBlock::updateImagePath()
 {
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+    if(Database::connectToDatabase()) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET PhotoPath=:_PhotoPath WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
         qry.bindValue(":_PhotoPath", carPhotoPath);
-        bool isExecuted = qry.exec();
-        Database::closeDatabase();
-        if( !isExecuted )
+        if(!qry.exec())
             QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powidoła się.\nERROR: "+qry.lastError().text()+"");
     }
     else {
-        Database::closeDatabase();
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
@@ -484,7 +452,7 @@ void CarBlock::on_btnIsVisible_clicked()
 {
     static bool isVisible = isCarVisible;
     if(!isAddBlock) {
-        if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+        if(Database::connectToDatabase()) {
             isVisible = !isVisible;
             setVisibleButton(isVisible);
             QSqlQuery qry;
@@ -492,15 +460,12 @@ void CarBlock::on_btnIsVisible_clicked()
             qry.bindValue(":_id", idCar);
             qry.bindValue(":_IsVisible", isVisible);
             qry.bindValue(":_Status", !isVisible);
-            bool isExecuted = qry.exec();
-            Database::closeDatabase();
-            if( !isExecuted )
+            if(!qry.exec())
                 QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powidoła się.\nERROR: "+qry.lastError().text()+"");
             else
                 emit carDeleted(true); // only for update
         }
         else {
-            Database::closeDatabase();
             QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
             emit changeStatusBar("Nie można połączyć z bazą danych");
         }
@@ -513,16 +478,14 @@ void CarBlock::on_btnIsVisible_clicked()
 
 void CarBlock::on_btnViewRepairs_clicked()
 {
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+    if(Database::connectToDatabase()) {
         serviceBlock = new ServiceBlock(idCar);
         emit inProgress();
         if(serviceBlock->exec()== ServiceBlock::Rejected)
             emit progressFinished();
         delete serviceBlock;
-        Database::closeDatabase();
     }
     else {
-        Database::closeDatabase();
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
@@ -530,16 +493,29 @@ void CarBlock::on_btnViewRepairs_clicked()
 
 void CarBlock::on_btnPDF_clicked()
 {
-    if(Database::connectToDatabase("rezerwacja","rezerwacja")) {
+    if(Database::connectToDatabase()) {
         reportDialog = new ReportDialog(idCar);
         emit inProgress();
         if(reportDialog->exec()== ReportDialog::Rejected)
             emit progressFinished();
         delete reportDialog;
-        Database::closeDatabase();
     }
     else {
-        Database::closeDatabase();
+        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        emit changeStatusBar("Nie można połączyć z bazą danych");
+    }
+}
+
+void CarBlock::on_btnOil_clicked()
+{
+    if(Database::connectToDatabase()) {
+        oilDialog = new OilDialog(idCar);
+        emit inProgress();
+        if(oilDialog->exec()== OilDialog::Rejected)
+            emit progressFinished();
+        delete oilDialog;
+    }
+    else {
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
