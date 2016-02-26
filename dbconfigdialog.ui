@@ -6,23 +6,73 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>402</width>
-    <height>235</height>
+    <width>532</width>
+    <height>390</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Konfiguracja bazy danych</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(255, 255, 255);</string>
+   <string notr="true">QDialog {background-color: rgb(255, 255, 255);}
+QLabel {color: gray;
+background-color:transparent}
+
+#ServiceBlock QScrollBar:vertical {
+  border: none;
+  background: &quot;transparent&quot;;
+  width: 8px;
+  margin: 20px 0px 20px 0px;
+}
+
+#ServiceBlock QScrollBar::handle:vertical {
+  background: rgb(107,124,140);
+  min-height: 20px; 
+  border-radius: 2px;
+}
+
+#ServiceBlock QScrollBar::add-line:vertical {
+   border: none;
+   background: none;
+}
+
+#ServiceBlock QScrollBar::sub-line:vertical {
+   border: none;
+   background: none;
+}
+
+
+QMessageBox QPushButton:hover {
+border-radius: 5px;
+background: rgb(255,140,0);
+}
+
+QMessageBox QPushButton{
+color: white;
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));
+min-height: 30px;
+min-width: 70px;
+}
+
+QMessageBox QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(255,105,0);
+}
+
+QRadioButton {color: gray;
+background-color:transparent}
+</string>
   </property>
-  <widget class="QLineEdit" name="leAddress">
+  <widget class="QPushButton" name="cancelButton">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>60</y>
-     <width>131</width>
-     <height>21</height>
+     <x>170</x>
+     <y>300</y>
+     <width>105</width>
+     <height>35</height>
     </rect>
    </property>
    <property name="font">
@@ -31,184 +81,35 @@
      <pointsize>12</pointsize>
     </font>
    </property>
-  </widget>
-  <widget class="QLabel" name="lblAddress">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>40</y>
-     <width>111</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>12</pointsize>
-    </font>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+border-radius: 5px;
+background: rgb(255,102,102);
+}
+
+QPushButton{
+color: white;
+border-radius: 5px;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(255,102,102), stop: 0.7 rgb(255,50,50));
+}
+
+QPushButton:pressed {
+color: white;
+border-radius: 5px;
+background: rgb(255,50,50);
+}
+</string>
    </property>
    <property name="text">
-    <string>Adres serwera</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lePort">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>120</y>
-     <width>71</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>12</pointsize>
-    </font>
-   </property>
-  </widget>
-  <widget class="QLabel" name="lblPort">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>100</y>
-     <width>71</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>12</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Nr portu</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="lblUser">
-   <property name="geometry">
-    <rect>
-     <x>250</x>
-     <y>10</y>
-     <width>111</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>12</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Użytkownik:</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="leUser">
-   <property name="geometry">
-    <rect>
-     <x>250</x>
-     <y>30</y>
-     <width>131</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>12</pointsize>
-    </font>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lePassword">
-   <property name="geometry">
-    <rect>
-     <x>250</x>
-     <y>80</y>
-     <width>131</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>12</pointsize>
-    </font>
-   </property>
-  </widget>
-  <widget class="QLabel" name="lblPassword">
-   <property name="geometry">
-    <rect>
-     <x>250</x>
-     <y>60</y>
-     <width>111</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>12</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Hasło:</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="leDatabase">
-   <property name="geometry">
-    <rect>
-     <x>250</x>
-     <y>140</y>
-     <width>131</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>12</pointsize>
-    </font>
-   </property>
-  </widget>
-  <widget class="QLabel" name="lblDatabase">
-   <property name="geometry">
-    <rect>
-     <x>250</x>
-     <y>120</y>
-     <width>111</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Calibri</family>
-     <pointsize>12</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Baza danych:</string>
-   </property>
-  </widget>
-  <widget class="Line" name="line_2">
-   <property name="geometry">
-    <rect>
-     <x>-3</x>
-     <y>171</y>
-     <width>441</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
+    <string>Zamknij</string>
    </property>
   </widget>
   <widget class="QPushButton" name="runButton">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>190</y>
+     <x>280</x>
+     <y>300</y>
      <width>105</width>
      <height>35</height>
     </rect>
@@ -243,13 +144,100 @@ background: rgb(0,150,0);
     <string>Uruchom</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="cancelButton">
+  <widget class="QLabel" name="lbl">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>190</y>
-     <width>105</width>
-     <height>35</height>
+     <x>10</x>
+     <y>10</y>
+     <width>441</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Wybierz jedną z poniższych opcji:</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="rbRemoteDB">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>80</y>
+     <width>321</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>zdalna baza danych</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="rbLocalDB">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>50</y>
+     <width>311</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>lokalna baza danych</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblUser">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>140</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Użytkownik:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="leUser">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>170</y>
+     <width>131</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
@@ -258,43 +246,118 @@ background: rgb(0,150,0);
      <pointsize>12</pointsize>
     </font>
    </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton:hover {
-border-radius: 5px;
-background: rgb(255,102,102);
-}
-
-QPushButton{
-color: white;
-border-radius: 5px;
-background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-   stop: 0 rgba(255,102,102), stop: 0.7 rgb(255,50,50));
-}
-
-QPushButton:pressed {
-color: white;
-border-radius: 5px;
-background: rgb(255,50,50);
-}
-</string>
+  </widget>
+  <widget class="QLineEdit" name="lePassword">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>250</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
    </property>
-   <property name="text">
-    <string>Anuluj</string>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
    </property>
   </widget>
-  <zorder>leAddress</zorder>
-  <zorder>lblAddress</zorder>
-  <zorder>lePort</zorder>
-  <zorder>lblPort</zorder>
-  <zorder>lblUser</zorder>
-  <zorder>leUser</zorder>
-  <zorder>lePassword</zorder>
-  <zorder>lblPassword</zorder>
-  <zorder>leDatabase</zorder>
-  <zorder>lblDatabase</zorder>
-  <zorder>runButton</zorder>
-  <zorder>cancelButton</zorder>
-  <zorder>line_2</zorder>
+  <widget class="QLabel" name="lblPort">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>220</y>
+     <width>121</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Nr portu:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblAddress">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>140</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Adres serwera:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="leAddress">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>170</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lePort">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>250</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblPassword">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>220</y>
+     <width>111</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Calibri</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Hasło:</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

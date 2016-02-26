@@ -237,7 +237,10 @@ void MainWindow::createDBConfigButton()
     dbConfigButton->setToolTip("Konfiguracja bazy danych");
     dbConfigButton->setStyleSheet("border:none; color: gray");
     ui->statusBar->addPermanentWidget(dbConfigButton);
-    connect(dbConfigButton, &QPushButton::clicked,[=](){DBConfigDialog d; d.exec();});
+    connect(dbConfigButton, &QPushButton::clicked,[=](){
+        DBConfigDialog d(false);
+        connect(&d,SIGNAL(connectedToDB(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
+        d.exec();});
 }
 
 void MainWindow::setBackupButtonVisible()
@@ -532,4 +535,12 @@ void MainWindow::setPopupMessage()
         loadTrayIcon();
         trayIcon->showMessage(title, newNote, QSystemTrayIcon::Information, 10000);
     }
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    QProcess * createMysql = new QProcess(this);
+    createMysql->start("mysql.exe -h 127.0.0.1 -u root -pPASSWORD > C:/DATABASE.sql");
+    while(!createMysql->waitForFinished()) {}
+    delete createMysql;
 }

@@ -2,11 +2,26 @@
 #include "ui_dbconfigdialog.h"
 #include "database.h"
 
-DBConfigDialog::DBConfigDialog(QWidget *parent) :
+DBConfigDialog::DBConfigDialog(bool noDB, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::DBConfigDialog)
+    ui(new Ui::DBConfigDialog),
+    noDataBase(noDB)
 {
     ui->setupUi(this);
+
+    ui->lblAddress->setVisible(false);
+    ui->leAddress->setVisible(false);
+    ui->lblUser->setVisible(false);
+    ui->leUser->setVisible(false);
+    ui->lblPassword->setVisible(false);
+    ui->lePassword->setVisible(false);
+    ui->lblPort->setVisible(false);
+    ui->lePort->setVisible(false);
+
+    if(noDataBase)
+        ui->runButton->setText("Utwórz");
+
+    connect(ui->cancelButton,SIGNAL(clicked(bool)),this,SLOT(reject()));
 }
 
 DBConfigDialog::~DBConfigDialog()
@@ -14,18 +29,67 @@ DBConfigDialog::~DBConfigDialog()
     delete ui;
 }
 
-void DBConfigDialog::on_cancelButton_clicked()
-{
-    this->close();
-}
-
 void DBConfigDialog::on_runButton_clicked()
 {
     Database::purgeDatabase();
-    Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),
-                               ui->leDatabase->text(), ui->leUser->text(),
-                               ui->lePassword->text());
 
-    Database::connectToDatabase();
-    this->close();
+    if(ui->rbLocalDB->isChecked()) {
+        if(!noDataBase)
+            Database::setParameters("localhost", 3306,
+                                   "sigmacars", "root",
+                                   "PASSWORD");
+        else {
+            // create local Data base
+            qDebug() << "KOZA";
+            Database::setParameters("localhost", 3306,
+                                   "sigmacars", "root",
+                                   "PASSWORD");
+            QProcess * process = new QProcess;
+            process->start("mysql -u root -pPASSWORD < "+QDir::currentPath()+"/DATABASE.sql");
+            while(!process->waitForFinished());
+        }
+    }
+
+    else if (ui->rbRemoteDB->isChecked()) {
+        if(!noDataBase)
+            Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),
+                                    "sigmacars", ui->leUser->text(),
+                                    ui->lePassword->text());
+        else {
+            // create remote Data base
+        }
+    }
+
+    if(Database::connectToDatabase()) {
+        QMessageBox::information(this,"Informacja", "Pomyślnie połączono z bazą danych.");
+        emit connectedToDB(false);
+        this->accept();
+    }
+    else {
+        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        this->reject();
+    }
+}
+void DBConfigDialog::on_rbRemoteDB_toggled(bool checked)
+{
+    if(checked) {
+        ui->lblAddress->setVisible(true);
+        ui->leAddress->setVisible(true);
+        ui->lblUser->setVisible(true);
+        ui->leUser->setVisible(true);
+        ui->lblPassword->setVisible(true);
+        ui->lePassword->setVisible(true);
+        ui->lblPort->setVisible(true);
+        ui->lePort->setVisible(true);
+    }
+    else {
+        ui->lblAddress->setVisible(false);
+        ui->leAddress->setVisible(false);
+        ui->lblUser->setVisible(false);
+        ui->leUser->setVisible(false);
+        ui->lblPassword->setVisible(false);
+        ui->lePassword->setVisible(false);
+        ui->lblPort->setVisible(false);
+        ui->lePort->setVisible(false);
+    }
 }

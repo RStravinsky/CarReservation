@@ -11,6 +11,7 @@
 #include <QTimer>
 #include <QScrollBar>
 #include <QMovie>
+#include <QProcess>
 #include <vector>
 #include <memory>
 #include "carblock.h"
@@ -44,6 +45,8 @@ private slots:
     void noteActionClicked(QAction *act);
     void poupMessageClicked();
     void setPopupMessage();
+
+    void on_pushButton_clicked();
 
 signals:
     void trayMenuNoteClicked(int _idNotes, int _idCar);
