@@ -34,27 +34,26 @@ void DBConfigDialog::on_runButton_clicked()
     Database::purgeDatabase();
 
     if(ui->rbLocalDB->isChecked()) {
-        if(!noDataBase)
-            Database::setParameters("localhost", 3306,
-                                   "sigmacars", "root",
-                                   "PASSWORD");
+        if(!noDataBase) {
+            Database::setParameters("localhost", 3306,"sigmacars", "root","PASSWORD");
+            writeToFile("localhost", 3306, "sigmacars", "root","PASSWORD");
+        }
         else {
             // create local Data base
-            qDebug() << "KOZA";
-            Database::setParameters("localhost", 3306,
-                                   "sigmacars", "root",
-                                   "PASSWORD");
-            QProcess * process = new QProcess;
-            process->start("mysql -u root -pPASSWORD < "+QDir::currentPath()+"/DATABASE.sql");
-            while(!process->waitForFinished());
+            Database::setParameters("localhost", 3306,"sigmacars", "root","PASSWORD");
+            writeToFile("localhost", 3306, "sigmacars", "root","PASSWORD");
         }
     }
 
     else if (ui->rbRemoteDB->isChecked()) {
-        if(!noDataBase)
+        if(!noDataBase) {
             Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),
                                     "sigmacars", ui->leUser->text(),
                                     ui->lePassword->text());
+            writeToFile(ui->leAddress->text(), ui->lePort->text().toInt(),
+                        "sigmacars", ui->leUser->text(),
+                        ui->lePassword->text());
+        }
         else {
             // create remote Data base
         }
@@ -92,4 +91,15 @@ void DBConfigDialog::on_rbRemoteDB_toggled(bool checked)
         ui->lblPort->setVisible(false);
         ui->lePort->setVisible(false);
     }
+}
+
+bool DBConfigDialog::writeToFile(const QString &hostname, int port, const QString &database, const QString &user, const QString &password)
+{
+    QFile initFile( QDir::currentPath()+"/init.txt" );
+    if (!initFile.open(QIODevice::WriteOnly))
+            return false;
+
+    QTextStream out( &initFile );
+    out << hostname << ";" << QString::number(port) << ";" << database << ";" << user << ";" << password;
+    initFile.close();
 }

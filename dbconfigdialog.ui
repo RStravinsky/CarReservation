@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>532</width>
-    <height>390</height>
+    <width>400</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,8 +69,8 @@ background-color:transparent}
   <widget class="QPushButton" name="cancelButton">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>300</y>
+     <x>180</x>
+     <y>360</y>
      <width>105</width>
      <height>35</height>
     </rect>
@@ -108,8 +108,8 @@ background: rgb(255,50,50);
   <widget class="QPushButton" name="runButton">
    <property name="geometry">
     <rect>
-     <x>280</x>
-     <y>300</y>
+     <x>290</x>
+     <y>360</y>
      <width>105</width>
      <height>35</height>
     </rect>
@@ -148,15 +148,15 @@ background: rgb(0,150,0);
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
-     <width>441</width>
+     <y>80</y>
+     <width>391</width>
      <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>Calibri</family>
-     <pointsize>12</pointsize>
+     <pointsize>14</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -168,8 +168,8 @@ background: rgb(0,150,0);
   <widget class="QRadioButton" name="rbRemoteDB">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>80</y>
+     <x>20</x>
+     <y>140</y>
      <width>321</width>
      <height>21</height>
     </rect>
@@ -178,8 +178,8 @@ background: rgb(0,150,0);
     <font>
      <family>Calibri</family>
      <pointsize>12</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
+     <weight>50</weight>
+     <bold>false</bold>
     </font>
    </property>
    <property name="text">
@@ -189,8 +189,8 @@ background: rgb(0,150,0);
   <widget class="QRadioButton" name="rbLocalDB">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>50</y>
+     <x>20</x>
+     <y>110</y>
      <width>311</width>
      <height>21</height>
     </rect>
@@ -199,8 +199,8 @@ background: rgb(0,150,0);
     <font>
      <family>Calibri</family>
      <pointsize>12</pointsize>
-     <weight>75</weight>
-     <bold>true</bold>
+     <weight>50</weight>
+     <bold>false</bold>
     </font>
    </property>
    <property name="text">
@@ -213,8 +213,8 @@ background: rgb(0,150,0);
   <widget class="QLabel" name="lblUser">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>140</y>
+     <x>20</x>
+     <y>190</y>
      <width>111</width>
      <height>16</height>
     </rect>
@@ -234,9 +234,9 @@ background: rgb(0,150,0);
   <widget class="QLineEdit" name="leUser">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>170</y>
-     <width>131</width>
+     <x>20</x>
+     <y>220</y>
+     <width>161</width>
      <height>31</height>
     </rect>
    </property>
@@ -250,9 +250,9 @@ background: rgb(0,150,0);
   <widget class="QLineEdit" name="lePassword">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>250</y>
-     <width>131</width>
+     <x>20</x>
+     <y>300</y>
+     <width>161</width>
      <height>31</height>
     </rect>
    </property>
@@ -266,8 +266,8 @@ background: rgb(0,150,0);
   <widget class="QLabel" name="lblPort">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>220</y>
+     <x>210</x>
+     <y>270</y>
      <width>121</width>
      <height>16</height>
     </rect>
@@ -287,8 +287,8 @@ background: rgb(0,150,0);
   <widget class="QLabel" name="lblAddress">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>140</y>
+     <x>210</x>
+     <y>190</y>
      <width>111</width>
      <height>16</height>
     </rect>
@@ -308,9 +308,9 @@ background: rgb(0,150,0);
   <widget class="QLineEdit" name="leAddress">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>170</y>
-     <width>131</width>
+     <x>210</x>
+     <y>220</y>
+     <width>161</width>
      <height>31</height>
     </rect>
    </property>
@@ -324,9 +324,9 @@ background: rgb(0,150,0);
   <widget class="QLineEdit" name="lePort">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>250</y>
-     <width>131</width>
+     <x>210</x>
+     <y>300</y>
+     <width>161</width>
      <height>31</height>
     </rect>
    </property>
@@ -340,8 +340,8 @@ background: rgb(0,150,0);
   <widget class="QLabel" name="lblPassword">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>220</y>
+     <x>20</x>
+     <y>270</y>
      <width>111</width>
      <height>16</height>
     </rect>
@@ -357,6 +357,91 @@ background: rgb(0,150,0);
    <property name="text">
     <string>Hasło:</string>
    </property>
+  </widget>
+  <widget class="QFrame" name="topFrame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>400</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">#topFrame {
+border: none;
+background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+   stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));
+border-bottom-right-radius: 10px;
+border-bottom-left-radius:10px;
+}
+
+</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>371</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Calibri</family>
+      <pointsize>24</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: transparent;
+color: white</string>
+    </property>
+    <property name="text">
+     <string>Kreator bazy danych</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblHoliday">
+    <property name="geometry">
+     <rect>
+      <x>730</x>
+      <y>10</y>
+      <width>101</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: &quot;transparent&quot;;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>40</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

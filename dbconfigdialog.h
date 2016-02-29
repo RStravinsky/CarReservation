@@ -27,6 +27,7 @@ private slots:
 private:
     Ui::DBConfigDialog *ui;
     bool noDataBase;
+    bool writeToFile(const QString &hostname, int port, const QString &database, const QString &user, const QString &password);
 };
 
 #endif // DBCONFIGDIALOG_H

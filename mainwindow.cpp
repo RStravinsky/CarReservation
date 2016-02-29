@@ -12,10 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    login = "rezerwacja";
-    password = "rezerwacja"; //change password here
-
-    Database::setParameters("192.168.1.7", 3306, "sigmacars", "rezerwacja", "rezerwacja");
 
     createHelpButton();
     createUpdateButton();
@@ -133,29 +129,6 @@ void MainWindow::updateView(bool isCopyEnable)
         }
         if(isAdmin) {
             setPopupMessage();
-
-//            for(int i = 0; i < carTable->rowCount(); ++i) {
-//                if(!carTable->data(carTable->index(i,9)).toBool()) {
-//                    carBlockVector.emplace_back(std::move(new CarBlock(false, carTable->data(carTable->index(i,0)).toInt(),
-//                                                                       carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
-//                                                                       carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
-//                                                                       carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
-//                                                                       static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString(),
-//                                                                       carTable->data(carTable->index(i,9)).toBool()
-//                                                                      )
-//                                                          ));
-//                   lastCarBlock = carBlockVector.back();
-//                   lastCarBlock->setBookingTable(bookingTable);
-//                   lastCarBlock->setAdminPermissions(isAdmin);
-//                   connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)), Qt::DirectConnection);
-//                   connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
-//                   connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
-//                   connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
-//                   connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
-//                   connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();}, Qt::QueuedConnection);
-//               }
-//            }
-
             if(!copyEnable)
                 carBlockVector.emplace_back(std::move(new CarBlock()));
 
@@ -165,10 +138,6 @@ void MainWindow::updateView(bool isCopyEnable)
             connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
             connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(UPDATE_TIME);});
             copyEnable = true;
-
-//            QMovie *movie = new QMovie("//k1/DBIR/Programowanie/Aplikacja REZERWACJA/lblHoliday/holiday.gif");
-//            ui->lblHoliday->setMovie(movie);
-//            movie->start();
         }
 
         delete scrollLayout;
@@ -540,7 +509,7 @@ void MainWindow::setPopupMessage()
 void MainWindow::on_pushButton_clicked()
 {
     QProcess * createMysql = new QProcess(this);
-    createMysql->start("mysql.exe -h 127.0.0.1 -u root -pPASSWORD > C:/DATABASE.sql");
+    createMysql->start("mysql.exe -h 127.0.0.1 -u root -pPASSWORD < C:/DATABASE.sql");
     while(!createMysql->waitForFinished()) {}
     delete createMysql;
 }
