@@ -28,7 +28,7 @@ private slots:
 
 private:
     Ui::NameDialog *ui;
-    QSqlQueryModel * bookingTable{nullptr};
+    QSqlQueryModel * historyTable{nullptr};
     QStringList nameList;
     QStringList surnameList;
     QStringList destinationList;

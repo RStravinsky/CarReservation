@@ -20,6 +20,8 @@ DBConfigDialog::DBConfigDialog(bool noDB, QWidget *parent) :
 
     if(noDataBase)
         ui->runButton->setText("Utwórz");
+    else
+        ui->runButton->setText("Połącz");
 
     connect(ui->cancelButton,SIGNAL(clicked(bool)),this,SLOT(reject()));
 }
@@ -30,33 +32,33 @@ DBConfigDialog::~DBConfigDialog()
 }
 
 void DBConfigDialog::on_runButton_clicked()
-{
-    Database::purgeDatabase();
-
+{  
     if(ui->rbLocalDB->isChecked()) {
-        if(!noDataBase) {
-            Database::setParameters("localhost", 3306,"sigmacars", "root","PASSWORD");
-            writeToFile("localhost", 3306, "sigmacars", "root","PASSWORD");
+        Database::purgeDatabase();
+        if(noDataBase) {
+            // create DB
         }
-        else {
-            // create local Data base
-            Database::setParameters("localhost", 3306,"sigmacars", "root","PASSWORD");
-            writeToFile("localhost", 3306, "sigmacars", "root","PASSWORD");
-        }
+        Database::setParameters("localhost", 3306,"sigmacars", "root","PASSWORD");
+        if(!writeToFile("localhost", 3306, "sigmacars", "root","PASSWORD"))
+            return;
     }
 
     else if (ui->rbRemoteDB->isChecked()) {
-        if(!noDataBase) {
-            Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),
-                                    "sigmacars", ui->leUser->text(),
-                                    ui->lePassword->text());
-            writeToFile(ui->leAddress->text(), ui->lePort->text().toInt(),
-                        "sigmacars", ui->leUser->text(),
-                        ui->lePassword->text());
+
+        if(dataIsEmpty())
+            return;
+
+        Database::purgeDatabase();
+
+        if(noDataBase) {
+            // create DB
         }
-        else {
-            // create remote Data base
-        }
+        Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),
+                                "sigmacars", ui->leUser->text(),
+                                ui->lePassword->text());
+        if(!writeToFile(ui->leAddress->text(), ui->lePort->text().toInt(),
+                                "sigmacars", ui->leUser->text(),ui->lePassword->text()))
+            return;
     }
 
     if(Database::connectToDatabase()) {
@@ -65,8 +67,9 @@ void DBConfigDialog::on_runButton_clicked()
         this->accept();
     }
     else {
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-        this->reject();
+        QMessageBox::critical(this,"Błąd!", "Nie połączono z bazą danych!");
+        emit changeStatusBar("Nie można połączyć z bazą danych");
+        return;
     }
 }
 void DBConfigDialog::on_rbRemoteDB_toggled(bool checked)
@@ -80,6 +83,7 @@ void DBConfigDialog::on_rbRemoteDB_toggled(bool checked)
         ui->lePassword->setVisible(true);
         ui->lblPort->setVisible(true);
         ui->lePort->setVisible(true);
+        ui->runButton->setText("Połącz");
     }
     else {
         ui->lblAddress->setVisible(false);
@@ -90,16 +94,33 @@ void DBConfigDialog::on_rbRemoteDB_toggled(bool checked)
         ui->lePassword->setVisible(false);
         ui->lblPort->setVisible(false);
         ui->lePort->setVisible(false);
+        if(noDataBase)
+            ui->runButton->setText("Utwórz");
+        else
+            ui->runButton->setText("Połącz");
     }
 }
 
 bool DBConfigDialog::writeToFile(const QString &hostname, int port, const QString &database, const QString &user, const QString &password)
 {
     QFile initFile( QDir::currentPath()+"/init.txt" );
-    if (!initFile.open(QIODevice::WriteOnly))
-            return false;
-
+    if(!initFile.open(QIODevice::WriteOnly)) {
+        QMessageBox::critical(this,"Błąd!", "Nie można otworzyć pliku z kofiguracją bazy danych.");
+        return false;
+    }
     QTextStream out( &initFile );
     out << hostname << ";" << QString::number(port) << ";" << database << ";" << user << ";" << password;
     initFile.close();
+
+    return true;
+}
+
+bool DBConfigDialog::dataIsEmpty()
+{
+    if(ui->leUser->text().isEmpty() | ui->lePassword->text().isEmpty() || ui->leAddress->text().isEmpty() || ui->lePort->text().isEmpty()) {
+        QMessageBox::warning(this,"Uwaga!","Pole tekstowe nie zostało wypełnione.");
+        return true;
+    }
+
+    return false;
 }

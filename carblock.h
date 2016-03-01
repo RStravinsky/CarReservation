@@ -55,9 +55,7 @@ private slots:
     void on_btnAddMileage_clicked();
     void on_btnIsVisible_clicked();
     void on_btnViewRepairs_clicked();
-
     void on_btnPDF_clicked();
-
     void on_btnOil_clicked();
 
 signals:

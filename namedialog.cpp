@@ -9,8 +9,8 @@ NameDialog::NameDialog(QWidget *parent) :
     connect(ui->pushButtonCancel, SIGNAL(released()), this, SLOT(reject()));
     ui->lineEditName->setFocus();
 
-    bookingTable = new QSqlQueryModel(this);
-    bookingTable->setQuery("SELECT Name, Surname, Destination FROM booking;");
+    historyTable = new QSqlQueryModel(this);
+    historyTable->setQuery("SELECT Name, Surname, Destination FROM history;");
 
     setCompleterLists();
     setCompleters();
@@ -54,10 +54,10 @@ void NameDialog::on_pushButtonConfirm_released()
 
 void NameDialog::setCompleterLists()
 {
-    for(int i=0; i < bookingTable->rowCount() ;++i) {
-        nameList << bookingTable->index(i, 0).data().toString();
-        surnameList << bookingTable->index(i, 1).data().toString();
-        destinationList << bookingTable->index(i, 2).data().toString();
+    for(int i=0; i < historyTable->rowCount() ;++i) {
+        nameList << historyTable->index(i, 0).data().toString();
+        surnameList << historyTable->index(i, 1).data().toString();
+        destinationList << historyTable->index(i, 2).data().toString();
     }
 
     nameList.removeDuplicates();
@@ -77,7 +77,6 @@ void NameDialog::setCompleters()
     nameCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     surnameCompleter->setCaseSensitivity(Qt::CaseInsensitive);
     destinationCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-
 
     nameCompleter->popup()->setStyleSheet(scrollBarStylesheet());
     surnameCompleter->popup()->setStyleSheet(scrollBarStylesheet());

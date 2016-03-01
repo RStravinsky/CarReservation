@@ -19,6 +19,7 @@ public:
 
 signals:
     void connectedToDB(bool);
+    void changeStatusBar(QString,int timeout = 0);
 
 private slots:
     void on_runButton_clicked();
@@ -28,6 +29,8 @@ private:
     Ui::DBConfigDialog *ui;
     bool noDataBase;
     bool writeToFile(const QString &hostname, int port, const QString &database, const QString &user, const QString &password);
+    bool dataIsEmpty();
+    void showMsg(const QString &msg);
 };
 
 #endif // DBCONFIGDIALOG_H

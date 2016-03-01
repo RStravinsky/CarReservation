@@ -209,6 +209,7 @@ void MainWindow::createDBConfigButton()
     connect(dbConfigButton, &QPushButton::clicked,[=](){
         DBConfigDialog d(false);
         connect(&d,SIGNAL(connectedToDB(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
+        connect(&d,SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
         d.exec();});
 }
 
