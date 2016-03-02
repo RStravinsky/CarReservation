@@ -36,7 +36,14 @@ void DBConfigDialog::on_runButton_clicked()
     if(ui->rbLocalDB->isChecked()) {
         Database::purgeDatabase();
         if(noDataBase) {
-            // create DB
+
+            QString pth = QString(QDir::currentPath() + "\\\"");
+            QString cmd = QString("\"" + pth + "mysqlRun -h127.0.0.1 -P3306 -uroot -pPASSWORD");
+            QProcess * createMysql = new QProcess(this);
+            createMysql->start(cmd);
+            while(!createMysql->waitForFinished()) {}
+            delete createMysql;
+
         }
         Database::setParameters("localhost", 3306,"sigmacars", "root","PASSWORD");
         if(!writeToFile("localhost", 3306, "sigmacars", "root","PASSWORD"))
@@ -51,13 +58,20 @@ void DBConfigDialog::on_runButton_clicked()
         Database::purgeDatabase();
 
         if(noDataBase) {
-            // create DB
+
+            QString pth = QString(QDir::currentPath() + "\\\"");
+            QString cmd = QString("\"" + pth + "mysqlRun -h" + ui->leAddress->text() + " -P" + ui->lePort->text() + " -u" + ui->leUser->text() + " -p" + ui->lePassword->text() + " -dtestsigmadb");
+            QProcess * createMysql = new QProcess(this);
+            createMysql->start(cmd);
+            while(!createMysql->waitForFinished()) {}
+            delete createMysql;
+
         }
         Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),
-                                "sigmacars", ui->leUser->text(),
+                                "testsigmadb", ui->leUser->text(),
                                 ui->lePassword->text());
         if(!writeToFile(ui->leAddress->text(), ui->lePort->text().toInt(),
-                                "sigmacars", ui->leUser->text(),ui->lePassword->text()))
+                                "testsigmadb", ui->leUser->text(),ui->lePassword->text()))
             return;
     }
 

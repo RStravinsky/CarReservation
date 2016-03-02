@@ -18,6 +18,8 @@
 #include "database.h"
 #include "helpdialog.h"
 #include "dbconfigdialog.h"
+#include <QtNetwork/QNetworkAccessManager>
+#include <QNetworkReply>
 
 namespace Ui {
 class MainWindow;

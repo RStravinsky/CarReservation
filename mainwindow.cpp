@@ -509,8 +509,18 @@ void MainWindow::setPopupMessage()
 
 void MainWindow::on_pushButton_clicked()
 {
-    QProcess * createMysql = new QProcess(this);
-    createMysql->start("mysql.exe -h 127.0.0.1 -u root -pPASSWORD < C:/DATABASE.sql");
-    while(!createMysql->waitForFinished()) {}
-    delete createMysql;
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+
+    manager->get(QNetworkRequest(QUrl("http://qt-project.org")));
+
+    QNetworkRequest request;
+    request.setUrl(QUrl("http://qt-project.org"));
+    request.setRawHeader("User-Agent", "MyOwnBrowser 1.0");
+
+    QNetworkReply *reply = manager->get(request);
+
+    if(reply->error() == QNetworkReply::NoError)
+        qDebug() << "connected";
+    else
+        qDebug() << "not connected";
 }
