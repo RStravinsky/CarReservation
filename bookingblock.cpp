@@ -41,7 +41,7 @@ QString BookingBlock::getName()
 
 void BookingBlock::on_pushButtonDelete_clicked()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
 
         if(!showMsgBeforeDelete())
                 return;

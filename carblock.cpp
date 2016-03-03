@@ -166,7 +166,7 @@ bool CarBlock::getCarVisible()
 void CarBlock::showNotesDialog(int _idNotes, int _idCar)
 {
     if(_idCar == idCar) {
-        if(Database::connectToDatabase()) {
+        if(Database::isOpen()) {
             emit inProgress();
                 notesDialogPointer = std::shared_ptr<NotesDialog>(new NotesDialog(_idNotes, _idCar));
                 if(notesDialogPointer.use_count() == 1 && notesDialogPointer.get()->exec() == NotesDialog::Rejected){
@@ -182,7 +182,7 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
 
 void CarBlock::on_btnReserve_clicked()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         bookingDialog = new BookingDialog(idCar);
         emit inProgress();
         if(bookingDialog->exec()== BookingDialog::Rejected)
@@ -199,7 +199,7 @@ void CarBlock::on_btnAddMileage_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET Mileage=:_Mileage WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
@@ -221,7 +221,7 @@ void CarBlock::on_btnAddLicensePlate_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET LicensePlate=:_LicensePlate WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
@@ -243,7 +243,7 @@ void CarBlock::on_btnAddInsurance_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET InsuranceDate=:_insuranceDate WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
@@ -265,7 +265,7 @@ void CarBlock::on_btnAddInspection_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET InspectionDate=:_inspectionDate WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
@@ -287,11 +287,13 @@ void CarBlock::on_btnRemove_clicked()
 {
     emit inProgress();
 
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         if(!isAddBlock) {
 
-            if(!showMsgBeforeDelete())
+            if(!showMsgBeforeDelete()){
+                    emit progressFinished();
                     return;
+            }
 
             QSqlQuery qry;
             qry.prepare("DELETE FROM car WHERE idCar=:_id");
@@ -389,7 +391,7 @@ QPair<QDate,QDate> CarBlock::getDates()
 
 void CarBlock::updateImagePath()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET PhotoPath=:_PhotoPath WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);
@@ -452,7 +454,7 @@ void CarBlock::on_btnIsVisible_clicked()
 {
     static bool isVisible = isCarVisible;
     if(!isAddBlock) {
-        if(Database::connectToDatabase()) {
+        if(Database::isOpen()) {
             isVisible = !isVisible;
             setVisibleButton(isVisible);
             QSqlQuery qry;
@@ -478,7 +480,7 @@ void CarBlock::on_btnIsVisible_clicked()
 
 void CarBlock::on_btnViewRepairs_clicked()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         serviceBlock = new ServiceBlock(idCar);
         emit inProgress();
         if(serviceBlock->exec()== ServiceBlock::Rejected)
@@ -493,7 +495,7 @@ void CarBlock::on_btnViewRepairs_clicked()
 
 void CarBlock::on_btnPDF_clicked()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         reportDialog = new ReportDialog(idCar);
         emit inProgress();
         if(reportDialog->exec()== ReportDialog::Rejected)
@@ -508,7 +510,7 @@ void CarBlock::on_btnPDF_clicked()
 
 void CarBlock::on_btnOil_clicked()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         oilDialog = new OilDialog(idCar);
         emit inProgress();
         if(oilDialog->exec()== OilDialog::Rejected)

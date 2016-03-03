@@ -200,7 +200,7 @@ void ReportDialog::on_cancelButton_clicked()
 
 void ReportDialog::on_exportButton_clicked()
 {
-    if(Database::connectToDatabase())
+    if(Database::isOpen())
         populatePDF();
     else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
 }

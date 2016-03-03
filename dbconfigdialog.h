@@ -14,8 +14,9 @@ class DBConfigDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit DBConfigDialog(bool noDB, QWidget *parent = 0);
+    explicit DBConfigDialog(QString line, bool noDB, QWidget *parent = 0);
     ~DBConfigDialog();
+    static bool readFromFile(QString &line);
 
 signals:
     void connectedToDB(bool);

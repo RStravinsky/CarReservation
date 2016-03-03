@@ -2,7 +2,7 @@
 #include "ui_dbconfigdialog.h"
 #include "database.h"
 
-DBConfigDialog::DBConfigDialog(bool noDB, QWidget *parent) :
+DBConfigDialog::DBConfigDialog(QString line, bool noDB, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DBConfigDialog),
     noDataBase(noDB)
@@ -18,8 +18,20 @@ DBConfigDialog::DBConfigDialog(bool noDB, QWidget *parent) :
     ui->lblPort->setVisible(false);
     ui->lePort->setVisible(false);
 
-    if(noDataBase)
+    ui->lblWait->setVisible(false);
+    ui->lblLoad->setVisible(false);
+
+    if(!line.isEmpty()) {
+        QStringList parameters = line.split(";");
+        ui->leUser->setText(parameters.at(3));
+        ui->lePassword->setText(parameters.at(4));
+        ui->leAddress->setText(parameters.at(0));
+        ui->lePort->setText(parameters.at(1));
+    }
+
+    if(noDataBase) {
         ui->runButton->setText("Utwórz");
+    }
     else
         ui->runButton->setText("Połącz");
 
@@ -32,7 +44,13 @@ DBConfigDialog::~DBConfigDialog()
 }
 
 void DBConfigDialog::on_runButton_clicked()
-{  
+{      
+    // show waiting labels
+    this->setEnabled(false);
+    ui->lblWait->setVisible(true);
+    ui->lblLoad->setVisible(true);
+    qApp->processEvents();
+
     if(ui->rbLocalDB->isChecked()) {
         Database::purgeDatabase();
         if(noDataBase) {
@@ -48,6 +66,7 @@ void DBConfigDialog::on_runButton_clicked()
         Database::setParameters("localhost", 3306,"sigmacars", "root","PASSWORD");
         if(!writeToFile("localhost", 3306, "sigmacars", "root","PASSWORD"))
             return;
+        Database::isLocal = true;
     }
 
     else if (ui->rbRemoteDB->isChecked()) {
@@ -68,20 +87,28 @@ void DBConfigDialog::on_runButton_clicked()
 
         }
         Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),
-                                "testsigmadb", ui->leUser->text(),
+                                "sigmacars", ui->leUser->text(),
                                 ui->lePassword->text());
         if(!writeToFile(ui->leAddress->text(), ui->lePort->text().toInt(),
-                                "testsigmadb", ui->leUser->text(),ui->lePassword->text()))
+                                "sigmacars", ui->leUser->text(),ui->lePassword->text()))
             return;
+
+        Database::isLocal = false;
     }
 
     if(Database::connectToDatabase()) {
         QMessageBox::information(this,"Informacja", "Pomyślnie połączono z bazą danych.");
         emit connectedToDB(false);
+        ui->lblWait->setVisible(false);
+        ui->lblLoad->setVisible(false);
+        this->setEnabled(true);
         this->accept();
     }
     else {
         QMessageBox::critical(this,"Błąd!", "Nie połączono z bazą danych!");
+        ui->lblWait->setVisible(false);
+        ui->lblLoad->setVisible(false);
+        this->setEnabled(true);
         emit changeStatusBar("Nie można połączyć z bazą danych");
         return;
     }
@@ -97,7 +124,10 @@ void DBConfigDialog::on_rbRemoteDB_toggled(bool checked)
         ui->lePassword->setVisible(true);
         ui->lblPort->setVisible(true);
         ui->lePort->setVisible(true);
-        ui->runButton->setText("Połącz");
+        if(noDataBase)
+            ui->runButton->setText("Utwórz");
+        else
+            ui->runButton->setText("Połącz");
     }
     else {
         ui->lblAddress->setVisible(false);
@@ -137,4 +167,43 @@ bool DBConfigDialog::dataIsEmpty()
     }
 
     return false;
+}
+
+bool DBConfigDialog::readFromFile(QString &line)
+{
+    QFile initFile(QDir::currentPath()+"/init.txt");
+    if (!initFile.open(QIODevice::ReadOnly)) {
+        QMessageBox msgBox(QMessageBox::Critical, QString("Błąd!"), QString("<font face=""Calibri"" size=""3"" color=""gray"">Nie można otworzyć pliku konfiguracji bazy danych.</font>"));
+        msgBox.setStyleSheet("QMessageBox {background: white;}"
+                             "QPushButton:hover {"
+                             "border-radius: 5px;"
+                             "background: rgb(255,140,0);"
+                             "}"
+                             "QPushButton{"
+                             "color: white;"
+                             "border-radius: 5px;"
+                             "background: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+                             "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                             "min-width: 70px;"
+                             "min-height: 30px;"
+                             "font-family: Calibri;"
+                             "font-size: 12;"
+                             "font-weight: bold;"
+                             "}"
+                             "QPushButton:pressed {"
+                             "color: white;"
+                             "border-radius: 5px;"
+                             "background: rgb(255,105,0);"
+                             "}"
+                             );
+
+        msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
+        msgBox.exec();
+        return false;
+    }
+    QTextStream in(&initFile);
+    line = in.readLine();
+    initFile.close();
+
+    return true;
 }

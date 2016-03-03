@@ -46,7 +46,7 @@ bool NoteBlock::eventFilter(QObject *obj, QEvent *event)
 
         if (event->type() == QEvent::MouseButtonDblClick) {
 
-            if(Database::connectToDatabase()) {
+            if(Database::isOpen()) {
                 QSqlQuery qry;
                 qry.prepare("UPDATE notes SET isRead=1 WHERE idNotes = :_idNotes;");
                 qry.bindValue(":_idNotes", idNotes);
@@ -72,7 +72,7 @@ void NoteBlock::setSelection()
 
 void NoteBlock::on_btnRemove_clicked()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         if(!isAdded) {
 
             if(!showMsgBeforeDelete())

@@ -48,5 +48,6 @@
         <file>images/report.png</file>
         <file>images/oil.png</file>
         <file>images/dbconfig.png</file>
+        <file>images/sand-clock.png</file>
     </qresource>
 </RCC>

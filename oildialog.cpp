@@ -25,7 +25,7 @@ OilDialog::~OilDialog()
 
 void OilDialog::on_btnAddOil_clicked()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         QSqlQuery qry;
         qry.prepare("UPDATE car SET Oil=:_Oil WHERE idCar=:_id");
         qry.bindValue(":_id", idCar);

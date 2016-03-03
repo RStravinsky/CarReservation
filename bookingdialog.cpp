@@ -1,7 +1,7 @@
 #include "bookingdialog.h"
 #include "ui_bookingdialog.h"
 
-#define UPDATE_TIME 30000
+#define UPDATE_TIME 5000
 
 BookingDialog::BookingDialog(int id, int vMode,  QWidget *parent) :
     idCar(id),
@@ -174,7 +174,7 @@ void BookingDialog::setCalendarColor(QCalendarWidget *calendarWidget,QColor colo
 
 void BookingDialog::on_calendarWidget_clicked(const QDate &date)
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
 
         carReservations->setQuery(QString("SELECT * FROM booking WHERE idCar = %1").arg(idCar));
         statusHistory->setQuery(QString("SELECT * FROM history WHERE idCar = %1").arg(idCar));
@@ -259,7 +259,7 @@ bool BookingDialog::isDateFree()
 
 void BookingDialog::on_btnReserve_clicked()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
 
         if(isDateFree()) {
             NameDialog n;
@@ -302,7 +302,7 @@ void BookingDialog::clearCalendarFormat()
 
 void BookingDialog::on_btnShowHistory_clicked()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         ui->lblCheck->setGeometry(239,187,21,18);
         viewMode = ViewMode::History;
         updateView();
@@ -312,7 +312,7 @@ void BookingDialog::on_btnShowHistory_clicked()
 
 void BookingDialog::on_btnShowReservation_clicked()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         ui->lblCheck->setGeometry(13,187,21,18);
         viewMode = ViewMode::Booked;
         updateView();

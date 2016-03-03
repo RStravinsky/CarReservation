@@ -40,7 +40,7 @@ bool ServiceBlock::isOpen;
 
 void ServiceBlock::on_lvServices_clicked(const QModelIndex &index)
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         serviceTable = new QSqlQueryModel(this);
         serviceTable->setQuery(QString("SELECT * FROM service WHERE idCar = %1 ORDER BY EventDate DESC;").arg(idCar));
         loadData(index);
@@ -81,7 +81,7 @@ void ServiceBlock::clearWidgets()
 
 void ServiceBlock::updateView()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         nameList.clear();
         ui->lvServices->clear();
 
@@ -104,7 +104,7 @@ void ServiceBlock::updateView()
 
 void ServiceBlock::on_pbSave_clicked()
 {
-     if(Database::connectToDatabase()) {
+     if(Database::isOpen()) {
          // insert new repair
          if(ui->lvServices->currentIndex().data(Qt::DisplayRole ).toString() == "Dodaj naprawę ...") {
              QSqlQuery qry;
@@ -161,7 +161,7 @@ void ServiceBlock::on_pbSave_clicked()
 
 void ServiceBlock::on_pbDelete_clicked()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         QSqlQuery qry;
         qry.prepare("DELETE FROM service WHERE idService=:_idS");
         qry.bindValue(":_idS", idService);

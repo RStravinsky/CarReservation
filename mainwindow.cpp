@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#define UPDATE_TIME 120000
+#define UPDATE_TIME 5000
 #define ADMIN_PASSWD "Admin4q@"
 
 std::shared_ptr<NotesDialog> notesDialogPointer;
@@ -61,7 +61,7 @@ void MainWindow::createBackup()
 void MainWindow::updateView(bool isCopyEnable)
 {  
     qDebug() << "Updating..." << endl;
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
 
         ui->statusBar->showMessage("Połączono z bazą danych: " + Database::returnHostname());
         const int varticalPosition = ui->scrollArea->verticalScrollBar()->value();
@@ -103,9 +103,10 @@ void MainWindow::updateView(bool isCopyEnable)
                connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)), Qt::DirectConnection);
                connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
                connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
-               connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
-               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->stop();timer->start(UPDATE_TIME);});
-               connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();}, Qt::QueuedConnection);
+               //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
+               connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->start(UPDATE_TIME); this->setEnabled(false); });
+               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->stop();timer->start(UPDATE_TIME); this->setEnabled(true); });
+               connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();this->setEnabled(true); }, Qt::QueuedConnection);
            }
            else if(!carTable->data(carTable->index(i,9)).toBool() && isAdmin){
                 carBlockVector.emplace_back(std::move(new CarBlock(false, carTable->data(carTable->index(i,0)).toInt(),
@@ -122,9 +123,11 @@ void MainWindow::updateView(bool isCopyEnable)
                connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)), Qt::DirectConnection);
                connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
                connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
-               connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
-               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
-               connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();}, Qt::QueuedConnection);
+               //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
+               //connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
+               connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->start(UPDATE_TIME); this->setEnabled(false); });
+               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->stop();timer->start(UPDATE_TIME); this->setEnabled(true); });
+               connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();this->setEnabled(true); }, Qt::QueuedConnection);
             }
         }
         if(isAdmin) {
@@ -135,8 +138,10 @@ void MainWindow::updateView(bool isCopyEnable)
             else carBlockVector.push_back(std::move(element));
 
             connect(carBlockVector.back(),SIGNAL(carAdded(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
-            connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
-            connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(UPDATE_TIME);});
+            //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
+            //connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(UPDATE_TIME);});
+            connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->start(UPDATE_TIME); this->setEnabled(false); });
+            connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->stop();timer->start(UPDATE_TIME); this->setEnabled(true); });
             copyEnable = true;
         }
 
@@ -207,10 +212,16 @@ void MainWindow::createDBConfigButton()
     dbConfigButton->setStyleSheet("border:none; color: gray");
     ui->statusBar->addPermanentWidget(dbConfigButton);
     connect(dbConfigButton, &QPushButton::clicked,[=](){
-        DBConfigDialog d(false);
+        QString line{};
+        timer->stop();
+        if(!DBConfigDialog::readFromFile(line))
+            return;
+        DBConfigDialog d(line,false);
         connect(&d,SIGNAL(connectedToDB(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
         connect(&d,SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
-        d.exec();});
+        d.exec();
+        timer->start(UPDATE_TIME);
+    });
 }
 
 void MainWindow::setBackupButtonVisible()
@@ -252,7 +263,7 @@ void MainWindow::createLoginOption()
     });
 
     connect(adminPassword, &QLineEdit::editingFinished, [=]() {
-        if(Database::connectToDatabase()) {
+        if(Database::isOpen()) {
             if(adminPassword->text()==ADMIN_PASSWD) {
                     isAdmin = true;
                     setBackupButtonVisible();
@@ -269,7 +280,7 @@ void MainWindow::createLoginOption()
         }
     });
     connect(logoutButton, &QPushButton::clicked, [=]() {
-        if(Database::connectToDatabase()) {
+        if(Database::isOpen()) {
             isAdmin = false;
             setBackupButtonVisible();
             loginButton->setVisible(true);
@@ -446,7 +457,7 @@ void MainWindow::createTrayIcon(bool _isAdmin)
 
 void MainWindow::loadTrayIcon()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         reloadNotes();
 
         delete trayIcon;
@@ -489,7 +500,7 @@ void MainWindow::noteActionClicked(QAction * act)
 
 void MainWindow::poupMessageClicked()
 {
-    if(Database::connectToDatabase()) {
+    if(Database::isOpen()) {
         notesTable->setQuery("SELECT * FROM notes WHERE isRead = 0 ORDER BY Datetime DESC, idNotes DESC;");
         emit trayMenuNoteClicked(notesTable->data(notesTable->index(0,0)).toInt(), notesTable->data(notesTable->index(0,6)).toInt());
     }
