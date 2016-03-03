@@ -156,19 +156,6 @@ color: white</string>
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton">
-     <property name="geometry">
-      <rect>
-       <x>510</x>
-       <y>40</y>
-       <width>111</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>PushButton</string>
-     </property>
-    </widget>
    </widget>
    <widget class="QScrollArea" name="scrollArea">
     <property name="geometry">
@@ -210,7 +197,7 @@ color: white</string>
      <x>0</x>
      <y>0</y>
      <width>840</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

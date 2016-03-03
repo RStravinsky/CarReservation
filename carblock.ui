@@ -214,7 +214,7 @@ background: rgb(255,105,0);
    </property>
    <property name="styleSheet">
     <string notr="true">border:none;
-</string>
+background-color:transparent;</string>
    </property>
    <property name="text">
     <string/>

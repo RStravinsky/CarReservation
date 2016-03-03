@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#define UPDATE_TIME 5000
+#define UPDATE_TIME 120000
 #define ADMIN_PASSWD "Admin4q@"
 
 std::shared_ptr<NotesDialog> notesDialogPointer;
@@ -60,9 +60,10 @@ void MainWindow::createBackup()
 
 void MainWindow::updateView(bool isCopyEnable)
 {  
-    qDebug() << "Updating..." << endl;
+    qDebug() << endl;
+    qDebug() << "Updating...";
     if(Database::isOpen()) {
-
+        qDebug() << "is Open";
         ui->statusBar->showMessage("Połączono z bazą danych: " + Database::returnHostname());
         const int varticalPosition = ui->scrollArea->verticalScrollBar()->value();
 
@@ -104,9 +105,9 @@ void MainWindow::updateView(bool isCopyEnable)
                connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
                connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
                //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
-               connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->start(UPDATE_TIME); this->setEnabled(false); });
-               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->stop();timer->start(UPDATE_TIME); this->setEnabled(true); });
-               connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();this->setEnabled(true); }, Qt::QueuedConnection);
+               connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->stop(); this->setEnabled(false); qDebug() << "In progress" ;});
+               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME); this->setEnabled(true); qDebug() << "Progress finished" ; });
+               connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();this->setEnabled(true);}, Qt::QueuedConnection);
            }
            else if(!carTable->data(carTable->index(i,9)).toBool() && isAdmin){
                 carBlockVector.emplace_back(std::move(new CarBlock(false, carTable->data(carTable->index(i,0)).toInt(),
@@ -125,9 +126,9 @@ void MainWindow::updateView(bool isCopyEnable)
                connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
                //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
                //connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
-               connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->start(UPDATE_TIME); this->setEnabled(false); });
-               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->stop();timer->start(UPDATE_TIME); this->setEnabled(true); });
-               connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();this->setEnabled(true); }, Qt::QueuedConnection);
+               connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->stop(); this->setEnabled(false); qApp->processEvents(); qDebug() << "In progress" ;});
+               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME); this->setEnabled(true); qApp->processEvents(); qDebug() << "Progress finished" ; });
+               connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();this->setEnabled(true);}, Qt::QueuedConnection);
             }
         }
         if(isAdmin) {
@@ -140,8 +141,8 @@ void MainWindow::updateView(bool isCopyEnable)
             connect(carBlockVector.back(),SIGNAL(carAdded(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
             //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
             //connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(UPDATE_TIME);});
-            connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->start(UPDATE_TIME); this->setEnabled(false); });
-            connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->stop();timer->start(UPDATE_TIME); this->setEnabled(true); });
+            connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->stop(); this->setEnabled(false); qDebug() << "In progress" ;});
+            connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME); this->setEnabled(true); qDebug() << "Progress finished" ;});
             copyEnable = true;
         }
 
@@ -263,6 +264,8 @@ void MainWindow::createLoginOption()
     });
 
     connect(adminPassword, &QLineEdit::editingFinished, [=]() {
+        //this->setEnabled(false);
+        //qApp->processEvents();
         if(Database::isOpen()) {
             if(adminPassword->text()==ADMIN_PASSWD) {
                     isAdmin = true;
@@ -278,8 +281,12 @@ void MainWindow::createLoginOption()
             QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
             ui->statusBar->showMessage("Nie można połączyć z bazą danych");
         }
+        //this->setEnabled(true);
+        //qApp->processEvents();
     });
     connect(logoutButton, &QPushButton::clicked, [=]() {
+        this->setEnabled(false);
+        qApp->processEvents();
         if(Database::isOpen()) {
             isAdmin = false;
             setBackupButtonVisible();
@@ -292,6 +299,8 @@ void MainWindow::createLoginOption()
             QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
             ui->statusBar->showMessage("Nie można połączyć z bazą danych");
         }
+        this->setEnabled(true);
+        qApp->processEvents();
     });
 }
 
@@ -518,20 +527,3 @@ void MainWindow::setPopupMessage()
     }
 }
 
-void MainWindow::on_pushButton_clicked()
-{
-    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-
-    manager->get(QNetworkRequest(QUrl("http://qt-project.org")));
-
-    QNetworkRequest request;
-    request.setUrl(QUrl("http://qt-project.org"));
-    request.setRawHeader("User-Agent", "MyOwnBrowser 1.0");
-
-    QNetworkReply *reply = manager->get(request);
-
-    if(reply->error() == QNetworkReply::NoError)
-        qDebug() << "connected";
-    else
-        qDebug() << "not connected";
-}

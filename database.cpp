@@ -2,7 +2,7 @@
 
 QSqlDatabase Database::sqlDatabase = QSqlDatabase();
 
-bool Database::isLocal=true;
+bool Database::isLocal = false;
 
 Database::Database(QObject *parent) : QObject(parent)
 {
@@ -16,13 +16,20 @@ bool Database::connectToDatabase()
 
 bool Database::isOpen()
 {
-    if(isLocal || isConnectedToNetwork()){
-        //qDebug() << "Network OK!";
+    if(isLocal){
+        qDebug() << "LOCAL";
         return sqlDatabase.isOpen();
     }
-    else{
-        //qDebug() << "Network ERROR!";
-        return false;
+    else {
+        qDebug() << "REMOTE";
+        if(isConnectedToNetwork()){
+            qDebug() << "Network OK!";
+            return sqlDatabase.isOpen();
+        }
+        else{
+            qDebug() << "Network ERROR!";
+            return false;
+        }
     }
 }
 

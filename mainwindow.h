@@ -46,9 +46,7 @@ private slots:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void noteActionClicked(QAction *act);
     void poupMessageClicked();
-    void setPopupMessage();
-
-    void on_pushButton_clicked();
+    void setPopupMessage();;
 
 signals:
     void trayMenuNoteClicked(int _idNotes, int _idCar);

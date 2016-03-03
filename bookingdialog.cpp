@@ -50,7 +50,7 @@ BookingDialog::~BookingDialog()
 
 void BookingDialog::updateView()
 {
-    //qDebug() << "Updating booking ..." << endl;
+    qDebug() << "Updating booking ..." << endl;
     if(firstInit) {
         ui->calendarWidget->clicked(QDate::currentDate());
         firstInit=false;

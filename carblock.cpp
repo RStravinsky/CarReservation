@@ -165,9 +165,9 @@ bool CarBlock::getCarVisible()
 
 void CarBlock::showNotesDialog(int _idNotes, int _idCar)
 {
+    emit inProgress();
     if(_idCar == idCar) {
         if(Database::isOpen()) {
-            emit inProgress();
                 notesDialogPointer = std::shared_ptr<NotesDialog>(new NotesDialog(_idNotes, _idCar));
                 if(notesDialogPointer.use_count() == 1 && notesDialogPointer.get()->exec() == NotesDialog::Rejected){
                     if(!(BookingDialog::isOpen || ServiceBlock::isOpen)) emit progressFinished();
@@ -178,21 +178,24 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
             QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         }
     }
+    emit progressFinished();
 }
 
 void CarBlock::on_btnReserve_clicked()
 {
+    emit inProgress();
     if(Database::isOpen()) {
         bookingDialog = new BookingDialog(idCar);
-        emit inProgress();
         if(bookingDialog->exec()== BookingDialog::Rejected)
-            emit progressFinished();
+            //emit progressFinished();
         delete bookingDialog;
     }
     else {
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
+
+    emit progressFinished();
 }
 
 void CarBlock::on_btnAddMileage_clicked()
@@ -452,6 +455,8 @@ bool CarBlock::showMsgBeforeDelete()
 
 void CarBlock::on_btnIsVisible_clicked()
 {
+    this->setEnabled(false);
+    qApp->processEvents();
     static bool isVisible = isCarVisible;
     if(!isAddBlock) {
         if(Database::isOpen()) {
@@ -476,49 +481,51 @@ void CarBlock::on_btnIsVisible_clicked()
         isVisible = !isVisible;
         setVisibleButton(isVisible);
     }
+    this->setEnabled(true);
+    qApp->processEvents();
 }
 
 void CarBlock::on_btnViewRepairs_clicked()
 {
+    emit inProgress();
     if(Database::isOpen()) {
         serviceBlock = new ServiceBlock(idCar);
-        emit inProgress();
         if(serviceBlock->exec()== ServiceBlock::Rejected)
-            emit progressFinished();
-        delete serviceBlock;
+            delete serviceBlock;
     }
     else {
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
+    emit progressFinished();
 }
 
 void CarBlock::on_btnPDF_clicked()
 {
+    emit inProgress();
     if(Database::isOpen()) {
         reportDialog = new ReportDialog(idCar);
-        emit inProgress();
         if(reportDialog->exec()== ReportDialog::Rejected)
-            emit progressFinished();
-        delete reportDialog;
+            delete reportDialog;
     }
     else {
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
+    emit progressFinished();
 }
 
 void CarBlock::on_btnOil_clicked()
 {
+    emit inProgress();
     if(Database::isOpen()) {
         oilDialog = new OilDialog(idCar);
-        emit inProgress();
         if(oilDialog->exec()== OilDialog::Rejected)
-            emit progressFinished();
-        delete oilDialog;
+            delete oilDialog;
     }
     else {
         QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
+    emit progressFinished();
 }
