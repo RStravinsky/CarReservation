@@ -235,22 +235,22 @@ bool BookingDialog::isDateFree()
         modelEnd = bookedDates->data(bookedDates->index(i,1)).toDateTime();
 
         if(ui->dateTimeEditBegin->dateTime() >= modelBegin && ui->dateTimeEditEnd->dateTime() <= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany1.");
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
             return false;
         }
 
         if(ui->dateTimeEditBegin->dateTime() <= modelBegin && ui->dateTimeEditEnd->dateTime() >= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany2.");
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
             return false;
         }
 
         if(ui->dateTimeEditBegin->dateTime()<= modelBegin && ui->dateTimeEditEnd->dateTime() >= modelBegin && ui->dateTimeEditEnd->dateTime() <= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany3.");
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
             return false;
         }
 
         if(ui->dateTimeEditBegin->dateTime() >= modelBegin && ui->dateTimeEditBegin->dateTime() <= modelEnd && ui->dateTimeEditEnd->dateTime() >= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany4.");
+            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
             return false;
         }
     }

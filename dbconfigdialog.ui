@@ -458,7 +458,7 @@ color: white</string>
   <widget class="QLabel" name="lblWait">
    <property name="geometry">
     <rect>
-     <x>60</x>
+     <x>40</x>
      <y>360</y>
      <width>111</width>
      <height>31</height>
@@ -477,7 +477,7 @@ color: white</string>
   <widget class="QLabel" name="lblLoad">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>0</x>
      <y>360</y>
      <width>47</width>
      <height>31</height>
@@ -487,13 +487,15 @@ color: white</string>
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>:/images/images/sand-clock.png</pixmap>
+    <pixmap resource="resources.qrc">:/images/images/sand-clock.png</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>
    </property>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

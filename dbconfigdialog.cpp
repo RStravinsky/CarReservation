@@ -54,15 +54,14 @@ void DBConfigDialog::on_runButton_clicked()
     if(ui->rbLocalDB->isChecked()) {
         Database::purgeDatabase();
         if(noDataBase) {
-
             QString pth = QString(QDir::currentPath() + "\\\"");
             QString cmd = QString("\"" + pth + "mysqlRun -h127.0.0.1 -P3306 -uroot -pPASSWORD");
             QProcess * createMysql = new QProcess(this);
             createMysql->start(cmd);
             while(!createMysql->waitForFinished()) {}
             delete createMysql;
-
         }
+
         Database::setParameters("localhost", 3306,"sigmacars", "root","PASSWORD");
         if(!writeToFile("localhost", 3306, "sigmacars", "root","PASSWORD"))
             return;
@@ -77,15 +76,14 @@ void DBConfigDialog::on_runButton_clicked()
         Database::purgeDatabase();
 
         if(noDataBase) {
-
             QString pth = QString(QDir::currentPath() + "\\\"");
             QString cmd = QString("\"" + pth + "mysqlRun -h" + ui->leAddress->text() + " -P" + ui->lePort->text() + " -u" + ui->leUser->text() + " -p" + ui->lePassword->text() + " -dtestsigmadb");
             QProcess * createMysql = new QProcess(this);
             createMysql->start(cmd);
             while(!createMysql->waitForFinished()) {}
             delete createMysql;
-
         }
+
         Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),
                                 "sigmacars", ui->leUser->text(),
                                 ui->lePassword->text());
@@ -113,6 +111,7 @@ void DBConfigDialog::on_runButton_clicked()
         return;
     }
 }
+
 void DBConfigDialog::on_rbRemoteDB_toggled(bool checked)
 {
     if(checked) {
@@ -150,6 +149,12 @@ bool DBConfigDialog::writeToFile(const QString &hostname, int port, const QStrin
     QFile initFile( QDir::currentPath()+"/init.txt" );
     if(!initFile.open(QIODevice::WriteOnly)) {
         QMessageBox::critical(this,"Błąd!", "Nie można otworzyć pliku z kofiguracją bazy danych.");
+
+        //unlock
+        ui->lblWait->setVisible(false);
+        ui->lblLoad->setVisible(false);
+        this->setEnabled(true);
+
         return false;
     }
     QTextStream out( &initFile );
@@ -163,6 +168,12 @@ bool DBConfigDialog::dataIsEmpty()
 {
     if(ui->leUser->text().isEmpty() | ui->lePassword->text().isEmpty() || ui->leAddress->text().isEmpty() || ui->lePort->text().isEmpty()) {
         QMessageBox::warning(this,"Uwaga!","Pole tekstowe nie zostało wypełnione.");
+
+        //unlock
+        ui->lblWait->setVisible(false);
+        ui->lblLoad->setVisible(false);
+        this->setEnabled(true);
+
         return true;
     }
 
