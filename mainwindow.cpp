@@ -215,9 +215,45 @@ void MainWindow::createDBConfigButton()
     connect(dbConfigButton, &QPushButton::clicked,[=](){
         QString line{};
         timer->stop();
+        bool result;
+
+        QMessageBox msgBox(QMessageBox::Question, tr("Wybierz!"), tr("<font face=""Calibri"" size=""3"" color=""gray"">Chcesz utworzyć czy połączyć z bazą danych?</font>"), QMessageBox::Yes | QMessageBox::No );
+        msgBox.setStyleSheet("QMessageBox {background: white;}"
+                             "QPushButton:hover {"
+                             "border-radius: 5px;"
+                             "background: rgb(255,140,0);"
+                             "}"
+                             "QPushButton{"
+                             "color: white;"
+                             "border-radius: 5px;"
+                             "background: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+                             "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                             "min-width: 70px;"
+                             "min-height: 30px;"
+                             "font-family: Calibri;"
+                             "font-size: 12;"
+                             "font-weight: bold;"
+                             "}"
+                             "QPushButton:pressed {"
+                             "color: white;"
+                             "border-radius: 5px;"
+                             "background: rgb(255,105,0);"
+                             "}"
+                             );
+
+        msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
+        msgBox.setButtonText(QMessageBox::Yes, tr("Połącz"));
+        msgBox.setButtonText(QMessageBox::No, tr("Utwórz"));
+        if (msgBox.exec() == QMessageBox::Yes)
+            result = false;
+
+        else result = true;
+
         if(!DBConfigDialog::readFromFile(line))
             return;
-        DBConfigDialog d(line,false);
+
+        DBConfigDialog d(line,result);
+
         connect(&d,SIGNAL(connectedToDB(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
         connect(&d,SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
         d.exec();

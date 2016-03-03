@@ -85,10 +85,10 @@ void DBConfigDialog::on_runButton_clicked()
         }
 
         Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),
-                                "sigmacars", ui->leUser->text(),
+                                "testsigmadb", ui->leUser->text(),
                                 ui->lePassword->text());
         if(!writeToFile(ui->leAddress->text(), ui->lePort->text().toInt(),
-                                "sigmacars", ui->leUser->text(),ui->lePassword->text()))
+                                "testsigmadb", ui->leUser->text(),ui->lePassword->text()))
             return;
 
         Database::isLocal = false;
