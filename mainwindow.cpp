@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#define UPDATE_TIME 120000
+#define UPDATE_TIME 50000
 #define ADMIN_PASSWD "Admin4q@"
 
 std::shared_ptr<NotesDialog> notesDialogPointer;
@@ -262,6 +262,7 @@ void MainWindow::createDBConfigButton()
         connect(&d,SIGNAL(connectedToDB(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
         connect(&d,SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
         d.exec();
+        loadTrayIcon();
         timer->start(UPDATE_TIME);
     });
 }
@@ -288,60 +289,65 @@ void MainWindow::createLoginOption()
     logoutButton->setVisible(false);
 
     QLineEdit *  adminPassword = new QLineEdit(this);
-    adminPassword->setVisible(false);
+    adminPassword->setVisible(true);
     adminPassword->setEchoMode(QLineEdit::Password);
     adminPassword->setFixedWidth(100);
+    adminPassword->setPlaceholderText("Admin");
 
     ui->statusBar->addPermanentWidget(loginButton);
     ui->statusBar->addPermanentWidget(logoutButton);
     ui->statusBar->addPermanentWidget(adminPassword);
 
-    connect(loginButton, &QPushButton::clicked, [=]() {
-            static bool visible = false;
-            visible = !visible;
-            adminPassword->clear();
-            adminPassword->setFocus();
-            adminPassword->setVisible(visible); 
-    });
+//    connect(loginButton, &QPushButton::clicked, [=]() {
+//        adminPassword->clearFocus();
+//        adminPassword->clear();
+//        if(adminPassword->isVisible()) adminPassword->setVisible(false);
+//        else adminPassword->setVisible(true);
+//    });
 
     connect(adminPassword, &QLineEdit::editingFinished, [=]() {
-
-        qDebug() << isDatabase;
-        if(!isDatabase && adminPassword->text()==ADMIN_PASSWD){
-            isAdmin = true;
-            loginButton->setVisible(false);
-            logoutButton->setVisible(true);
-            adminPassword->clear();
-            adminPassword->setVisible(false);
-            return;
+        if(!isDatabase){
+            if(adminPassword->text()==ADMIN_PASSWD) {
+                isAdmin = true;
+                loginButton->setVisible(false);
+                logoutButton->setVisible(true);
+                adminPassword->clear();
+                adminPassword->setVisible(false);
+                return;
+            }
         }
 
-        this->setEnabled(false);
-        qApp->processEvents();
+        else {
+            this->setEnabled(false);
+            qApp->processEvents();
             if(Database::isOpen()) {
                 if(adminPassword->text()==ADMIN_PASSWD) {
-                        isAdmin = true;
-                        setBackupButtonVisible();
-                        loginButton->click();
-                        loginButton->setVisible(false);
-                        logoutButton->setVisible(true);
-                        updateView(false);
-                        loadTrayIcon();
+                    isAdmin = true;
+                    updateView(false);
+                    loadTrayIcon();
+                    setBackupButtonVisible();
+                    loginButton->setVisible(false);
+                    logoutButton->setVisible(true);
+                    adminPassword->setVisible(false);
+                    //adminPassword->setText("");
                 }
             }
             else {
                 QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
                 ui->statusBar->showMessage("Nie można połączyć z bazą danych");
             }
-        this->setEnabled(true);
-        qApp->processEvents();
+            this->setEnabled(true);
+            qApp->processEvents();
+        }
     });
+
     connect(logoutButton, &QPushButton::clicked, [=]() {
 
         if(!isDatabase){
             isAdmin = false;
             loginButton->setVisible(true);
             logoutButton->setVisible(false);
+            adminPassword->setVisible(true);
             return;
         }
 
@@ -349,11 +355,12 @@ void MainWindow::createLoginOption()
         qApp->processEvents();
             if(Database::isOpen()) {
                 isAdmin = false;
+                updateView(true);
+                loadTrayIcon();
                 setBackupButtonVisible();
                 loginButton->setVisible(true);
                 logoutButton->setVisible(false);
-                updateView(true);
-                loadTrayIcon();
+                adminPassword->setVisible(true);
             }
             else {
                 QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");

@@ -2,10 +2,10 @@
 #include "ui_dbconfigdialog.h"
 #include "database.h"
 
-DBConfigDialog::DBConfigDialog(QString line, bool noDB, QWidget *parent) :
+DBConfigDialog::DBConfigDialog(QString line, bool isCreateType, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DBConfigDialog),
-    noDataBase(noDB)
+    createMode(isCreateType)
 {
     ui->setupUi(this);
 
@@ -29,7 +29,7 @@ DBConfigDialog::DBConfigDialog(QString line, bool noDB, QWidget *parent) :
         ui->lePort->setText(parameters.at(1));
     }
 
-    if(noDataBase) {
+    if(createMode) {
         ui->runButton->setText("Utwórz");
     }
     else
@@ -46,16 +46,12 @@ DBConfigDialog::~DBConfigDialog()
 void DBConfigDialog::on_runButton_clicked()
 {
     bool isLocal;
-    // show waiting labels
-    this->setEnabled(false);
-    ui->lblWait->setVisible(true);
-    ui->lblLoad->setVisible(true);
-    qApp->processEvents();
+    setGrayOut(true);
 
     if(ui->rbLocalDB->isChecked()) {
         Database::purgeDatabase();
-        if(noDataBase) {
-            qDebug() << "Create local db";
+        if(createMode) {
+            qDebug() << "--- Creating local database ---";
             QString pth = QString(QDir::currentPath() + "\\\"");
             QString cmd = QString("\"" + pth + "mysqlRun -h127.0.0.1 -P3306 -uroot -pPASSWORD");
             QProcess * createMysql = new QProcess(this);
@@ -64,21 +60,21 @@ void DBConfigDialog::on_runButton_clicked()
             delete createMysql;
         }
 
-        Database::setParameters("localhost", 3306,"sigmacars", "root","PASSWORD");
-        if(!writeToFile("localhost", 3306, "sigmacars", "root","PASSWORD"))
-            return;
+        Database::setParameters("127.0.0.1", 3306,"sigmacars", "root","PASSWORD");
         isLocal = true;
     }
 
     else if (ui->rbRemoteDB->isChecked()) {
 
-        if(dataIsEmpty())
+        if(dataIsEmpty()){
+            setGrayOut(false);
             return;
+        }
 
         Database::purgeDatabase();
 
-        if(noDataBase) {
-            qDebug() << "Create remote db";
+        if(createMode) {
+            qDebug() << "--- Creating remote database ---";
             QString pth = QString(QDir::currentPath() + "\\\"");
             QString cmd = QString("\"" + pth + "mysqlRun -h" + ui->leAddress->text() + " -P" + ui->lePort->text() + " -u" + ui->leUser->text() + " -p" + ui->lePassword->text() + " -dtestsigmadb");
             QProcess * createMysql = new QProcess(this);
@@ -90,29 +86,32 @@ void DBConfigDialog::on_runButton_clicked()
         Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),
                                 "testsigmadb", ui->leUser->text(),
                                 ui->lePassword->text());
-        if(!writeToFile(ui->leAddress->text(), ui->lePort->text().toInt(),
-                                "testsigmadb", ui->leUser->text(),ui->lePassword->text()))
-            return;
         isLocal = false;
     }
 
     if(Database::connectToDatabase()) {
         QMessageBox::information(this,"Informacja", "Pomyślnie połączono z bazą danych.");
-        emit connectedToDB(false);
-        ui->lblWait->setVisible(false);
-        ui->lblLoad->setVisible(false);
-        this->setEnabled(true);
+        if(isLocal) {
+            if(!writeToFile("localhost", 3306, "sigmacars", "root","PASSWORD"))
+                return;
+        }
+        else {
+            if(!writeToFile(ui->leAddress->text(), ui->lePort->text().toInt(),
+                    "testsigmadb", ui->leUser->text(),ui->lePassword->text()))
+                return;
+        }
+
+        setGrayOut(false);
         MainWindow::isDatabase = true;
         Database::isLocal = isLocal;
+        emit connectedToDB(false);
         this->accept();
     }
     else {
         QMessageBox::critical(this,"Błąd!", "Nie połączono z bazą danych!");
-        ui->lblWait->setVisible(false);
-        ui->lblLoad->setVisible(false);
-        this->setEnabled(true);
-        emit changeStatusBar("Nie można połączyć z bazą danych");
+        setGrayOut(false);
         MainWindow::isDatabase = false;
+        emit changeStatusBar("Nie można połączyć z bazą danych");
         return;
     }
 }
@@ -128,7 +127,7 @@ void DBConfigDialog::on_rbRemoteDB_toggled(bool checked)
         ui->lePassword->setVisible(true);
         ui->lblPort->setVisible(true);
         ui->lePort->setVisible(true);
-        if(noDataBase)
+        if(createMode)
             ui->runButton->setText("Utwórz");
         else
             ui->runButton->setText("Połącz");
@@ -142,7 +141,7 @@ void DBConfigDialog::on_rbRemoteDB_toggled(bool checked)
         ui->lePassword->setVisible(false);
         ui->lblPort->setVisible(false);
         ui->lePort->setVisible(false);
-        if(noDataBase)
+        if(createMode)
             ui->runButton->setText("Utwórz");
         else
             ui->runButton->setText("Połącz");
@@ -154,12 +153,7 @@ bool DBConfigDialog::writeToFile(const QString &hostname, int port, const QStrin
     QFile initFile( QDir::currentPath()+"/init.txt" );
     if(!initFile.open(QIODevice::WriteOnly)) {
         QMessageBox::critical(this,"Błąd!", "Nie można otworzyć pliku z kofiguracją bazy danych.");
-
-        //unlock
-        ui->lblWait->setVisible(false);
-        ui->lblLoad->setVisible(false);
-        this->setEnabled(true);
-
+        setGrayOut(false);
         return false;
     }
     QTextStream out( &initFile );
@@ -173,16 +167,18 @@ bool DBConfigDialog::dataIsEmpty()
 {
     if(ui->leUser->text().isEmpty() | ui->lePassword->text().isEmpty() || ui->leAddress->text().isEmpty() || ui->lePort->text().isEmpty()) {
         QMessageBox::warning(this,"Uwaga!","Pole tekstowe nie zostało wypełnione.");
-
-        //unlock
-        ui->lblWait->setVisible(false);
-        ui->lblLoad->setVisible(false);
-        this->setEnabled(true);
-
         return true;
     }
 
     return false;
+}
+
+void DBConfigDialog::setGrayOut(bool isGray)
+{
+    ui->lblWait->setVisible(isGray);
+    ui->lblLoad->setVisible(isGray);
+    this->setEnabled(!isGray);
+    qApp->processEvents();
 }
 
 bool DBConfigDialog::readFromFile(QString &line)

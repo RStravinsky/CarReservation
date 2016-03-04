@@ -15,7 +15,7 @@ class DBConfigDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit DBConfigDialog(QString line, bool noDB, QWidget *parent = 0);
+    explicit DBConfigDialog(QString line, bool isCreateType, QWidget *parent = 0);
     ~DBConfigDialog();
     static bool readFromFile(QString &line);
 
@@ -29,10 +29,11 @@ private slots:
 
 private:
     Ui::DBConfigDialog *ui;
-    bool noDataBase;
+    bool createMode;
     bool writeToFile(const QString &hostname, int port, const QString &database, const QString &user, const QString &password);
     bool dataIsEmpty();
     void showMsg(const QString &msg);
+    void setGrayOut(bool isGray);
 };
 
 #endif // DBCONFIGDIALOG_H

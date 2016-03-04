@@ -47,16 +47,18 @@ CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString lice
     ui->dateEditInspection->setDate(inspectionDate);
     ui->dateEditInsurance->setDate(insuranceDate);
 
-    QDate tmp;
-    tmp = QDate::currentDate().addDays(7);
+    if(!isAddBlock) {
+        QDate tmp;
+        tmp = QDate::currentDate().addDays(7);
 
-    if(tmp >= inspectionDate)
-        ui->lblInspectionImage->setPixmap(QPixmap(":/images/images/inspection_warning.png"));
-    else ui->lblInspectionImage->setPixmap(QPixmap(":/images/images/inspection.png"));
+        if(tmp >= inspectionDate)
+            ui->lblInspectionImage->setPixmap(QPixmap(":/images/images/inspection_warning.png"));
+        else ui->lblInspectionImage->setPixmap(QPixmap(":/images/images/inspection.png"));
 
-    if(tmp >= insuranceDate)
-        ui->lblInsuranceImage->setPixmap(QPixmap(":/images/images/insurance_warning.png"));
-    else ui->lblInsuranceImage->setPixmap(QPixmap(":/images/images/insurance.png"));
+        if(tmp >= insuranceDate)
+            ui->lblInsuranceImage->setPixmap(QPixmap(":/images/images/insurance_warning.png"));
+        else ui->lblInsuranceImage->setPixmap(QPixmap(":/images/images/insurance.png"));
+    }
 
     setStatus(status);
     if(status && isVisible) {
