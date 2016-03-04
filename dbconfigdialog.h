@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QMessageBox>
 #include <QProcess>
+#include "mainwindow.h"
 
 namespace Ui {
 class DBConfigDialog;

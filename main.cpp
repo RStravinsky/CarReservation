@@ -16,16 +16,10 @@ int main(int argc, char *argv[])
 
         if(parameters.at(0)=="localhost") Database::isLocal = true;
         else Database::isLocal = false;
-        // check connection
-        if(!Database::connectToDatabase())
-            goto runCreator;
-    }
 
-    if(line.isEmpty()){
-        runCreator:
-        DBConfigDialog dbConfig(line,true);
-        if(dbConfig.exec()==DBConfigDialog::Rejected)
-            return 0;
+        // check connection
+        if(Database::connectToDatabase())
+             MainWindow::isDatabase = true;
     }
 
     MainWindow w;

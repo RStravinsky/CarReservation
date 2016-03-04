@@ -44,7 +44,8 @@ DBConfigDialog::~DBConfigDialog()
 }
 
 void DBConfigDialog::on_runButton_clicked()
-{      
+{
+    bool isLocal;
     // show waiting labels
     this->setEnabled(false);
     ui->lblWait->setVisible(true);
@@ -54,6 +55,7 @@ void DBConfigDialog::on_runButton_clicked()
     if(ui->rbLocalDB->isChecked()) {
         Database::purgeDatabase();
         if(noDataBase) {
+            qDebug() << "Create local db";
             QString pth = QString(QDir::currentPath() + "\\\"");
             QString cmd = QString("\"" + pth + "mysqlRun -h127.0.0.1 -P3306 -uroot -pPASSWORD");
             QProcess * createMysql = new QProcess(this);
@@ -65,7 +67,7 @@ void DBConfigDialog::on_runButton_clicked()
         Database::setParameters("localhost", 3306,"sigmacars", "root","PASSWORD");
         if(!writeToFile("localhost", 3306, "sigmacars", "root","PASSWORD"))
             return;
-        Database::isLocal = true;
+        isLocal = true;
     }
 
     else if (ui->rbRemoteDB->isChecked()) {
@@ -76,6 +78,7 @@ void DBConfigDialog::on_runButton_clicked()
         Database::purgeDatabase();
 
         if(noDataBase) {
+            qDebug() << "Create remote db";
             QString pth = QString(QDir::currentPath() + "\\\"");
             QString cmd = QString("\"" + pth + "mysqlRun -h" + ui->leAddress->text() + " -P" + ui->lePort->text() + " -u" + ui->leUser->text() + " -p" + ui->lePassword->text() + " -dtestsigmadb");
             QProcess * createMysql = new QProcess(this);
@@ -90,8 +93,7 @@ void DBConfigDialog::on_runButton_clicked()
         if(!writeToFile(ui->leAddress->text(), ui->lePort->text().toInt(),
                                 "testsigmadb", ui->leUser->text(),ui->lePassword->text()))
             return;
-
-        Database::isLocal = false;
+        isLocal = false;
     }
 
     if(Database::connectToDatabase()) {
@@ -100,6 +102,8 @@ void DBConfigDialog::on_runButton_clicked()
         ui->lblWait->setVisible(false);
         ui->lblLoad->setVisible(false);
         this->setEnabled(true);
+        MainWindow::isDatabase = true;
+        Database::isLocal = isLocal;
         this->accept();
     }
     else {
@@ -108,6 +112,7 @@ void DBConfigDialog::on_runButton_clicked()
         ui->lblLoad->setVisible(false);
         this->setEnabled(true);
         emit changeStatusBar("Nie można połączyć z bazą danych");
+        MainWindow::isDatabase = false;
         return;
     }
 }

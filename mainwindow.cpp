@@ -7,6 +7,8 @@
 std::shared_ptr<NotesDialog> notesDialogPointer;
 bool isAdmin{false};
 
+bool MainWindow::isDatabase = false;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -62,103 +64,105 @@ void MainWindow::updateView(bool isCopyEnable)
 {  
     qDebug() << endl;
     qDebug() << "Updating...";
-    if(Database::isOpen()) {
-        qDebug() << "is Open";
-        ui->statusBar->showMessage("Połączono z bazą danych: " + Database::returnHostname());
-        const int varticalPosition = ui->scrollArea->verticalScrollBar()->value();
+    if(isDatabase){
+        if(Database::isOpen()) {
+            qDebug() << "is Open";
+            ui->statusBar->showMessage("Połączono z bazą danych: " + Database::returnHostname());
+            const int varticalPosition = ui->scrollArea->verticalScrollBar()->value();
 
-        if(isAdmin)
-            copyEnable = isCopyEnable;
+            if(isAdmin)
+                copyEnable = isCopyEnable;
 
-        delete carTable;
-        carTable = new QSqlQueryModel(this);
-        carTable->setQuery("SELECT * FROM car;");
+            delete carTable;
+            carTable = new QSqlQueryModel(this);
+            carTable->setQuery("SELECT * FROM car;");
 
-        delete bookingTable;
-        bookingTable = new QSqlQueryModel(this);
-        bookingTable->setQuery("SELECT * FROM booking;");
+            delete bookingTable;
+            bookingTable = new QSqlQueryModel(this);
+            bookingTable->setQuery("SELECT * FROM booking;");
 
-        if(notesTable != nullptr)
-            lastRowCount = notesTable->rowCount();
+            if(notesTable != nullptr)
+                lastRowCount = notesTable->rowCount();
 
-        // Copy last CarBlock
-        CarBlock * element;
-        if (isAdmin && carBlockVector.size()>0)
-                element = new CarBlock(*(carBlockVector.at(carBlockVector.size()-1)));
+            // Copy last CarBlock
+            CarBlock * element;
+            if (isAdmin && carBlockVector.size()>0)
+                    element = new CarBlock(*(carBlockVector.at(carBlockVector.size()-1)));
 
-        carBlockVector.clear();
-        CarBlock * lastCarBlock{nullptr};
-        for(int i = 0; i < carTable->rowCount(); ++i) {
-            if(carTable->data(carTable->index(i,9)).toBool()) {
-               carBlockVector.emplace_back(std::move(new CarBlock(false, carTable->data(carTable->index(i,0)).toInt(),
-                                                                   carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
-                                                                   carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
-                                                                   carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
-                                                                   static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString(),
-                                                                   carTable->data(carTable->index(i,9)).toBool()
-                                                                  )
-                                                      ));
-               lastCarBlock = carBlockVector.back();
-               lastCarBlock->setBookingTable(bookingTable);
-               lastCarBlock->setAdminPermissions(isAdmin);
-               connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)), Qt::DirectConnection);
-               connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
-               connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
-               //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
-               connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->stop(); this->setEnabled(false); qDebug() << "In progress" ;});
-               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME); this->setEnabled(true); qDebug() << "Progress finished" ; });
-               connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();this->setEnabled(true);}, Qt::QueuedConnection);
-           }
-           else if(!carTable->data(carTable->index(i,9)).toBool() && isAdmin){
-                carBlockVector.emplace_back(std::move(new CarBlock(false, carTable->data(carTable->index(i,0)).toInt(),
-                                                                   carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
-                                                                   carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
-                                                                   carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
-                                                                   static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString(),
-                                                                   carTable->data(carTable->index(i,9)).toBool()
-                                                                  )
-                                                      ));
-               lastCarBlock = carBlockVector.back();
-               lastCarBlock->setBookingTable(bookingTable);
-               lastCarBlock->setAdminPermissions(isAdmin);
-               connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)), Qt::DirectConnection);
-               connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
-               connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
-               //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
-               //connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
-               connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->stop(); this->setEnabled(false); qApp->processEvents(); qDebug() << "In progress" ;});
-               connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME); this->setEnabled(true); qApp->processEvents(); qDebug() << "Progress finished" ; });
-               connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();this->setEnabled(true);}, Qt::QueuedConnection);
+            carBlockVector.clear();
+            CarBlock * lastCarBlock{nullptr};
+            for(int i = 0; i < carTable->rowCount(); ++i) {
+                if(carTable->data(carTable->index(i,9)).toBool()) {
+                   carBlockVector.emplace_back(std::move(new CarBlock(false, carTable->data(carTable->index(i,0)).toInt(),
+                                                                       carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
+                                                                       carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
+                                                                       carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
+                                                                       static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString(),
+                                                                       carTable->data(carTable->index(i,9)).toBool()
+                                                                      )
+                                                          ));
+                   lastCarBlock = carBlockVector.back();
+                   lastCarBlock->setBookingTable(bookingTable);
+                   lastCarBlock->setAdminPermissions(isAdmin);
+                   connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)), Qt::DirectConnection);
+                   connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
+                   connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
+                   //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
+                   connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->stop(); this->setEnabled(false); qDebug() << "In progress" ;});
+                   connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME); this->setEnabled(true); qDebug() << "Progress finished" ; });
+                   connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();this->setEnabled(true);}, Qt::QueuedConnection);
+               }
+               else if(!carTable->data(carTable->index(i,9)).toBool() && isAdmin){
+                    carBlockVector.emplace_back(std::move(new CarBlock(false, carTable->data(carTable->index(i,0)).toInt(),
+                                                                       carTable->data(carTable->index(i,1)).toString(), carTable->data(carTable->index(i,2)).toString(),
+                                                                       carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
+                                                                       carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
+                                                                       static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString(),
+                                                                       carTable->data(carTable->index(i,9)).toBool()
+                                                                      )
+                                                          ));
+                   lastCarBlock = carBlockVector.back();
+                   lastCarBlock->setBookingTable(bookingTable);
+                   lastCarBlock->setAdminPermissions(isAdmin);
+                   connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)), Qt::DirectConnection);
+                   connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
+                   connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
+                   //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
+                   //connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
+                   connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->stop(); this->setEnabled(false); qApp->processEvents(); qDebug() << "In progress" ;});
+                   connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME); this->setEnabled(true); qApp->processEvents(); qDebug() << "Progress finished" ; });
+                   connect(carBlockVector.back(),&CarBlock::noteClosed, this,[=](){loadTrayIcon();this->setEnabled(true);}, Qt::QueuedConnection);
+                }
             }
+            if(isAdmin) {
+                setPopupMessage();
+                if(!copyEnable)
+                    carBlockVector.emplace_back(std::move(new CarBlock()));
+
+                else carBlockVector.push_back(std::move(element));
+
+                connect(carBlockVector.back(),SIGNAL(carAdded(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
+                //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
+                //connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(UPDATE_TIME);});
+                connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->stop(); this->setEnabled(false); qDebug() << "In progress" ;});
+                connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME); this->setEnabled(true); qDebug() << "Progress finished" ;});
+                copyEnable = true;
+            }
+
+            delete scrollLayout;
+            delete scrollWidget;
+            scrollWidget = new QWidget(ui->scrollArea);
+            scrollLayout = new QVBoxLayout(scrollWidget);
+            for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos)
+                scrollLayout->addWidget(*pos);
+            ui->scrollArea->setWidget(scrollWidget);
+            ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
         }
-        if(isAdmin) {
-            setPopupMessage();
-            if(!copyEnable)
-                carBlockVector.emplace_back(std::move(new CarBlock()));
 
-            else carBlockVector.push_back(std::move(element));
-
-            connect(carBlockVector.back(),SIGNAL(carAdded(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
-            //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()));
-            //connect(carBlockVector.back(),&CarBlock::progressFinished,[=](){timer->start(UPDATE_TIME);});
-            connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->stop(); this->setEnabled(false); qDebug() << "In progress" ;});
-            connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME); this->setEnabled(true); qDebug() << "Progress finished" ;});
-            copyEnable = true;
+        else {
+            QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+            ui->statusBar->showMessage("Nie można połączyć z bazą danych");
         }
-
-        delete scrollLayout;
-        delete scrollWidget;
-        scrollWidget = new QWidget(ui->scrollArea);
-        scrollLayout = new QVBoxLayout(scrollWidget);
-        for(auto pos= carBlockVector.begin();pos!=carBlockVector.end();++pos)
-            scrollLayout->addWidget(*pos);
-        ui->scrollArea->setWidget(scrollWidget);
-        ui->scrollArea->verticalScrollBar()->setValue(varticalPosition);
-    }
-
-    else {
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-        ui->statusBar->showMessage("Nie można połączyć z bazą danych");
     }
 }
 
@@ -215,39 +219,40 @@ void MainWindow::createDBConfigButton()
     connect(dbConfigButton, &QPushButton::clicked,[=](){
         QString line{};
         timer->stop();
-        bool result;
+        bool result = false ;
 
-        QMessageBox msgBox(QMessageBox::Question, tr("Wybierz!"), tr("<font face=""Calibri"" size=""3"" color=""gray"">Chcesz utworzyć czy połączyć z bazą danych?</font>"), QMessageBox::Yes | QMessageBox::No );
-        msgBox.setStyleSheet("QMessageBox {background: white;}"
-                             "QPushButton:hover {"
-                             "border-radius: 5px;"
-                             "background: rgb(255,140,0);"
-                             "}"
-                             "QPushButton{"
-                             "color: white;"
-                             "border-radius: 5px;"
-                             "background: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
-                             "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
-                             "min-width: 70px;"
-                             "min-height: 30px;"
-                             "font-family: Calibri;"
-                             "font-size: 12;"
-                             "font-weight: bold;"
-                             "}"
-                             "QPushButton:pressed {"
-                             "color: white;"
-                             "border-radius: 5px;"
-                             "background: rgb(255,105,0);"
-                             "}"
-                             );
+        if(isAdmin){
+            QMessageBox msgBox(QMessageBox::Question, tr("Wybierz!"), tr("<font face=""Calibri"" size=""3"" color=""gray"">Chcesz utworzyć czy połączyć z bazą danych?</font>"), QMessageBox::Yes | QMessageBox::No );
+            msgBox.setStyleSheet("QMessageBox {background: white;}"
+                                 "QPushButton:hover {"
+                                 "border-radius: 5px;"
+                                 "background: rgb(255,140,0);"
+                                 "}"
+                                 "QPushButton{"
+                                 "color: white;"
+                                 "border-radius: 5px;"
+                                 "background: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+                                 "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                                 "min-width: 70px;"
+                                 "min-height: 30px;"
+                                 "font-family: Calibri;"
+                                 "font-size: 12;"
+                                 "font-weight: bold;"
+                                 "}"
+                                 "QPushButton:pressed {"
+                                 "color: white;"
+                                 "border-radius: 5px;"
+                                 "background: rgb(255,105,0);"
+                                 "}"
+                                 );
 
-        msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
-        msgBox.setButtonText(QMessageBox::Yes, tr("Połącz"));
-        msgBox.setButtonText(QMessageBox::No, tr("Utwórz"));
-        if (msgBox.exec() == QMessageBox::Yes)
-            result = false;
-
-        else result = true;
+            msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
+            msgBox.setButtonText(QMessageBox::Yes, tr("Połącz"));
+            msgBox.setButtonText(QMessageBox::No, tr("Utwórz"));
+            if (msgBox.exec() == QMessageBox::Yes)
+                result = false;
+            else result = true;
+        }
 
         if(!DBConfigDialog::readFromFile(line))
             return;
@@ -300,41 +305,60 @@ void MainWindow::createLoginOption()
     });
 
     connect(adminPassword, &QLineEdit::editingFinished, [=]() {
-        //this->setEnabled(false);
-        //qApp->processEvents();
-        if(Database::isOpen()) {
-            if(adminPassword->text()==ADMIN_PASSWD) {
-                    isAdmin = true;
-                    setBackupButtonVisible();
-                    loginButton->click();
-                    loginButton->setVisible(false);
-                    logoutButton->setVisible(true);
-                    updateView(false);
-                    loadTrayIcon();
-            }
+
+        qDebug() << isDatabase;
+        if(!isDatabase && adminPassword->text()==ADMIN_PASSWD){
+            isAdmin = true;
+            loginButton->setVisible(false);
+            logoutButton->setVisible(true);
+            adminPassword->clear();
+            adminPassword->setVisible(false);
+            return;
         }
-        else {
-            QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-            ui->statusBar->showMessage("Nie można połączyć z bazą danych");
-        }
-        //this->setEnabled(true);
-        //qApp->processEvents();
-    });
-    connect(logoutButton, &QPushButton::clicked, [=]() {
+
         this->setEnabled(false);
         qApp->processEvents();
-        if(Database::isOpen()) {
+            if(Database::isOpen()) {
+                if(adminPassword->text()==ADMIN_PASSWD) {
+                        isAdmin = true;
+                        setBackupButtonVisible();
+                        loginButton->click();
+                        loginButton->setVisible(false);
+                        logoutButton->setVisible(true);
+                        updateView(false);
+                        loadTrayIcon();
+                }
+            }
+            else {
+                QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+                ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+            }
+        this->setEnabled(true);
+        qApp->processEvents();
+    });
+    connect(logoutButton, &QPushButton::clicked, [=]() {
+
+        if(!isDatabase){
             isAdmin = false;
-            setBackupButtonVisible();
             loginButton->setVisible(true);
             logoutButton->setVisible(false);
-            updateView(true);
-            loadTrayIcon();
+            return;
         }
-        else {
-            QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-            ui->statusBar->showMessage("Nie można połączyć z bazą danych");
-        }
+
+        this->setEnabled(false);
+        qApp->processEvents();
+            if(Database::isOpen()) {
+                isAdmin = false;
+                setBackupButtonVisible();
+                loginButton->setVisible(true);
+                logoutButton->setVisible(false);
+                updateView(true);
+                loadTrayIcon();
+            }
+            else {
+                QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+                ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+            }
         this->setEnabled(true);
         qApp->processEvents();
     });
@@ -344,19 +368,22 @@ void MainWindow::createLoginOption()
 
 void MainWindow::setVisible(bool visible)
 {
-    minimizeAction->setEnabled(visible);
-    restoreAction->setEnabled(!visible);
     QMainWindow::setVisible(visible);
 
-    if(visible) {
-        dcAction = minimizeAction;
-        minimizeAction->setFont(QFont("Calibri", 9, QFont::Bold));
-        restoreAction->setFont(QFont("Calibri", 9));
-    }
-    else {
-        dcAction = restoreAction;
-        restoreAction->setFont(QFont("Calibri", 9, QFont::Bold));
-        minimizeAction->setFont(QFont("Calibri", 9));
+    if(isDatabase){
+        minimizeAction->setEnabled(visible);
+        restoreAction->setEnabled(!visible);
+
+        if(visible) {
+            dcAction = minimizeAction;
+            minimizeAction->setFont(QFont("Calibri", 9, QFont::Bold));
+            restoreAction->setFont(QFont("Calibri", 9));
+        }
+        else {
+            dcAction = restoreAction;
+            restoreAction->setFont(QFont("Calibri", 9, QFont::Bold));
+            minimizeAction->setFont(QFont("Calibri", 9));
+        }
     }
 }
 
@@ -367,42 +394,44 @@ void MainWindow::showTrayIcon()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (trayIcon->isVisible()) {
+    if(isDatabase) {
+        if (trayIcon->isVisible()) {
 
-        QMessageBox msgBox(QMessageBox::Question, tr("Rezerwacja samochodów"), tr("<font face=""Calibri Light"" size=""5"" color=""gray""><b>Czy chcesz zminimalizować program do paska zadań?</b></font>"), QMessageBox::Yes | QMessageBox::No );
+            QMessageBox msgBox(QMessageBox::Question, tr("Rezerwacja samochodów"), tr("<font face=""Calibri Light"" size=""5"" color=""gray""><b>Czy chcesz zminimalizować program do paska zadań?</b></font>"), QMessageBox::Yes | QMessageBox::No );
 
-        msgBox.setStyleSheet("QMessageBox {background: white;}"
-                             "QPushButton:hover {"
-                             "border-radius: 5px;"
-                             "background: rgb(255,140,0);"
-                             "}"
-                             "QPushButton{"
-                             "color: white;"
-                             "border-radius: 5px;"
-                             "background: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
-                             "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
-                             "width: 100;"
-                             "height: 40;"
-                             "font-family: Calibri Light;"
-                             "font-size: 12;"
-                             "font-weight: bold;"
-                             "}"
-                             "QPushButton:pressed {"
-                             "color: white;"
-                             "border-radius: 5px;"
-                             "background: rgb(255,105,0);"
-                             "}"
+            msgBox.setStyleSheet("QMessageBox {background: white;}"
+                                 "QPushButton:hover {"
+                                 "border-radius: 5px;"
+                                 "background: rgb(255,140,0);"
+                                 "}"
+                                 "QPushButton{"
+                                 "color: white;"
+                                 "border-radius: 5px;"
+                                 "background: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+                                 "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                                 "width: 100;"
+                                 "height: 40;"
+                                 "font-family: Calibri Light;"
+                                 "font-size: 12;"
+                                 "font-weight: bold;"
+                                 "}"
+                                 "QPushButton:pressed {"
+                                 "color: white;"
+                                 "border-radius: 5px;"
+                                 "background: rgb(255,105,0);"
+                                 "}"
 
-                             );
+                                 );
 
-        msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
-        msgBox.setButtonText(QMessageBox::Yes, tr("Tak"));
-        msgBox.setButtonText(QMessageBox::No, tr("Nie"));
-        if (msgBox.exec() == QMessageBox::No) {
-            QApplication::quit();
+            msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
+            msgBox.setButtonText(QMessageBox::Yes, tr("Tak"));
+            msgBox.setButtonText(QMessageBox::No, tr("Nie"));
+            if (msgBox.exec() == QMessageBox::No) {
+                QApplication::quit();
+            }
+            hide();
+            event->ignore();
         }
-        hide();
-        event->ignore();
     }
 }
 
