@@ -436,7 +436,7 @@ bool CarBlock::showMsgBeforeDelete()
                          "min-width: 70px;"
                          "min-height: 30px;"
                          "font-family: Calibri;"
-                         "font-size: 12;"
+                         "font-size: 14;"
                          "font-weight: bold;"
                          "}"
                          "QPushButton:pressed {"

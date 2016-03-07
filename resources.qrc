@@ -49,5 +49,6 @@
         <file>images/oil.png</file>
         <file>images/dbconfig.png</file>
         <file>images/sand-clock.png</file>
+        <file>images/deleteDB.png</file>
     </qresource>
 </RCC>

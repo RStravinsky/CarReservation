@@ -15,13 +15,18 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->statusBar->setStyleSheet("QStatusBar{background: white; color: gray; font-family: Calibri; font-size: 10pt;}"
+                                 "QLabel{border:none; color:gray; font-family: Calibri; font-size: 10pt;}"
+                                 "QStatusBar::item{border: none;}");
+    statusLabel = new QLabel(this);
+    ui->statusBar->addWidget(statusLabel);
+
     createHelpButton();
     createUpdateButton();
     createBackupButton();
     createDBConfigButton();
-    ui->statusBar->setStyleSheet("background: white; color: gray; font-family: Calibri; font-size: 10pt;");
-
     createLoginOption();
+
     timer = new QTimer(this);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimerOverflow()));
     onTimerOverflow();
@@ -67,7 +72,8 @@ void MainWindow::updateView(bool isCopyEnable)
     if(isDatabase){
         if(Database::isOpen()) {
             qDebug() << "is Open";
-            ui->statusBar->showMessage("Połączono z bazą danych: " + Database::returnHostname());
+            //ui->statusBar->showMessage("Połączono z bazą danych: " + Database::returnHostname());
+            statusLabel->setText("Połączono z bazą danych: " + Database::returnHostname());
             const int varticalPosition = ui->scrollArea->verticalScrollBar()->value();
 
             if(isAdmin)
@@ -105,7 +111,7 @@ void MainWindow::updateView(bool isCopyEnable)
                    lastCarBlock->setBookingTable(bookingTable);
                    lastCarBlock->setAdminPermissions(isAdmin);
                    connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)), Qt::DirectConnection);
-                   connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
+                   connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString)),statusLabel,SLOT(setText(QString)));
                    connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
                    //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
                    connect(carBlockVector.back(),&CarBlock::inProgress,this,[=](){ timer->stop(); this->setEnabled(false); qDebug() << "In progress" ;});
@@ -125,7 +131,8 @@ void MainWindow::updateView(bool isCopyEnable)
                    lastCarBlock->setBookingTable(bookingTable);
                    lastCarBlock->setAdminPermissions(isAdmin);
                    connect(this, SIGNAL(trayMenuNoteClicked(int, int)), lastCarBlock, SLOT(showNotesDialog(int, int)), Qt::DirectConnection);
-                   connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
+                   //connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
+                   connect(carBlockVector.back(),SIGNAL(changeStatusBar(QString)),statusLabel,SLOT(setText(QString)));
                    connect(carBlockVector.back(),SIGNAL(carDeleted(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
                    //connect(carBlockVector.back(),SIGNAL(inProgress()),timer,SLOT(stop()), Qt::QueuedConnection);
                    //connect(carBlockVector.back(),&CarBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
@@ -161,8 +168,13 @@ void MainWindow::updateView(bool isCopyEnable)
 
         else {
             QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-            ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+            //ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+            statusLabel->setText("Nie można połączyć z bazą danych");
         }
+    }
+    else{
+        delete scrollLayout;
+        delete scrollWidget;
     }
 }
 
@@ -222,7 +234,7 @@ void MainWindow::createDBConfigButton()
         bool result = false ;
 
         if(isAdmin){
-            QMessageBox msgBox(QMessageBox::Question, tr("Wybierz!"), tr("<font face=""Calibri"" size=""3"" color=""gray"">Chcesz utworzyć czy połączyć z bazą danych?</font>"), QMessageBox::Yes | QMessageBox::No );
+            QMessageBox msgBox(QMessageBox::Question, tr("Wybierz!"), tr("<font face=""Calibri"" size=""3"" color=""gray"">Chcesz utworzyć czy połączyć z bazą danych?</font>"), QMessageBox::Close);
             msgBox.setStyleSheet("QMessageBox {background: white;}"
                                  "QPushButton:hover {"
                                  "border-radius: 5px;"
@@ -236,7 +248,7 @@ void MainWindow::createDBConfigButton()
                                  "min-width: 70px;"
                                  "min-height: 30px;"
                                  "font-family: Calibri;"
-                                 "font-size: 12;"
+                                 "font-size: 14;"
                                  "font-weight: bold;"
                                  "}"
                                  "QPushButton:pressed {"
@@ -247,20 +259,30 @@ void MainWindow::createDBConfigButton()
                                  );
 
             msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
-            msgBox.setButtonText(QMessageBox::Yes, tr("Połącz"));
-            msgBox.setButtonText(QMessageBox::No, tr("Utwórz"));
-            if (msgBox.exec() == QMessageBox::Yes)
+            QAbstractButton *myYesButton = msgBox.addButton(trUtf8("Połącz"), QMessageBox::YesRole);
+            QAbstractButton *myNoButton = msgBox.addButton(trUtf8("Dodaj/Usuń"), QMessageBox::NoRole);
+            msgBox.setButtonText(QMessageBox::Close, tr("Zamknij"));
+            msgBox.exec();
+
+            if(msgBox.clickedButton() == myNoButton)
+                result = true;
+            else if (msgBox.clickedButton() == myYesButton)
                 result = false;
-            else result = true;
+            else {
+                timer->start(UPDATE_TIME);
+                return;
+            }
         }
 
-        if(!DBConfigDialog::readFromFile(line))
+        if(!DBConfigDialog::readFromFile(line)){
+            timer->start(UPDATE_TIME);
             return;
+        }
 
         DBConfigDialog d(line,result);
 
         connect(&d,SIGNAL(connectedToDB(bool)),this,SLOT(updateView(bool)),Qt::QueuedConnection);
-        connect(&d,SIGNAL(changeStatusBar(QString,int)),ui->statusBar,SLOT(showMessage(QString,int)));
+        connect(&d,SIGNAL(changeStatusBar(QString)),statusLabel,SLOT(setText(QString)));
         d.exec();
         loadTrayIcon();
         timer->start(UPDATE_TIME);
@@ -277,10 +299,6 @@ void MainWindow::setBackupButtonVisible()
 
 void MainWindow::createLoginOption()
 {
-    QPushButton * loginButton = new QPushButton(this);
-    loginButton->setIcon(QIcon(":/images/images/key.png"));
-    loginButton->setStyleSheet("border:none;");
-    loginButton->setToolTip("Zaloguj jako administrator");
 
     QPushButton * logoutButton = new QPushButton(this);
     logoutButton->setIcon(QIcon(":/images/images/exit.png"));
@@ -288,24 +306,22 @@ void MainWindow::createLoginOption()
     logoutButton->setToolTip("Wyloguj");
     logoutButton->setVisible(false);
 
+    QPushButton * loginButton = new QPushButton(this);
+    loginButton->setIcon(QIcon(":/images/images/key.png"));
+    loginButton->setStyleSheet("border:none;");
+    loginButton->setToolTip("Zaloguj jako administrator");
+
     QLineEdit *  adminPassword = new QLineEdit(this);
     adminPassword->setVisible(true);
     adminPassword->setEchoMode(QLineEdit::Password);
     adminPassword->setFixedWidth(100);
     adminPassword->setPlaceholderText("Admin");
 
-    ui->statusBar->addPermanentWidget(loginButton);
     ui->statusBar->addPermanentWidget(logoutButton);
     ui->statusBar->addPermanentWidget(adminPassword);
+    ui->statusBar->addPermanentWidget(loginButton);
 
-//    connect(loginButton, &QPushButton::clicked, [=]() {
-//        adminPassword->clearFocus();
-//        adminPassword->clear();
-//        if(adminPassword->isVisible()) adminPassword->setVisible(false);
-//        else adminPassword->setVisible(true);
-//    });
-
-    connect(adminPassword, &QLineEdit::editingFinished, [=]() {
+    connect(loginButton, &QPushButton::clicked, [=]() {
         if(!isDatabase){
             if(adminPassword->text()==ADMIN_PASSWD) {
                 isAdmin = true;
@@ -322,19 +338,19 @@ void MainWindow::createLoginOption()
             qApp->processEvents();
             if(Database::isOpen()) {
                 if(adminPassword->text()==ADMIN_PASSWD) {
-                    isAdmin = true;
-                    updateView(false);
-                    loadTrayIcon();
                     setBackupButtonVisible();
                     loginButton->setVisible(false);
                     logoutButton->setVisible(true);
                     adminPassword->setVisible(false);
-                    //adminPassword->setText("");
+                    isAdmin = true;
+                    loadTrayIcon();
+                    updateView(false);
                 }
             }
             else {
                 QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-                ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+                //ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+                statusLabel->setText("Nie można połączyć z bazą danych");
             }
             this->setEnabled(true);
             qApp->processEvents();
@@ -361,10 +377,12 @@ void MainWindow::createLoginOption()
                 loginButton->setVisible(true);
                 logoutButton->setVisible(false);
                 adminPassword->setVisible(true);
+                adminPassword->clear();
             }
             else {
                 QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
-                ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+                //ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+                statusLabel->setText("Nie można połączyć z bazą danych");
             }
         this->setEnabled(true);
         qApp->processEvents();
@@ -419,7 +437,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
                                  "width: 100;"
                                  "height: 40;"
                                  "font-family: Calibri Light;"
-                                 "font-size: 12;"
+                                 "font-size: 14;"
                                  "font-weight: bold;"
                                  "}"
                                  "QPushButton:pressed {"
@@ -551,7 +569,7 @@ void MainWindow::loadTrayIcon()
         connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
         connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(poupMessageClicked()));
     }
-    else ui->statusBar->showMessage("Nie można połączyć z bazą danych");
+    else statusLabel->setText("Nie można połączyć z bazą danych"); // ui->statusBar->showMessage("Nie można połączyć z bazą danych");
 }
 
 void MainWindow::setIcon()

@@ -67,6 +67,7 @@ private:
     bool copyEnable{false};
     QPushButton * backupButton{nullptr};
     QPushButton * dbConfigButton{nullptr};
+    QLabel * statusLabel;
 
     QSystemTrayIcon * trayIcon{nullptr};
     QAction *minimizeAction{nullptr};

@@ -26,14 +26,19 @@ DBConfigDialog::DBConfigDialog(QString line, bool isCreateType, QWidget *parent)
         ui->leUser->setText(parameters.at(3));
         ui->lePassword->setText(parameters.at(4));
         ui->leAddress->setText(parameters.at(0));
+        currentAddress = parameters.at(0);
         ui->lePort->setText(parameters.at(1));
     }
 
     if(createMode) {
         ui->runButton->setText("Utwórz");
+        this->setWindowTitle("Kreator bazy danych");
     }
-    else
+    else {
         ui->runButton->setText("Połącz");
+        this->setWindowTitle("Połącz z bazą danych");
+         ui->deleteButton->setVisible(false);
+    }
 
     connect(ui->cancelButton,SIGNAL(clicked(bool)),this,SLOT(reject()));
 }
@@ -60,7 +65,7 @@ void DBConfigDialog::on_runButton_clicked()
             delete createMysql;
         }
 
-        Database::setParameters("127.0.0.1", 3306,"sigmacars", "root","PASSWORD");
+        Database::setParameters("127.0.0.1", 3306,"testsigmadb", "root","PASSWORD");
         isLocal = true;
     }
 
@@ -83,6 +88,7 @@ void DBConfigDialog::on_runButton_clicked()
             delete createMysql;
         }
 
+        qDebug() << "YES!";
         Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),
                                 "testsigmadb", ui->leUser->text(),
                                 ui->lePassword->text());
@@ -92,7 +98,7 @@ void DBConfigDialog::on_runButton_clicked()
     if(Database::connectToDatabase()) {
         QMessageBox::information(this,"Informacja", "Pomyślnie połączono z bazą danych.");
         if(isLocal) {
-            if(!writeToFile("localhost", 3306, "sigmacars", "root","PASSWORD"))
+            if(!writeToFile("127.0.0.1", 3306, "sigmacars", "root","PASSWORD"))
                 return;
         }
         else {
@@ -199,7 +205,7 @@ bool DBConfigDialog::readFromFile(QString &line)
                              "min-width: 70px;"
                              "min-height: 30px;"
                              "font-family: Calibri;"
-                             "font-size: 12;"
+                             "font-size: 14;"
                              "font-weight: bold;"
                              "}"
                              "QPushButton:pressed {"
@@ -218,4 +224,77 @@ bool DBConfigDialog::readFromFile(QString &line)
     initFile.close();
 
     return true;
+}
+
+void DBConfigDialog::on_deleteButton_clicked()
+{
+    if(currentAddress.isEmpty()){
+        QMessageBox::information(this,"Informacja","Nie połączono z bazą danych.");
+        return;
+    }
+
+    if(ui->rbRemoteDB->isChecked() && currentAddress=="127.0.0.1"){
+        QMessageBox::information(this,"Informacja","Aby usunąć zdalną bazę danych proszę sie przelogować.");
+        return;
+    }
+
+    else if (ui->rbLocalDB->isChecked() && currentAddress!="127.0.0.1"){
+        QMessageBox::information(this,"Informacja","Aby usunąć lokalną bazę danych proszę sie przelogować.");
+        return;
+    }
+
+    QMessageBox msgBox(QMessageBox::Question, tr("Usuwanie bazy danych!"), "<font face=""Calibri"" size=""3"" color=""gray"">Czy na pewno chcesz usunąć bazę danych:\nNazwa: testsigmadb \nAdres: "+currentAddress+"</font>", QMessageBox::Yes | QMessageBox::No );
+    msgBox.setStyleSheet("QMessageBox {background: white;}"
+                         "QPushButton:hover {"
+                         "border-radius: 5px;"
+                         "background: rgb(255,140,0);"
+                         "}"
+                         "QPushButton{"
+                         "color: white;"
+                         "border-radius: 5px;"
+                         "background: qlineargradient(x1:0, y1:0, x2:0, y2:1,"
+                         "stop: 0 rgba(255,140,0), stop: 0.7 rgb(255,105,0));"
+                         "min-width: 70px;"
+                         "min-height: 30px;"
+                         "font-family: Calibri;"
+                         "font-size: 14;"
+                         "font-weight: bold;"
+                         "}"
+                         "QPushButton:pressed {"
+                         "color: white;"
+                         "border-radius: 5px;"
+                         "background: rgb(255,105,0);"
+                         "}"
+                         );
+
+    msgBox.setWindowIcon(QIcon(":/images/images/icon.ico"));
+    msgBox.setButtonText(QMessageBox::Yes, tr("Tak"));
+    msgBox.setButtonText(QMessageBox::No, tr("Nie"));
+    if (msgBox.exec() == QMessageBox::No)
+        return;
+
+    setGrayOut(true);
+
+    QSqlQuery qry;
+    qry.prepare("DROP DATABASE testsigmadb");
+    if(!qry.exec())
+        QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
+    else {
+        QMessageBox::information(this,"Informacja","Usunieto!");
+        QFile initFile1( QDir::currentPath()+"/init.txt" );
+        initFile1.remove();
+        QFile initFile2( QDir::currentPath()+"/init.txt" );
+        if (!initFile2.open(QIODevice::WriteOnly))
+            QMessageBox::critical(this,"Błąd!", "Nie można otworzyć pliku z kofiguracją bazy danych.");
+
+        currentAddress = "";
+        MainWindow::isDatabase = false;
+        ui->leUser->clear();
+        ui->lePassword->clear();
+        ui->leAddress->clear();
+        ui->lePort->clear();
+        emit changeStatusBar("Nie można połączyć z bazą danych");
+    }
+
+    setGrayOut(false);
 }

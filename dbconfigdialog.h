@@ -21,11 +21,12 @@ public:
 
 signals:
     void connectedToDB(bool);
-    void changeStatusBar(QString,int timeout = 0);
+    void changeStatusBar(QString);
 
 private slots:
     void on_runButton_clicked();
     void on_rbRemoteDB_toggled(bool checked);
+    void on_deleteButton_clicked();
 
 private:
     Ui::DBConfigDialog *ui;
@@ -34,6 +35,7 @@ private:
     bool dataIsEmpty();
     void showMsg(const QString &msg);
     void setGrayOut(bool isGray);
+    QString currentAddress;
 };
 
 #endif // DBCONFIGDIALOG_H

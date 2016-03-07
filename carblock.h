@@ -64,7 +64,7 @@ signals:
     void inProgress();
     void progressFinished();
     void noteClosed();
-    void changeStatusBar(QString,int timeout = 0);
+    void changeStatusBar(QString);
 
 private:
     int * wsk;
