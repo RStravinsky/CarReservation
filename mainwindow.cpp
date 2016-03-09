@@ -173,8 +173,17 @@ void MainWindow::updateView(bool isCopyEnable)
         }
     }
     else{
-        delete scrollLayout;
-        delete scrollWidget;
+        if(scrollLayout != nullptr) {
+            qDebug() << "layout: " << scrollLayout << endl;
+            delete scrollLayout;
+            scrollLayout = nullptr;
+        }
+
+        if(scrollWidget != nullptr) {
+            qDebug() << "layout: " << scrollWidget << endl;
+            delete scrollWidget;
+            scrollWidget = nullptr;
+        }
     }
 }
 

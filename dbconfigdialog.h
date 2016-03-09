@@ -35,6 +35,8 @@ private:
     bool dataIsEmpty();
     void showMsg(const QString &msg);
     void setGrayOut(bool isGray);
+    bool createDatabase(QString command);
+    bool showMsgBeforeDelete();
     QString currentAddress;
 };
 

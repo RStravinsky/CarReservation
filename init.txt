@@ -1,1 +1,1 @@
-192.168.1.7;3306;testsigmadb;root;Serwis4q@
+127.0.0.1;3306;testsigmadb;root;PASSWORD
