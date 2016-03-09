@@ -50,5 +50,7 @@
         <file>images/dbconfig.png</file>
         <file>images/sand-clock.png</file>
         <file>images/deleteDB.png</file>
+        <file>images/oil_warning.png</file>
+        <file>images/psw.png</file>
     </qresource>
 </RCC>

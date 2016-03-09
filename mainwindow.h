@@ -14,12 +14,13 @@
 #include <QProcess>
 #include <vector>
 #include <memory>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QNetworkReply>
 #include "carblock.h"
 #include "database.h"
 #include "helpdialog.h"
 #include "dbconfigdialog.h"
-#include <QtNetwork/QNetworkAccessManager>
-#include <QNetworkReply>
+#include "changepassworddialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -67,6 +68,7 @@ private:
     bool copyEnable{false};
     QPushButton * backupButton{nullptr};
     QPushButton * dbConfigButton{nullptr};
+    QPushButton * changePSW;
     QLabel * statusLabel;
 
     QSystemTrayIcon * trayIcon{nullptr};
@@ -90,6 +92,7 @@ private:
     void createHelpButton();
     void createBackupButton();
     void createDBConfigButton();
+    void createChangePSW();
 
     void createBackup();
     void setBackupButtonVisible();

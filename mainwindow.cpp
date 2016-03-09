@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#define UPDATE_TIME 50000
+#define UPDATE_TIME 5000
 #define ADMIN_PASSWD "Admin4q@"
 
 std::shared_ptr<NotesDialog> notesDialogPointer;
@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     createHelpButton();
     createUpdateButton();
+    createChangePSW();
     createBackupButton();
     createDBConfigButton();
     createLoginOption();
@@ -51,10 +52,10 @@ void MainWindow::createBackup()
     if(fileName.isEmpty())
         return;
 
-    QString backUpPath= fileName +"/SigmaCars_"+QDate::currentDate().toString().replace(" ","_")+"_"+currentTime.replace(":","_")+".sql";
+    QString backUpPath= fileName +"/BACKUP_"+QDate::currentDate().toString().replace(" ","_")+"_"+currentTime.replace(":","_")+".sql";
     backUpPath.replace("file:","");
 
-    QString Cmd = QString("mysqldump.exe -u%1 -h%2 -p%3 --routines sigmacars").arg("rezerwacja","192.168.1.7","rezerwacja");
+    QString Cmd = QString("mysqldump.exe -u%1 -h%2 -p%3 --routines testsigmadb").arg(DBConfigDialog::user,DBConfigDialog::currentAddress,DBConfigDialog::password);
     QString Path = QString("%1").arg(backUpPath);
     QProcess poc;
     poc.setStandardOutputFile(Path);
@@ -104,7 +105,7 @@ void MainWindow::updateView(bool isCopyEnable)
                                                                        carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
                                                                        carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
                                                                        static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString(),
-                                                                       carTable->data(carTable->index(i,9)).toBool()
+                                                                       carTable->data(carTable->index(i,9)).toBool(),carTable->data(carTable->index(i,10)).toInt()
                                                                       )
                                                           ));
                    lastCarBlock = carBlockVector.back();
@@ -124,7 +125,7 @@ void MainWindow::updateView(bool isCopyEnable)
                                                                        carTable->data(carTable->index(i,3)).toString(), carTable->data(carTable->index(i,4)).toDate(),
                                                                        carTable->data(carTable->index(i,5)).toDate(), carTable->data(carTable->index(i,6)).toInt(),
                                                                        static_cast<CarBlock::Status>(carTable->data(carTable->index(i,7)).toInt()), carTable->data(carTable->index(i,8)).toString(),
-                                                                       carTable->data(carTable->index(i,9)).toBool()
+                                                                       carTable->data(carTable->index(i,9)).toBool(),carTable->data(carTable->index(i,10)).toInt()
                                                                       )
                                                           ));
                    lastCarBlock = carBlockVector.back();
@@ -199,6 +200,24 @@ void MainWindow::reloadNotes()
     notesActionsVector.clear();
 }
 
+void MainWindow::createChangePSW()
+{
+    changePSW = new QPushButton(this);
+    changePSW->setIcon(QIcon(":/images/images/psw.png"));
+    changePSW->setToolTip("Zmień hasło");
+    changePSW->setStyleSheet("border:none;");
+    ui->statusBar->addPermanentWidget(changePSW);
+    connect(changePSW, &QPushButton::clicked,[=](){
+        if(isDatabase){
+            timer->stop();
+            ChangePasswordDialog psw;
+            psw.exec();
+            timer->start(UPDATE_TIME);
+        }
+        else QMessageBox::information(this,"Informacja","Nie połączono z bazą danych.");
+    });
+}
+
 void MainWindow::createUpdateButton()
 {
     QPushButton * updateButton = new QPushButton(this);
@@ -226,7 +245,12 @@ void MainWindow::createBackupButton()
     backupButton->setToolTip("Kopia bezpieczeństwa");
     backupButton->setStyleSheet("border:none; color: gray");
     ui->statusBar->addPermanentWidget(backupButton);
-    connect(backupButton, &QPushButton::clicked,[=](){createBackup();});
+    connect(backupButton, &QPushButton::clicked,[=](){
+        if(isDatabase)
+            createBackup();
+        else
+            QMessageBox::information(this,"Informacja","Nie połączono z bazą danych.");
+    });
 
     setBackupButtonVisible();
 }
@@ -301,15 +325,18 @@ void MainWindow::createDBConfigButton()
 
 void MainWindow::setBackupButtonVisible()
 {
-    if(!isAdmin)
+    if(!isAdmin){
         backupButton->setVisible(false);
-    if(isAdmin)
+        changePSW->setVisible(false);
+    }
+    if(isAdmin){
         backupButton->setVisible(true);
+        changePSW->setVisible(true);
+    }
 }
 
 void MainWindow::createLoginOption()
 {
-
     QPushButton * logoutButton = new QPushButton(this);
     logoutButton->setIcon(QIcon(":/images/images/exit.png"));
     logoutButton->setStyleSheet("border:none;");
@@ -335,6 +362,7 @@ void MainWindow::createLoginOption()
         if(!isDatabase){
             if(adminPassword->text()==ADMIN_PASSWD) {
                 isAdmin = true;
+                setBackupButtonVisible();
                 loginButton->setVisible(false);
                 logoutButton->setVisible(true);
                 adminPassword->clear();
@@ -347,12 +375,17 @@ void MainWindow::createLoginOption()
             this->setEnabled(false);
             qApp->processEvents();
             if(Database::isOpen()) {
-                if(adminPassword->text()==ADMIN_PASSWD) {
+                QSqlQueryModel *pswQry = new QSqlQueryModel(this);
+                pswQry->setQuery(QString("SELECT Password FROM admin WHERE idAdmin=0"));
+                const QString admin_password = pswQry->data(pswQry->index(0,0)).toString();
+                qDebug() << admin_password;
+                delete pswQry;
+                if(adminPassword->text()==admin_password) {
+                    isAdmin = true;
                     setBackupButtonVisible();
                     loginButton->setVisible(false);
                     logoutButton->setVisible(true);
                     adminPassword->setVisible(false);
-                    isAdmin = true;
                     loadTrayIcon();
                     updateView(false);
                 }
@@ -371,9 +404,11 @@ void MainWindow::createLoginOption()
 
         if(!isDatabase){
             isAdmin = false;
+            setBackupButtonVisible();
             loginButton->setVisible(true);
             logoutButton->setVisible(false);
             adminPassword->setVisible(true);
+            adminPassword->clear();
             return;
         }
 

@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     serviceblock.cpp \
     reportdialog.cpp \
     oildialog.cpp \
-    dbconfigdialog.cpp
+    dbconfigdialog.cpp \
+    changepassworddialog.cpp
 
 HEADERS  += mainwindow.h \
     carblock.h \
@@ -41,7 +42,8 @@ HEADERS  += mainwindow.h \
     serviceblock.h \
     reportdialog.h \
     oildialog.h \
-    dbconfigdialog.h
+    dbconfigdialog.h \
+    changepassworddialog.h
 
 FORMS    += mainwindow.ui \
     carblock.ui \
@@ -54,7 +56,8 @@ FORMS    += mainwindow.ui \
     serviceblock.ui \
     reportdialog.ui \
     oildialog.ui \
-    dbconfigdialog.ui
+    dbconfigdialog.ui \
+    changepassworddialog.ui
 
 RESOURCES += \
     resources.qrc

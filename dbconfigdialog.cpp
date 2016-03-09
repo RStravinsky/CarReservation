@@ -2,6 +2,10 @@
 #include "ui_dbconfigdialog.h"
 #include "database.h"
 
+QString DBConfigDialog::currentAddress = "";
+QString DBConfigDialog::user = "";
+QString DBConfigDialog::password = "";
+
 DBConfigDialog::DBConfigDialog(QString line, bool isCreateType, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DBConfigDialog),
@@ -23,9 +27,11 @@ DBConfigDialog::DBConfigDialog(QString line, bool isCreateType, QWidget *parent)
     if(!line.isEmpty()) {
         QStringList parameters = line.split(";");
         ui->leUser->setText(parameters.at(3));
+        //user = parameters.at(3);
         ui->lePassword->setText(parameters.at(4));
+        //password = parameters.at(4);
         ui->leAddress->setText(parameters.at(0));
-        currentAddress = parameters.at(0);
+        //currentAddress = parameters.at(0);
         ui->lePort->setText(parameters.at(1));
     }
 
@@ -106,11 +112,17 @@ void DBConfigDialog::on_runButton_clicked()
         if(isLocal) {
             if(!writeToFile("127.0.0.1", 3306, "testsigmadb", "root","PASSWORD"))
                 return;
+            user="root";
+            password="PASSWORD";
+            currentAddress="127.0.0.1";
         }
         else {
             if(!writeToFile(ui->leAddress->text(), ui->lePort->text().toInt(),
                     "testsigmadb", ui->leUser->text(),ui->lePassword->text()))
                 return;
+            user=ui->leUser->text();
+            password=ui->lePassword->text();
+            currentAddress=ui->leAddress->text();
         }
 
         setGrayOut(false);
@@ -124,6 +136,7 @@ void DBConfigDialog::on_runButton_clicked()
         setGrayOut(false);
         MainWindow::isDatabase = false;
         emit changeStatusBar("Nie można połączyć z bazą danych");
+        emit connectedToDB(false);
         return;
     }
 }
@@ -266,12 +279,15 @@ void DBConfigDialog::on_deleteButton_clicked()
                 QMessageBox::critical(this,"Błąd!", "Nie można otworzyć pliku z kofiguracją bazy danych.");
 
             currentAddress.clear();
+            user.clear();
+            password.clear();
             MainWindow::isDatabase = false;
             ui->leUser->clear();
             ui->lePassword->clear();
             ui->leAddress->clear();
             ui->lePort->clear();
             emit changeStatusBar("Nie można połączyć z bazą danych");
+            emit connectedToDB(false);
         }
 
         setGrayOut(false);

@@ -18,6 +18,9 @@ public:
     explicit DBConfigDialog(QString line, bool isCreateType, QWidget *parent = 0);
     ~DBConfigDialog();
     static bool readFromFile(QString &line);
+    static QString currentAddress;
+    static QString user;
+    static QString password;
 
 signals:
     void connectedToDB(bool);
@@ -37,7 +40,6 @@ private:
     void setGrayOut(bool isGray);
     bool createDatabase(QString command);
     bool showMsgBeforeDelete();
-    QString currentAddress;
 };
 
 #endif // DBCONFIGDIALOG_H

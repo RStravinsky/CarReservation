@@ -3,8 +3,8 @@
 
 extern std::shared_ptr<NotesDialog> notesDialogPointer;
 
-CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, Status status,
-                   QString photoPath, bool isVisible, QWidget *parent):
+CarBlock::CarBlock(bool toAdd, int id, QString name, QString model, QString licensePlate, QDate inspectionDate, QDate insuranceDate, int mileage, Status status,
+                   QString photoPath, bool isVisible, int oil, QWidget *parent):
     QWidget(parent),
     ui(new Ui::CarBlock),
     idCar(id),
@@ -58,6 +58,10 @@ CarBlock::CarBlock( bool toAdd,int id, QString name, QString model, QString lice
         if(tmp >= insuranceDate)
             ui->lblInsuranceImage->setPixmap(QPixmap(":/images/images/insurance_warning.png"));
         else ui->lblInsuranceImage->setPixmap(QPixmap(":/images/images/insurance.png"));
+
+        if(oil-mileage <=100)
+            ui->btnOil->setIcon(QIcon(":/images/images/oil_warning.png"));
+        else ui->btnOil->setIcon(QIcon(":/images/images/oil.png"));
     }
 
     setStatus(status);

@@ -4,7 +4,7 @@
 OilDialog::OilDialog(int id,QWidget *parent):
     QDialog(parent),
     ui(new Ui::OilDialog),
-    idCar(id)
+    idCar(id )
 {
     ui->setupUi(this);
     QSqlQueryModel * windTitle = new QSqlQueryModel(this);

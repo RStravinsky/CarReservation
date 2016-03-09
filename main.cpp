@@ -18,8 +18,12 @@ int main(int argc, char *argv[])
         else Database::isLocal = false;
 
         // check connection
-        if(Database::connectToDatabase())
+        if(Database::connectToDatabase()){
              MainWindow::isDatabase = true;
+             DBConfigDialog::user = parameters.at(3);
+             DBConfigDialog::password = parameters.at(4);
+             DBConfigDialog::currentAddress = parameters.at(0);
+        }
     }
 
     MainWindow w;
