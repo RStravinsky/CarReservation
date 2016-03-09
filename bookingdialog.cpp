@@ -279,7 +279,7 @@ void BookingDialog::on_btnReserve_clicked()
                     if(!qry.exec())
                         QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
                     else
-                        QMessageBox::information(this,"Informacja","Dodano!");
+                        QMessageBox::information(this,"Informacja","Dodano rezerwację!");
                 }
 
                 timer->start(UPDATE_TIME);

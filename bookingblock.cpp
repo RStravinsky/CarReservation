@@ -53,7 +53,7 @@ void BookingBlock::on_pushButtonDelete_clicked()
         if( !isExecuted )
             QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
         else {
-            QMessageBox::information(this,"Informacja","Usunieto!");
+            QMessageBox::information(this,"Informacja","Usunięto rezerwację!");
             emit refresh();
         }
     }
@@ -62,7 +62,7 @@ void BookingBlock::on_pushButtonDelete_clicked()
 
 bool BookingBlock::showMsgBeforeDelete()
 {
-    QMessageBox msgBox(QMessageBox::Question, tr("Usuwanie!"), tr("<font face=""Calibri"" size=""3"" color=""gray"">Czy na pewno chcesz anulować rezerwację?</font>"), QMessageBox::Yes | QMessageBox::No );
+    QMessageBox msgBox(QMessageBox::Question, tr("Usuwanie!"), tr("<font face=""Calibri"" size=""3"" color=""gray"">Czy na pewno chcesz usunąć rezerwację?</font>"), QMessageBox::Yes | QMessageBox::No );
 
     msgBox.setStyleSheet("QMessageBox {background: white;}"
                          "QPushButton:hover {"

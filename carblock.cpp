@@ -306,7 +306,7 @@ void CarBlock::on_btnRemove_clicked()
             if(!qry.exec())
                 QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
             else {
-                QMessageBox::information(this,"Informacja","Usunieto!");
+                QMessageBox::information(this,"Informacja","Usunięto samochód!");
                 emit carDeleted(true);
             }
         }
@@ -338,7 +338,7 @@ void CarBlock::on_btnRemove_clicked()
             if(!qry.exec())
                 QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR "+qry.lastError().text()+"");
             else {
-                QMessageBox::information(this,"Informacja","Dodano!");
+                QMessageBox::information(this,"Informacja","Dodano samochód!");
                 emit carAdded(false);
             }
         }

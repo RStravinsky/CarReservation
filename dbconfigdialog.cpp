@@ -258,7 +258,7 @@ void DBConfigDialog::on_deleteButton_clicked()
         if(!qry.exec())
             QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
         else {
-            QMessageBox::information(this,"Informacja","Usunieto!");
+            QMessageBox::information(this,"Informacja","Usunięto bazę danych!");
             QFile initFile1( QDir::currentPath()+"/init.txt" );
             initFile1.remove();
             QFile initFile2( QDir::currentPath()+"/init.txt" );
@@ -280,7 +280,7 @@ void DBConfigDialog::on_deleteButton_clicked()
 
 bool DBConfigDialog::showMsgBeforeDelete()
 {
-    QMessageBox msgBox(QMessageBox::Question, tr("Usuwanie bazy danych!"), "<font face=""Calibri"" size=""3"" color=""gray"">Czy na pewno chcesz usunąć bazę danych:\nNazwa: testsigmadb \nAdres: "+currentAddress+"</font>", QMessageBox::Yes | QMessageBox::No );
+    QMessageBox msgBox(QMessageBox::Question, tr("Usuwanie bazy danych!"), "<font face=""Calibri"" size=""3"" color=""gray"">Czy na pewno chcesz usunąć bazę danych:<br>Nazwa: testsigmadb<br>Adres: "+currentAddress+"</font>", QMessageBox::Yes | QMessageBox::No );
     msgBox.setStyleSheet("QMessageBox {background: white;}"
                          "QPushButton:hover {"
                          "border-radius: 5px;"

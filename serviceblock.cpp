@@ -125,7 +125,7 @@ void ServiceBlock::on_pbSave_clicked()
              if(!qry.exec())
                  QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
              else {
-                 QMessageBox::information(this,"Informacja","Dodano!");
+                 QMessageBox::information(this,"Informacja","Dodano naprawę!");
                  ui->lvServices->addItem(ui->leName->text());
                  clearWidgets();
                  ui->lvServices->item(0)->setSelected(true);
@@ -168,7 +168,7 @@ void ServiceBlock::on_pbDelete_clicked()
         if( !qry.exec() )
             QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
         else {
-            QMessageBox::information(this,"Informacja","Usunieto!");
+            QMessageBox::information(this,"Informacja","Usunięto naprawę!");
             clearWidgets();
             emit deleted();
         }

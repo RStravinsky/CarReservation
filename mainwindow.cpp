@@ -184,6 +184,7 @@ void MainWindow::updateView(bool isCopyEnable)
             delete scrollWidget;
             scrollWidget = nullptr;
         }
+        carBlockVector.clear();
     }
 }
 

@@ -53,6 +53,9 @@ background-color:transparent}
    background: none;
 }
 
+QMessageBox {
+min-width: 200px
+}
 
 QMessageBox QPushButton:hover {
 border-radius: 5px;
@@ -74,8 +77,10 @@ border-radius: 5px;
 background: rgb(255,105,0);
 }
 
-QRadioButton {color: gray;
-background-color:transparent}
+QRadioButton {
+color: gray;
+background-color:transparent
+}
 </string>
   </property>
   <widget class="QPushButton" name="cancelButton">

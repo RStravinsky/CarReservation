@@ -84,7 +84,7 @@ void NoteBlock::on_btnRemove_clicked()
             if(!qry.exec())
                 QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodła się.\nERROR: "+qry.lastError().text()+"");
             else {
-                QMessageBox::information(this,"Informacja","Usunieto!");
+                QMessageBox::information(this,"Informacja","Usunięto uwagę!");
                 emit noteDeleted();
             }
         }
@@ -107,7 +107,7 @@ void NoteBlock::on_btnRemove_clicked()
             if(!qry.exec())
                 QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR "+qry.lastError().text()+"");
             else {
-                QMessageBox::information(this,"Informacja","Dodano!");
+                QMessageBox::information(this,"Informacja","Dodano uwagę!");
                 emit noteAdded();
             }
         }
