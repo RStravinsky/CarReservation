@@ -93,9 +93,8 @@ private:
     void createBackupButton();
     void createDBConfigButton();
     void createChangePSW();
-
     void createBackup();
-    void setBackupButtonVisible();
+    void setAdminButtonsVisible();
 };
 
 #endif // MAINWINDOW_H

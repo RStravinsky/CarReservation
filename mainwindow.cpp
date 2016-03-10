@@ -23,10 +23,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     createHelpButton();
     createUpdateButton();
-    createChangePSW();
-    createBackupButton();
     createDBConfigButton();
+    createBackupButton();
+    createChangePSW();
     createLoginOption();
+    setAdminButtonsVisible();
 
     timer = new QTimer(this);
     QObject::connect(timer, SIGNAL(timeout()), this, SLOT(onTimerOverflow()));
@@ -55,7 +56,7 @@ void MainWindow::createBackup()
     QString backUpPath= fileName +"/BACKUP_"+QDate::currentDate().toString().replace(" ","_")+"_"+currentTime.replace(":","_")+".sql";
     backUpPath.replace("file:","");
 
-    QString Cmd = QString("mysqldump.exe -u%1 -h%2 -p%3 --routines testsigmadb").arg(DBConfigDialog::user,DBConfigDialog::currentAddress,DBConfigDialog::password);
+    QString Cmd = QString("mysqldump.exe -u%1 -h%2 -p%3 -B --events --routines --triggers testsigmadb").arg(DBConfigDialog::user,DBConfigDialog::currentAddress,DBConfigDialog::password);
     QString Path = QString("%1").arg(backUpPath);
     QProcess poc;
     poc.setStandardOutputFile(Path);
@@ -251,8 +252,6 @@ void MainWindow::createBackupButton()
         else
             QMessageBox::information(this,"Informacja","Nie połączono z bazą danych.");
     });
-
-    setBackupButtonVisible();
 }
 
 void MainWindow::createDBConfigButton()
@@ -323,7 +322,7 @@ void MainWindow::createDBConfigButton()
     });
 }
 
-void MainWindow::setBackupButtonVisible()
+void MainWindow::setAdminButtonsVisible()
 {
     if(!isAdmin){
         backupButton->setVisible(false);
@@ -362,7 +361,7 @@ void MainWindow::createLoginOption()
         if(!isDatabase){
             if(adminPassword->text()==ADMIN_PASSWD) {
                 isAdmin = true;
-                setBackupButtonVisible();
+                setAdminButtonsVisible();
                 loginButton->setVisible(false);
                 logoutButton->setVisible(true);
                 adminPassword->clear();
@@ -382,7 +381,7 @@ void MainWindow::createLoginOption()
                 delete pswQry;
                 if(adminPassword->text()==admin_password) {
                     isAdmin = true;
-                    setBackupButtonVisible();
+                    setAdminButtonsVisible();
                     loginButton->setVisible(false);
                     logoutButton->setVisible(true);
                     adminPassword->setVisible(false);
@@ -404,7 +403,7 @@ void MainWindow::createLoginOption()
 
         if(!isDatabase){
             isAdmin = false;
-            setBackupButtonVisible();
+            setAdminButtonsVisible();
             loginButton->setVisible(true);
             logoutButton->setVisible(false);
             adminPassword->setVisible(true);
@@ -418,7 +417,7 @@ void MainWindow::createLoginOption()
                 isAdmin = false;
                 updateView(true);
                 loadTrayIcon();
-                setBackupButtonVisible();
+                setAdminButtonsVisible();
                 loginButton->setVisible(true);
                 logoutButton->setVisible(false);
                 adminPassword->setVisible(true);

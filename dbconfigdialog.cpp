@@ -27,11 +27,8 @@ DBConfigDialog::DBConfigDialog(QString line, bool isCreateType, QWidget *parent)
     if(!line.isEmpty()) {
         QStringList parameters = line.split(";");
         ui->leUser->setText(parameters.at(3));
-        //user = parameters.at(3);
         ui->lePassword->setText(parameters.at(4));
-        //password = parameters.at(4);
         ui->leAddress->setText(parameters.at(0));
-        //currentAddress = parameters.at(0);
         ui->lePort->setText(parameters.at(1));
     }
 
@@ -42,7 +39,11 @@ DBConfigDialog::DBConfigDialog(QString line, bool isCreateType, QWidget *parent)
     else {
         ui->runButton->setText("Połącz");
         this->setWindowTitle("Połącz z bazą danych");
-         ui->deleteButton->setVisible(false);
+        ui->deleteButton->setVisible(false);
+        ui->lblPath->setVisible(false);
+        ui->cbImport->setVisible(false);
+        ui->pathButton->setVisible(false);
+        ui->lePath->setVisible(false);
     }
 
     connect(ui->cancelButton,SIGNAL(clicked(bool)),this,SLOT(reject()));
@@ -70,14 +71,30 @@ void DBConfigDialog::on_runButton_clicked()
 {
     bool isLocal;
     bool isDbExist = false;
+
+    if(ui->cbImport->isChecked() && (ui->lePath->text().isEmpty() || !ui->lePath->text().contains(".sql"))) {
+        QMessageBox::information(this,"Informacja", "Nie poprawna scieżka do importu bazy danych.");
+        return;
+    }
+
+
     setGrayOut(true);
 
     if(ui->rbLocalDB->isChecked()) {
         Database::purgeDatabase();
         if(createMode){
-            if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h127.0.0.1 -P3306 -uroot -pPASSWORD")) {
-                QMessageBox::information(this,"Informacja", "Baza danych już istnieje.");
-                isDbExist = true;
+            if(ui->cbImport->isChecked()){
+                                qDebug() << importPath;
+                if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h127.0.0.1 -P3306 -uroot -pPASSWORD -f"+importPath+"")) {
+                    QMessageBox::information(this,"Informacja", "Baza danych już istnieje.");
+                    isDbExist = true;
+                }
+            }
+            else {
+                if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h127.0.0.1 -P3306 -uroot -pPASSWORD -dtestsigmadb")) {
+                    QMessageBox::information(this,"Informacja", "Baza danych już istnieje.");
+                    isDbExist = true;
+                }
             }
         }
         Database::setParameters("127.0.0.1", 3306,"testsigmadb", "root","PASSWORD");
@@ -93,9 +110,17 @@ void DBConfigDialog::on_runButton_clicked()
 
         Database::purgeDatabase();
         if(createMode){
-            if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h" + ui->leAddress->text() + " -P" + ui->lePort->text() + " -u" + ui->leUser->text() + " -p" + ui->lePassword->text() + " -dtestsigmadb")) {
-                QMessageBox::information(this,"Informacja", "Baza danych już istnieje.");
-                isDbExist = true;
+            if(ui->cbImport->isChecked()){
+                if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h" + ui->leAddress->text() + " -P" + ui->lePort->text() + " -u" + ui->leUser->text() + " -p" + ui->lePassword->text() + " -f"+importPath)) {
+                    QMessageBox::information(this,"Informacja", "Baza danych już istnieje.");
+                    isDbExist = true;
+                }
+            }
+            else {
+                if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h" + ui->leAddress->text() + " -P" + ui->lePort->text() + " -u" + ui->leUser->text() + " -p" + ui->lePassword->text() + " -dtestsigmadb")) {
+                    QMessageBox::information(this,"Informacja", "Baza danych już istnieje.");
+                    isDbExist = true;
+                }
             }
         }
         Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),"testsigmadb", ui->leUser->text(),ui->lePassword->text());
@@ -142,7 +167,7 @@ void DBConfigDialog::on_runButton_clicked()
 }
 
 void DBConfigDialog::on_rbRemoteDB_toggled(bool checked)
-{
+{   
     if(checked) {
         ui->lblAddress->setVisible(true);
         ui->leAddress->setVisible(true);
@@ -152,10 +177,6 @@ void DBConfigDialog::on_rbRemoteDB_toggled(bool checked)
         ui->lePassword->setVisible(true);
         ui->lblPort->setVisible(true);
         ui->lePort->setVisible(true);
-        if(createMode)
-            ui->runButton->setText("Utwórz");
-        else
-            ui->runButton->setText("Połącz");
     }
     else {
         ui->lblAddress->setVisible(false);
@@ -166,10 +187,6 @@ void DBConfigDialog::on_rbRemoteDB_toggled(bool checked)
         ui->lePassword->setVisible(false);
         ui->lblPort->setVisible(false);
         ui->lePort->setVisible(false);
-        if(createMode)
-            ui->runButton->setText("Utwórz");
-        else
-            ui->runButton->setText("Połącz");
     }
 }
 
@@ -194,7 +211,6 @@ bool DBConfigDialog::dataIsEmpty()
         QMessageBox::warning(this,"Uwaga!","Pole tekstowe nie zostało wypełnione.");
         return true;
     }
-
     return false;
 }
 
@@ -262,7 +278,6 @@ void DBConfigDialog::on_deleteButton_clicked()
         return;
     }
 
-
     if(showMsgBeforeDelete()) {
         setGrayOut(true);
 
@@ -329,3 +344,21 @@ bool DBConfigDialog::showMsgBeforeDelete()
     return true;
 }
 
+void DBConfigDialog::on_cbImport_toggled(bool checked)
+{
+    if(checked){
+        ui->lePath->setEnabled(true);
+        ui->pathButton->setEnabled(true);
+    }
+    else {
+        ui->lePath->setEnabled(false);
+        ui->pathButton->setEnabled(false);
+    }
+}
+
+void DBConfigDialog::on_pathButton_clicked()
+{
+    QString customPath = QString(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+    importPath = QFileDialog::getOpenFileName(this , tr("Wybierz plik"), customPath, tr("Pliki SQL (*.sql)"));
+    ui->lePath->setText(importPath);
+}

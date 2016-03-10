@@ -30,9 +30,12 @@ private slots:
     void on_runButton_clicked();
     void on_rbRemoteDB_toggled(bool checked);
     void on_deleteButton_clicked();
+    void on_cbImport_toggled(bool checked);
+    void on_pathButton_clicked();
 
 private:
     Ui::DBConfigDialog *ui;
+    QString importPath;
     bool createMode;
     bool writeToFile(const QString &hostname, int port, const QString &database, const QString &user, const QString &password);
     bool dataIsEmpty();
