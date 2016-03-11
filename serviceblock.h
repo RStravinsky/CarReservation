@@ -6,6 +6,8 @@
 #include <QtSql>
 #include <initializer_list>
 #include <QMessageBox>
+#include <QVector>
+#include <QListWidgetItem>
 
 namespace Ui {
 class ServiceBlock;
@@ -41,7 +43,9 @@ private:
 
     void loadList();
     QStringList nameList;
-    void loadData(const QModelIndex &index);
+    QStringList idList;
+    QVector<QListWidgetItem*> lwiVector;
+    void loadData();
     void clearWidgets();
 };
 
