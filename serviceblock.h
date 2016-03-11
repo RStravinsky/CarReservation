@@ -2,10 +2,12 @@
 #define SERVICEBLOCK_H
 
 #include <QDialog>
-#include "database.h"
 #include <QtSql>
-#include <initializer_list>
 #include <QMessageBox>
+#include <QCalendarWidget>
+#include <initializer_list>
+#include "database.h"
+
 
 namespace Ui {
 class ServiceBlock;
@@ -43,6 +45,8 @@ private:
     QStringList nameList;
     void loadData(const QModelIndex &index);
     void clearWidgets();
+    void setCalendarColor(QCalendarWidget *calendarWidget,QColor color);
+    bool isDateCorrect();
 };
 
 #endif // SERVICEBLOCK_H

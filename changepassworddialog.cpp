@@ -25,7 +25,7 @@ ChangePasswordDialog::~ChangePasswordDialog()
 bool ChangePasswordDialog::dataIsEmpty()
 {
     if(ui->leNewPassword->text().isEmpty() | ui->leNewPasswordAgain->text().isEmpty() || ui->leOldPassword->text().isEmpty()) {
-        QMessageBox::warning(this,"Uwaga!","Pole tekstowe nie zostało wypełnione.");
+        QMessageBox::warning(this,tr("Uwaga!"),tr("Pole tekstowe nie zostało wypełnione."));
         return true;
     }
     return false;
@@ -37,12 +37,12 @@ void ChangePasswordDialog::on_pushButtonConfirm_clicked()
         return;
 
     if(ui->leNewPassword->text() != ui->leNewPasswordAgain->text()){
-        QMessageBox::warning(this,"Uwaga!","Wprowadzone hasła różnią się.");
+        QMessageBox::warning(this,tr("Uwaga!"),tr("Wprowadzone hasła różnią się."));
         return;
     }
 
     if(ui->leOldPassword->text() != oldPassword){
-        QMessageBox::warning(this,"Uwaga!","Aktualne hasło jest nie poprawne.");
+        QMessageBox::warning(this,tr("Uwaga!"),tr("Aktualne hasło jest nie poprawne."));
         return;
     }
 
@@ -51,9 +51,9 @@ void ChangePasswordDialog::on_pushButtonConfirm_clicked()
         qry.prepare("UPDATE admin SET Password=:_Password WHERE idAdmin=0");
         qry.bindValue(":_Password", ui->leNewPasswordAgain->text());
         if(!qry.exec())
-            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
+            QMessageBox::warning(this,tr("Uwaga!"),"Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
         else
-            QMessageBox::information(this,"Informacja","Zaktualizowano!");
+            QMessageBox::information(this,tr("Informacja"),tr("Zaktualizowano!"));
     }
-    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+    else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
 }

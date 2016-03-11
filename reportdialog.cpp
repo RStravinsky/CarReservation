@@ -189,7 +189,7 @@ void ReportDialog::populatePDF()
     printer.setOutputFileName(pdfFile);
     printer.setOutputFormat(QPrinter::PdfFormat);
     document.print(&printer);
-    QMessageBox::information( this, "Informacja", "Wyeksportowano do pliku:\n" + pdfFile );
+    QMessageBox::information( this, tr("Informacja"), "Wyeksportowano do pliku:\n" + pdfFile );
     QDesktopServices::openUrl(pdfFile);
 }
 
@@ -202,7 +202,7 @@ void ReportDialog::on_exportButton_clicked()
 {
     if(Database::isOpen())
         populatePDF();
-    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+    else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
 }
 
 void ReportDialog::setCalendarColor(QCalendarWidget *calendarWidget,QColor color)

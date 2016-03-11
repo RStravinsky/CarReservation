@@ -585,6 +585,9 @@ color: white;</string>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarAsNeeded</enum>
     </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
    </widget>
   </widget>
   <widget class="QLineEdit" name="leName">

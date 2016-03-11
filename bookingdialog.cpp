@@ -1,7 +1,7 @@
 #include "bookingdialog.h"
 #include "ui_bookingdialog.h"
 
-#define UPDATE_TIME 5000
+#define UPDATE_TIME 30000
 
 BookingDialog::BookingDialog(int id, int vMode,  QWidget *parent) :
     idCar(id),
@@ -50,7 +50,7 @@ BookingDialog::~BookingDialog()
 
 void BookingDialog::updateView()
 {
-    qDebug() << "Updating booking ..." << endl;
+    //qDebug() << "Updating booking ..." << endl;
     if(firstInit) {
         ui->calendarWidget->clicked(QDate::currentDate());
         firstInit=false;
@@ -132,7 +132,9 @@ void BookingDialog::loadBlock(int idx)
                 blockVector.emplace_back(std::move(new BookingBlock(carReservations->data(carReservations->index(idx,0)).toInt(),carReservations->data(carReservations->index(idx,1)).toString() + QString(" ") + carReservations->data(carReservations->index(idx,2)).toString(),
                                                                     carReservations->data(carReservations->index(idx,6)).toString() , carReservations->data(carReservations->index(idx,3)).toDateTime().time().toString("hh:mm"), carReservations->data(carReservations->index(idx,4)).toDateTime().time().toString("hh:mm"))));
 
-            connect(blockVector.back(),SIGNAL(refresh()),this,SLOT(updateView()));
+            connect(blockVector.back(),SIGNAL(refresh()),this,SLOT(updateView()),Qt::QueuedConnection);
+            connect(blockVector.back(),&BookingBlock::inProgress,this,[=](){ timer->stop();});
+            connect(blockVector.back(),&BookingBlock::progressFinished, this, [=](){timer->start(UPDATE_TIME);});
         }
     }
     else if(viewMode == ViewMode::History) {
@@ -158,7 +160,6 @@ void BookingDialog::loadBlock(int idx)
                 blockVector.emplace_back(std::move(new BookingBlock(-1,statusHistory->data(statusHistory->index(idx,1)).toString() + QString(" ") + statusHistory->data(statusHistory->index(idx,2)).toString(),
                                                                     statusHistory->data(statusHistory->index(idx,6)).toString(),statusHistory->data(statusHistory->index(idx,3)).toDateTime().time().toString("hh:mm"), statusHistory->data(statusHistory->index(idx,4)).toDateTime().time().toString("hh:mm"), true, false)));
         }
-
     }
 }
 
@@ -194,6 +195,8 @@ void BookingDialog::on_calendarWidget_clicked(const QDate &date)
                 loadBlock(i);
         }
 
+        std::sort(blockVector.begin(),blockVector.end(),PointerCompare());
+
         for(auto pos = blockVector.begin(); pos != blockVector.end(); ++pos)
             scrollLayout->addWidget(*pos);
         ui->scrollArea->setWidget(scrollWidget);
@@ -201,7 +204,7 @@ void BookingDialog::on_calendarWidget_clicked(const QDate &date)
 
         fillCalendar();
     }
-    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+    else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
 }
 
 void BookingDialog::clearScrollArea()
@@ -219,13 +222,13 @@ bool BookingDialog::isDateFree()
 
     QDateTime modelBegin = QDateTime::currentDateTime(), modelEnd = QDateTime::currentDateTime();
 
-    if(ui->dateTimeEditBegin->dateTime() < QDateTime::currentDateTime()) {
-        QMessageBox::warning(this, "Uwaga!", "Data i czas początku rezerwacji muszą być większe od aktualnej.");
+    if(ui->dateTimeEditBegin->dateTime().addSecs(60) < QDateTime::currentDateTime()) {
+        QMessageBox::warning(this, tr("Uwaga!"), tr("Data i czas początku rezerwacji muszą być większe od aktualnej."));
         return false;
     }
 
-    if(ui->dateTimeEditEnd->dateTime() <= ui->dateTimeEditBegin->dateTime()) {
-        QMessageBox::warning(this, "Uwaga!", "Data i czas końca rezerwacji muszą być większe od początkowej.");
+    if(ui->dateTimeEditEnd->dateTime() <= ui->dateTimeEditBegin->dateTime().addSecs(60)) {
+        QMessageBox::warning(this, tr("Uwaga!"), tr("Data i czas końca rezerwacji muszą być większe od początkowej."));
         return false;
     }
 
@@ -235,22 +238,22 @@ bool BookingDialog::isDateFree()
         modelEnd = bookedDates->data(bookedDates->index(i,1)).toDateTime();
 
         if(ui->dateTimeEditBegin->dateTime() >= modelBegin && ui->dateTimeEditEnd->dateTime() <= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
+            QMessageBox::warning(this, tr("Uwaga!"), tr("Termin nie może być zarezerwowany."));
             return false;
         }
 
         if(ui->dateTimeEditBegin->dateTime() <= modelBegin && ui->dateTimeEditEnd->dateTime() >= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
+            QMessageBox::warning(this, tr("Uwaga!"), tr("Termin nie może być zarezerwowany."));
             return false;
         }
 
         if(ui->dateTimeEditBegin->dateTime()<= modelBegin && ui->dateTimeEditEnd->dateTime() >= modelBegin && ui->dateTimeEditEnd->dateTime() <= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
+            QMessageBox::warning(this, tr("Uwaga!"), tr("Termin nie może być zarezerwowany."));
             return false;
         }
 
         if(ui->dateTimeEditBegin->dateTime() >= modelBegin && ui->dateTimeEditBegin->dateTime() <= modelEnd && ui->dateTimeEditEnd->dateTime() >= modelEnd) {
-            QMessageBox::warning(this, "Uwaga!", "Termin nie może być zarezerwowany.");
+            QMessageBox::warning(this, tr("Uwaga!"), tr("Termin nie może być zarezerwowany."));
             return false;
         }
     }
@@ -277,9 +280,9 @@ void BookingDialog::on_btnReserve_clicked()
                     qry.bindValue(":_idCar",idCar);
                     qry.bindValue(":_Destination",n.getDestination());
                     if(!qry.exec())
-                        QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
+                        QMessageBox::warning(this,tr("Uwaga!"),"Dodawanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
                     else
-                        QMessageBox::information(this,"Informacja","Dodano rezerwację!");
+                        QMessageBox::information(this,tr("Informacja"),tr("Dodano rezerwację!"));
                 }
 
                 timer->start(UPDATE_TIME);
@@ -287,7 +290,7 @@ void BookingDialog::on_btnReserve_clicked()
             }
         }       
     }
-    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+    else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
 
 }
 
@@ -307,7 +310,7 @@ void BookingDialog::on_btnShowHistory_clicked()
         viewMode = ViewMode::History;
         updateView();
     }
-    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+    else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
 }
 
 void BookingDialog::on_btnShowReservation_clicked()
@@ -317,7 +320,7 @@ void BookingDialog::on_btnShowReservation_clicked()
         viewMode = ViewMode::Booked;
         updateView();
     }
-    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+    else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
 }
 
 void BookingDialog::on_pushButton_clicked()
