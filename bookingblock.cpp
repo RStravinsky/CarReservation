@@ -11,6 +11,7 @@ BookingBlock::BookingBlock(int idB, QString name, QString destination, QString t
     ui->setupUi(this);
     ui->lblName->setText(name);
     ui->lblBegin->setText(timeBegin);
+    begin = QTime::fromString(timeBegin,"hh:mm");
     ui->lblEnd->setText(timeEnd);
     ui->lblDestination->setText(destination);
 
@@ -41,6 +42,7 @@ QString BookingBlock::getName()
 
 void BookingBlock::on_pushButtonDelete_clicked()
 {
+    emit inProgress();
     if(Database::isOpen()) {
 
         if(!showMsgBeforeDelete())
@@ -49,15 +51,16 @@ void BookingBlock::on_pushButtonDelete_clicked()
         QSqlQuery qry;
         qry.prepare("DELETE FROM booking WHERE idBooking=:_idBooking");
         qry.bindValue(":_idBooking", idBooking);
-        bool isExecuted = qry.exec();
-        if( !isExecuted )
-            QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
+        if(!qry.exec() )
+            QMessageBox::warning(this,tr("Uwaga!"),"Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
         else {
-            QMessageBox::information(this,"Informacja","Usunięto rezerwację!");
+            QMessageBox::information(this,tr("Informacja"),tr("Usunięto rezerwację!"));
             emit refresh();
         }
     }
-    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+    else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
+
+    emit progressFinished();
 }
 
 bool BookingBlock::showMsgBeforeDelete()

@@ -8,6 +8,11 @@ ServiceBlock::ServiceBlock(int idC, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setCalendarColor(ui->deBegin->calendarWidget(),QColor(255,140,0));
+    setCalendarColor(ui->deEnd->calendarWidget(),QColor(255,140,0));
+    setCalendarColor(ui->deEvent->calendarWidget(),QColor(255,140,0));
+    setCalendarColor(ui->deGuarantee->calendarWidget(),QColor(255,140,0));
+
     QSqlQueryModel * windTitle = new QSqlQueryModel(this);
     windTitle->setQuery(QString("SELECT Brand, Model, LicensePlate FROM car WHERE idCar = %1").arg(idCar));
     this->setWindowTitle( QString("Naprawy - ")
@@ -47,7 +52,32 @@ void ServiceBlock::on_lvServices_clicked(const QModelIndex &index)
         serviceTable->setQuery(QString("SELECT * FROM service WHERE idCar = %1 AND idService = %2;").arg(idCar).arg(ui->lvServices->currentItem()->data(Qt::UserRole).toInt()));
         loadData();
     }
-    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+    else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
+}
+
+void ServiceBlock::setCalendarColor(QCalendarWidget *calendarWidget,QColor color)
+{
+    QWidget *calendarNavBar = calendarWidget->findChild<QWidget *>("qt_calendar_navigationbar");
+    if (calendarNavBar) {
+        QPalette pal = calendarNavBar->palette();
+        pal.setColor(calendarNavBar->backgroundRole(), color);
+        calendarNavBar->setPalette(pal);
+    }
+}
+
+bool ServiceBlock::isDateCorrect()
+{
+    if(ui->deBegin->date() > ui->deEnd->date()) {
+        QMessageBox::warning(this, tr("Uwaga!"), tr("Nie poprawny czas trwania naprawy."));
+        return false;
+    }
+
+    if(ui->deEvent->date() > ui->deBegin->date()) {
+        QMessageBox::warning(this, tr("Uwaga!"), tr("Data zdarzenia jest większa od początkowej daty naprawy."));
+        return false;
+    }
+
+    return true;
 }
 
 void ServiceBlock::loadData()
@@ -108,13 +138,16 @@ void ServiceBlock::updateView()
         ui->pbDelete->setVisible(false);
     }
 
-    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+    else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
 }
 
 void ServiceBlock::on_pbSave_clicked()
 {
      if(Database::isOpen()) {
          // insert new repair
+         if(!isDateCorrect())
+             return;
+
          if(ui->lvServices->currentIndex().data(Qt::DisplayRole ).toString() == "Dodaj naprawę ...") {
              QSqlQuery qry;
              qry.prepare("INSERT INTO service(Name,ComponentCategory,EventDate,GuaranteeDate,"
@@ -132,7 +165,7 @@ void ServiceBlock::on_pbSave_clicked()
              qry.bindValue(":_Notes", ui->teNotes->toPlainText());
              qry.bindValue(":_idCar", idCar);
              if(!qry.exec())
-                 QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
+                 QMessageBox::warning(this,tr("Uwaga!"),"Dodawanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
              else {
 
                  QSqlQueryModel lastInserted;
@@ -163,15 +196,15 @@ void ServiceBlock::on_pbSave_clicked()
              qry.bindValue(":_Notes", ui->teNotes->toPlainText());
              qry.bindValue(":_idS", idService);
              if( !qry.exec() )
-                 QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
+                 QMessageBox::warning(this,tr("Uwaga!"),"Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
              else {
-                 QMessageBox::information(this,"Informacja","Zaktualizowano!");
+                 QMessageBox::information(this,tr("Informacja"),tr("Zaktualizowano!"));
                  clearWidgets();
                  emit saved();
              }
          }
      }
-     else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+     else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
 }
 
 void ServiceBlock::on_pbDelete_clicked()
@@ -181,13 +214,13 @@ void ServiceBlock::on_pbDelete_clicked()
         qry.prepare("DELETE FROM service WHERE idService=:_idS");
         qry.bindValue(":_idS", idService);
         if( !qry.exec() )
-            QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
+            QMessageBox::warning(this,tr("Uwaga!"),"Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
         else {
-            QMessageBox::information(this,"Informacja","Usunięto naprawę!");
+            QMessageBox::information(this,tr("Informacja"),tr("Usunięto naprawę!"));
             clearWidgets();
             emit deleted();
         }
     }
-    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+    else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
 }
 

@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#define UPDATE_TIME 5000
+#define UPDATE_TIME 120000
 #define ADMIN_PASSWD "Admin4q@"
 
 std::shared_ptr<NotesDialog> notesDialogPointer;
@@ -63,8 +63,7 @@ void MainWindow::createBackup()
     poc.start(Cmd);
     poc.waitForFinished( 30000 );
 
-    QMessageBox::information(this,"Informacja", "Kopia zapasowa została zapisana w folderze \n"
-                                                +backUpPath);
+    QMessageBox::information(this,tr("Informacja"), "Kopia zapasowa została zapisana w folderze \n"+backUpPath);
 }
 
 void MainWindow::updateView(bool isCopyEnable)
@@ -169,7 +168,7 @@ void MainWindow::updateView(bool isCopyEnable)
         }
 
         else {
-            QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+            QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
             //ui->statusBar->showMessage("Nie można połączyć z bazą danych");
             statusLabel->setText("Nie można połączyć z bazą danych");
         }
@@ -209,13 +208,15 @@ void MainWindow::createChangePSW()
     changePSW->setStyleSheet("border:none;");
     ui->statusBar->addPermanentWidget(changePSW);
     connect(changePSW, &QPushButton::clicked,[=](){
-        if(isDatabase){
-            timer->stop();
+        timer->stop();
+        this->setEnabled(false); qApp->processEvents();
+        if(Database::isOpen()){
             ChangePasswordDialog psw;
             psw.exec();
-            timer->start(UPDATE_TIME);
         }
-        else QMessageBox::information(this,"Informacja","Nie połączono z bazą danych.");
+        else QMessageBox::information(this,tr("Informacja"),tr("Nie połączono z bazą danych."));
+        this->setEnabled(true); qApp->processEvents();
+        timer->start(UPDATE_TIME);
     });
 }
 
@@ -247,10 +248,14 @@ void MainWindow::createBackupButton()
     backupButton->setStyleSheet("border:none; color: gray");
     ui->statusBar->addPermanentWidget(backupButton);
     connect(backupButton, &QPushButton::clicked,[=](){
-        if(isDatabase)
+        timer->stop();
+        this->setEnabled(false); qApp->processEvents();
+        if(Database::isOpen())
             createBackup();
         else
-            QMessageBox::information(this,"Informacja","Nie połączono z bazą danych.");
+            QMessageBox::information(this,tr("Informacja"),tr("Nie połączono z bazą danych."));
+        this->setEnabled(true); qApp->processEvents();
+        timer->start(UPDATE_TIME);
     });
 }
 
@@ -262,6 +267,8 @@ void MainWindow::createDBConfigButton()
     dbConfigButton->setStyleSheet("border:none; color: gray");
     ui->statusBar->addPermanentWidget(dbConfigButton);
     connect(dbConfigButton, &QPushButton::clicked,[=](){
+
+        this->setEnabled(false); qApp->processEvents();
         QString line{};
         timer->stop();
         bool result = false ;
@@ -319,6 +326,7 @@ void MainWindow::createDBConfigButton()
         d.exec();
         loadTrayIcon();
         timer->start(UPDATE_TIME);
+        this->setEnabled(true); qApp->processEvents();
     });
 }
 
@@ -390,7 +398,7 @@ void MainWindow::createLoginOption()
                 }
             }
             else {
-                QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+                QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
                 //ui->statusBar->showMessage("Nie można połączyć z bazą danych");
                 statusLabel->setText("Nie można połączyć z bazą danych");
             }
@@ -424,7 +432,7 @@ void MainWindow::createLoginOption()
                 adminPassword->clear();
             }
             else {
-                QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+                QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
                 //ui->statusBar->showMessage("Nie można połączyć z bazą danych");
                 statusLabel->setText("Nie można połączyć z bazą danych");
             }

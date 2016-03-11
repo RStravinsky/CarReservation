@@ -181,7 +181,7 @@ void CarBlock::showNotesDialog(int _idNotes, int _idCar)
                 }
         }
         else {
-            QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+            QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
         }
     }
     emit progressFinished();
@@ -197,7 +197,7 @@ void CarBlock::on_btnReserve_clicked()
         delete bookingDialog;
     }
     else {
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
 
@@ -214,12 +214,12 @@ void CarBlock::on_btnAddMileage_clicked()
         qry.bindValue(":_id", idCar);
         qry.bindValue(":_Mileage", ui->lblMileage->text());
         if(!qry.exec())
-            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
+            QMessageBox::warning(this,tr("Uwaga!"),"Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
         else
-            QMessageBox::information(this,"Informacja","Zaktualizowano!");
+            QMessageBox::information(this,tr("Informacja"),tr("Zaktualizowano!"));
     }
     else {
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
 
@@ -236,12 +236,12 @@ void CarBlock::on_btnAddLicensePlate_clicked()
         qry.bindValue(":_id", idCar);
         qry.bindValue(":_LicensePlate", ui->lblLicensePlate->text());
         if(!qry.exec())
-            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
+            QMessageBox::warning(this,tr("Uwaga!"),"Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
         else
-            QMessageBox::information(this,"Informacja","Zaktualizowano!");
+            QMessageBox::information(this,tr("Informacja"),tr("Zaktualizowano!"));
     }
     else {
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
 
@@ -258,12 +258,12 @@ void CarBlock::on_btnAddInsurance_clicked()
         qry.bindValue(":_id", idCar);
         qry.bindValue(":_insuranceDate", ui->dateEditInsurance->date());
         if(!qry.exec())
-            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
+            QMessageBox::warning(this,tr("Uwaga!"),"Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
         else
-            QMessageBox::information(this,"Informacja","Zaktualizowano!");
+            QMessageBox::information(this,tr("Informacja"),tr("Zaktualizowano!"));
     }
     else {
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
 
@@ -280,12 +280,12 @@ void CarBlock::on_btnAddInspection_clicked()
         qry.bindValue(":_id", idCar);
         qry.bindValue(":_inspectionDate", ui->dateEditInspection->date());
         if(!qry.exec())
-            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powidoła się.\nERROR: "+qry.lastError().text()+"");
+            QMessageBox::warning(this,tr("Uwaga!"),"Aktualizacja nie powidoła się.\nERROR: "+qry.lastError().text()+"");
         else
-            QMessageBox::information(this,"Informacja","Zaktualizowano!");
+            QMessageBox::information(this,tr("Informacja"),tr("Zaktualizowano!"));
     }
     else {
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
 
@@ -308,9 +308,9 @@ void CarBlock::on_btnRemove_clicked()
             qry.prepare("DELETE FROM car WHERE idCar=:_id");
             qry.bindValue(":_id", idCar);
             if(!qry.exec())
-                QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
+                QMessageBox::warning(this,tr("Uwaga!"),"Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
             else {
-                QMessageBox::information(this,"Informacja","Usunięto samochód!");
+                QMessageBox::information(this,tr("Informacja"),tr("Usunięto samochód!"));
                 emit carDeleted(true);
             }
         }
@@ -340,15 +340,15 @@ void CarBlock::on_btnRemove_clicked()
             else qry.bindValue(":_PhotoPath", QString(":/images/images/car.png"));
             qry.bindValue(":_IsVisible", getCarVisible());
             if(!qry.exec())
-                QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR "+qry.lastError().text()+"");
+                QMessageBox::warning(this,tr("Uwaga!"),"Dodawanie nie powiodło się.\nERROR "+qry.lastError().text()+"");
             else {
-                QMessageBox::information(this,"Informacja","Dodano samochód!");
+                QMessageBox::information(this,tr("Informacja"),tr("Dodano samochód!"));
                 emit carAdded(false);
             }
         }
     }
     else {
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
 
@@ -406,10 +406,10 @@ void CarBlock::updateImagePath()
         qry.bindValue(":_id", idCar);
         qry.bindValue(":_PhotoPath", carPhotoPath);
         if(!qry.exec())
-            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powidoła się.\nERROR: "+qry.lastError().text()+"");
+            QMessageBox::warning(this,tr("Uwaga!"),"Aktualizacja nie powidoła się.\nERROR: "+qry.lastError().text()+"");
     }
     else {
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
 }
@@ -474,12 +474,12 @@ void CarBlock::on_btnIsVisible_clicked()
             qry.bindValue(":_IsVisible", isVisible);
             qry.bindValue(":_Status", !isVisible);
             if(!qry.exec())
-                QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powidoła się.\nERROR: "+qry.lastError().text()+"");
+                QMessageBox::warning(this,tr("Uwaga!"),"Aktualizacja nie powidoła się.\nERROR: "+qry.lastError().text()+"");
             else
                 emit carDeleted(true); // only for update
         }
         else {
-            QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+            QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
             emit changeStatusBar("Nie można połączyć z bazą danych");
         }
     }
@@ -500,7 +500,7 @@ void CarBlock::on_btnViewRepairs_clicked()
             delete serviceBlock;
     }
     else {
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
     emit progressFinished();
@@ -515,7 +515,7 @@ void CarBlock::on_btnPDF_clicked()
             delete reportDialog;
     }
     else {
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
     emit progressFinished();
@@ -530,7 +530,7 @@ void CarBlock::on_btnOil_clicked()
             delete oilDialog;
     }
     else {
-        QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+        QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
         emit changeStatusBar("Nie można połączyć z bazą danych");
     }
     emit progressFinished();

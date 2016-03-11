@@ -73,7 +73,7 @@ void DBConfigDialog::on_runButton_clicked()
     bool isDbExist = false;
 
     if(ui->cbImport->isChecked() && (ui->lePath->text().isEmpty() || !ui->lePath->text().contains(".sql"))) {
-        QMessageBox::information(this,"Informacja", "Nie poprawna scieżka do importu bazy danych.");
+        QMessageBox::information(this,tr("Informacja"), tr("Nie poprawna scieżka do importu bazy danych."));
         return;
     }
 
@@ -86,13 +86,13 @@ void DBConfigDialog::on_runButton_clicked()
             if(ui->cbImport->isChecked()){
                                 qDebug() << importPath;
                 if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h127.0.0.1 -P3306 -uroot -pPASSWORD -f"+importPath+"")) {
-                    QMessageBox::information(this,"Informacja", "Baza danych już istnieje.");
+                    QMessageBox::information(this,tr("Informacja"), tr("Baza danych już istnieje."));
                     isDbExist = true;
                 }
             }
             else {
                 if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h127.0.0.1 -P3306 -uroot -pPASSWORD -dtestsigmadb")) {
-                    QMessageBox::information(this,"Informacja", "Baza danych już istnieje.");
+                    QMessageBox::information(this,tr("Informacja"), tr("Baza danych już istnieje."));
                     isDbExist = true;
                 }
             }
@@ -112,13 +112,13 @@ void DBConfigDialog::on_runButton_clicked()
         if(createMode){
             if(ui->cbImport->isChecked()){
                 if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h" + ui->leAddress->text() + " -P" + ui->lePort->text() + " -u" + ui->leUser->text() + " -p" + ui->lePassword->text() + " -f"+importPath)) {
-                    QMessageBox::information(this,"Informacja", "Baza danych już istnieje.");
+                    QMessageBox::information(this,tr("Informacja"), tr("Baza danych już istnieje."));
                     isDbExist = true;
                 }
             }
             else {
                 if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h" + ui->leAddress->text() + " -P" + ui->lePort->text() + " -u" + ui->leUser->text() + " -p" + ui->lePassword->text() + " -dtestsigmadb")) {
-                    QMessageBox::information(this,"Informacja", "Baza danych już istnieje.");
+                    QMessageBox::information(this,tr("Informacja"), tr("Baza danych już istnieje."));
                     isDbExist = true;
                 }
             }
@@ -128,11 +128,11 @@ void DBConfigDialog::on_runButton_clicked()
     }
 
     if(Database::connectToDatabase()) {
-        if(!createMode)QMessageBox::information(this,"Informacja", "Pomyślnie połączono z bazą danych.");
+        if(!createMode)QMessageBox::information(this,tr("Informacja"), tr("Pomyślnie połączono z bazą danych."));
         else if(isDbExist)
-            QMessageBox::information(this,"Informacja", "Pomyślnie połączono z bazą danych.");
+            QMessageBox::information(this,tr("Informacja"), tr("Pomyślnie połączono z bazą danych."));
         else
-            QMessageBox::information(this,"Informacja", "Pomyślnie dodano bazę danych.");
+            QMessageBox::information(this,tr("Informacja"), tr("Pomyślnie dodano bazę danych."));
 
         if(isLocal) {
             if(!writeToFile("127.0.0.1", 3306, "testsigmadb", "root","PASSWORD"))
@@ -157,7 +157,7 @@ void DBConfigDialog::on_runButton_clicked()
         this->accept();
     }
     else {
-        QMessageBox::critical(this,"Błąd!", "Nie połączono z bazą danych!");
+        QMessageBox::critical(this,tr("Błąd!"), tr("Nie połączono z bazą danych!"));
         setGrayOut(false);
         MainWindow::isDatabase = false;
         emit changeStatusBar("Nie można połączyć z bazą danych");
@@ -194,7 +194,7 @@ bool DBConfigDialog::writeToFile(const QString &hostname, int port, const QStrin
 {
     QFile initFile( QDir::currentPath()+"/init.txt" );
     if(!initFile.open(QIODevice::WriteOnly)) {
-        QMessageBox::critical(this,"Błąd!", "Nie można otworzyć pliku z kofiguracją bazy danych.");
+        QMessageBox::critical(this,tr("Błąd!"), tr("Nie można otworzyć pliku z kofiguracją bazy danych."));
         setGrayOut(false);
         return false;
     }
@@ -208,7 +208,7 @@ bool DBConfigDialog::writeToFile(const QString &hostname, int port, const QStrin
 bool DBConfigDialog::dataIsEmpty()
 {
     if(ui->leUser->text().isEmpty() | ui->lePassword->text().isEmpty() || ui->leAddress->text().isEmpty() || ui->lePort->text().isEmpty()) {
-        QMessageBox::warning(this,"Uwaga!","Pole tekstowe nie zostało wypełnione.");
+        QMessageBox::warning(this,tr("Uwaga!"),tr("Pole tekstowe nie zostało wypełnione."));
         return true;
     }
     return false;
@@ -226,7 +226,7 @@ bool DBConfigDialog::readFromFile(QString &line)
 {
     QFile initFile(QDir::currentPath()+"/init.txt");
     if (!initFile.open(QIODevice::ReadOnly)) {
-        QMessageBox msgBox(QMessageBox::Critical, QString("Błąd!"), QString("<font face=""Calibri"" size=""3"" color=""gray"">Nie można otworzyć pliku konfiguracji bazy danych.</font>"));
+        QMessageBox msgBox(QMessageBox::Critical, tr("Błąd!"), tr("<font face=""Calibri"" size=""3"" color=""gray"">Nie można otworzyć pliku konfiguracji bazy danych.</font>"));
         msgBox.setStyleSheet("QMessageBox {background: white;}"
                              "QPushButton:hover {"
                              "border-radius: 5px;"
@@ -264,17 +264,17 @@ bool DBConfigDialog::readFromFile(QString &line)
 void DBConfigDialog::on_deleteButton_clicked()
 {
     if(currentAddress.isEmpty()){
-        QMessageBox::information(this,"Informacja","Nie połączono z bazą danych.");
+        QMessageBox::information(this,tr("Informacja"),tr("Nie połączono z bazą danych."));
         return;
     }
 
     if(ui->rbRemoteDB->isChecked() && currentAddress=="127.0.0.1"){
-        QMessageBox::information(this,"Informacja","Aby usunąć zdalną bazę danych proszę sie przelogować.");
+        QMessageBox::information(this,tr("Informacja"),tr("Aby usunąć zdalną bazę danych proszę sie przelogować."));
         return;
     }
 
     else if (ui->rbLocalDB->isChecked() && currentAddress!="127.0.0.1"){
-        QMessageBox::information(this,"Informacja","Aby usunąć lokalną bazę danych proszę sie przelogować.");
+        QMessageBox::information(this,tr("Informacja"),tr("Aby usunąć lokalną bazę danych proszę sie przelogować."));
         return;
     }
 
@@ -284,14 +284,14 @@ void DBConfigDialog::on_deleteButton_clicked()
         QSqlQuery qry;
         qry.prepare("DROP DATABASE testsigmadb");
         if(!qry.exec())
-            QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
+            QMessageBox::warning(this,tr("Uwaga!"),"Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
         else {
-            QMessageBox::information(this,"Informacja","Usunięto bazę danych!");
+            QMessageBox::information(this,tr("Informacja"),tr("Usunięto bazę danych!"));
             QFile initFile1( QDir::currentPath()+"/init.txt" );
             initFile1.remove();
             QFile initFile2( QDir::currentPath()+"/init.txt" );
             if (!initFile2.open(QIODevice::WriteOnly))
-                QMessageBox::critical(this,"Błąd!", "Nie można otworzyć pliku z kofiguracją bazy danych.");
+                QMessageBox::critical(this,tr("Błąd!"), tr("Nie można otworzyć pliku z kofiguracją bazy danych."));
 
             currentAddress.clear();
             user.clear();

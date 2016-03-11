@@ -59,7 +59,7 @@ bool NoteBlock::eventFilter(QObject *obj, QEvent *event)
                     return true;;
                 }
             }
-            else  QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+            else  QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
         }
     }
     return false;
@@ -82,9 +82,9 @@ void NoteBlock::on_btnRemove_clicked()
             qry.prepare("DELETE FROM notes WHERE idNotes=:_id");
             qry.bindValue(":_id", idNotes);
             if(!qry.exec())
-                QMessageBox::warning(this,"Uwaga!","Usuwanie nie powiodła się.\nERROR: "+qry.lastError().text()+"");
+                QMessageBox::warning(this,tr("Uwaga!"),"Usuwanie nie powiodła się.\nERROR: "+qry.lastError().text()+"");
             else {
-                QMessageBox::information(this,"Informacja","Usunięto wiadomość!");
+                QMessageBox::information(this,tr("Informacja"),tr("Usunięto wiadomość!"));
                 emit noteDeleted();
             }
         }
@@ -105,14 +105,14 @@ void NoteBlock::on_btnRemove_clicked()
             qry.bindValue(":_idCar", idCar);
 
             if(!qry.exec())
-                QMessageBox::warning(this,"Uwaga!","Dodawanie nie powiodło się.\nERROR "+qry.lastError().text()+"");
+                QMessageBox::warning(this,tr("Uwaga!"),"Dodawanie nie powiodło się.\nERROR "+qry.lastError().text()+"");
             else {
-                QMessageBox::information(this,"Informacja","Dodano uwagę!");
+                QMessageBox::information(this,tr("Informacja"),tr("Dodano uwagę!"));
                 emit noteAdded();
             }
         }
     }
-    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+    else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
 }
 
 bool NoteBlock::showMsgBeforeDelete()

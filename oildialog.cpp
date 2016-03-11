@@ -31,11 +31,11 @@ void OilDialog::on_btnAddOil_clicked()
         qry.bindValue(":_id", idCar);
         qry.bindValue(":_Oil", ui->leOil->text());
         if(!qry.exec())
-            QMessageBox::warning(this,"Uwaga!","Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
+            QMessageBox::warning(this,tr("Uwaga!"),"Aktualizacja nie powiodła się.\nERROR: "+qry.lastError().text()+"");
         else
-            QMessageBox::information(this,"Informacja","Zaktualizowano!");
+            QMessageBox::information(this,tr("Informacja"),tr("Zaktualizowano!"));
     }
-    else QMessageBox::critical(this,"Błąd!", "Utracono połączenie z bazą danych!");
+    else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
 }
 
 

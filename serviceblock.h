@@ -2,12 +2,14 @@
 #define SERVICEBLOCK_H
 
 #include <QDialog>
-#include "database.h"
 #include <QtSql>
-#include <initializer_list>
 #include <QMessageBox>
 #include <QVector>
 #include <QListWidgetItem>
+#include <QCalendarWidget>
+#include <initializer_list>
+#include "database.h"
+
 
 namespace Ui {
 class ServiceBlock;
@@ -47,6 +49,8 @@ private:
     QVector<QListWidgetItem*> lwiVector;
     void loadData();
     void clearWidgets();
+    void setCalendarColor(QCalendarWidget *calendarWidget,QColor color);
+    bool isDateCorrect();
 };
 
 #endif // SERVICEBLOCK_H

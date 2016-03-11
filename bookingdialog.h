@@ -69,6 +69,12 @@ private:
     bool isDateFree();
     void clearCalendarFormat();
     void setCalendarColor(QCalendarWidget *calendarWidget, QColor color);
+
+    struct PointerCompare {
+      bool operator()(const BookingBlock *obj1, const BookingBlock *obj2) {
+        return obj1->getTime() < obj2->getTime();
+      }
+    };
 };
 
 #endif // BOOKINGDIALOG_H

@@ -47,7 +47,7 @@ void NameDialog::on_pushButtonConfirm_released()
     QString destination = ui->lineEditDestination->text();
 
     if(name.isEmpty() || surname.isEmpty() || destination.isEmpty())
-        QMessageBox::warning(this,"Uwaga!","Pole tekstowe nie zostało wypełnione.");
+        QMessageBox::warning(this,tr("Uwaga!"),tr("Pole tekstowe nie zostało wypełnione."));
 
     else this->accept();
 }

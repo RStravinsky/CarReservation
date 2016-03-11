@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "dbconfigdialog.h"
+#include "database.h"
 #include <QApplication>
+#include <QTextCodec>
 
 int main(int argc, char *argv[])
 {
@@ -14,7 +16,8 @@ int main(int argc, char *argv[])
         const QStringList parameters = line.split(";");
         Database::setParameters(parameters.at(0), parameters.at(1).toInt(), parameters.at(2), parameters.at(3), parameters.at(4));
 
-        if(parameters.at(0)=="localhost") Database::isLocal = true;
+        if(parameters.at(0)=="127.0.0.1")
+            Database::isLocal = true;
         else Database::isLocal = false;
 
         // check connection
