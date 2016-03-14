@@ -90,13 +90,13 @@ void DBConfigDialog::on_runButton_clicked()
                 }
             }
             else {
-                if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h127.0.0.1 -P3306 -uroot -pPASSWORD -dtestsigmadb")) {
+                if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h127.0.0.1 -P3306 -uroot -pPASSWORD -dsigmacars")) {
                     QMessageBox::information(this,tr("Informacja"), tr("Baza danych już istnieje."));
                     isDbExist = true;
                 }
             }
         }
-        Database::setParameters("127.0.0.1", 3306,"testsigmadb", "root","PASSWORD");
+        Database::setParameters("127.0.0.1", 3306,"sigmacars", "root","PASSWORD");
         isLocal = true;
     }
 
@@ -134,7 +134,7 @@ void DBConfigDialog::on_runButton_clicked()
             QMessageBox::information(this,tr("Informacja"), tr("Pomyślnie dodano bazę danych."));
 
         if(isLocal) {
-            if(!writeToFile("127.0.0.1", 3306, "testsigmadb", "root","PASSWORD"))
+            if(!writeToFile("127.0.0.1", 3306, "sigmacars", "root","PASSWORD"))
                 return;
             user="root";
             password="PASSWORD";
@@ -142,7 +142,7 @@ void DBConfigDialog::on_runButton_clicked()
         }
         else {
             if(!writeToFile(ui->leAddress->text(), ui->lePort->text().toInt(),
-                    "testsigmadb", ui->leUser->text(),ui->lePassword->text()))
+                    "sigmacars", ui->leUser->text(),ui->lePassword->text()))
                 return;
             user=ui->leUser->text();
             password=ui->lePassword->text();
@@ -310,7 +310,7 @@ void DBConfigDialog::on_deleteButton_clicked()
 
 bool DBConfigDialog::showMsgBeforeDelete()
 {
-    QMessageBox msgBox(QMessageBox::Question, tr("Usuwanie bazy danych!"), "<font face=""Calibri"" size=""3"" color=""gray"">Czy na pewno chcesz usunąć bazę danych:<br>Nazwa: testsigmadb<br>Adres: "+currentAddress+"</font>", QMessageBox::Yes | QMessageBox::No );
+    QMessageBox msgBox(QMessageBox::Question, tr("Usuwanie bazy danych!"), "<font face=""Calibri"" size=""3"" color=""gray"">Czy na pewno chcesz usunąć bazę danych:<br>Nazwa: sigmacars<br>Adres: "+currentAddress+"</font>", QMessageBox::Yes | QMessageBox::No );
     msgBox.setStyleSheet("QMessageBox {background: white;}"
                          "QPushButton:hover {"
                          "border-radius: 5px;"

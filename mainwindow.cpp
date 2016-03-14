@@ -56,7 +56,7 @@ void MainWindow::createBackup()
     QString backUpPath= fileName +"/BACKUP_"+QDate::currentDate().toString().replace(" ","_")+"_"+currentTime.replace(":","_")+".sql";
     backUpPath.replace("file:","");
 
-    QString Cmd = QString("mysqldump.exe -u%1 -h%2 -p%3 -B --events --routines --triggers testsigmadb").arg(DBConfigDialog::user,DBConfigDialog::currentAddress,DBConfigDialog::password);
+    QString Cmd = QString("mysqldump.exe -u%1 -h%2 -p%3 -B --events --routines --triggers sigmacars").arg(DBConfigDialog::user,DBConfigDialog::currentAddress,DBConfigDialog::password);
     QString Path = QString("%1").arg(backUpPath);
     QProcess poc;
     poc.setStandardOutputFile(Path);
