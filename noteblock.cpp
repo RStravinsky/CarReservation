@@ -91,7 +91,7 @@ void NoteBlock::on_btnRemove_clicked()
         else {
             QSqlQuery qry;
             QDateTime dateOfAdd = QDateTime::currentDateTime();
-            ui->lblDate->setText(dateOfAdd.toString());
+            ui->lblDate->setText(dateOfAdd.toString("dd-MM-yyyy hh:mm:ss"));
 
             qry.prepare("INSERT INTO notes(Contents,Name,Surname,Datetime,isRead,idCar)"
                          "VALUES(:_Contents,:_Name,:_Surname,:_Datetime,:_isRead,:_idCar)"

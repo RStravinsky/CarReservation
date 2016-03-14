@@ -17,17 +17,17 @@ bool Database::connectToDatabase()
 bool Database::isOpen()
 {
     if(isLocal){
-        qDebug() << "LOCAL";
+        //qDebug() << "LOCAL";
         return sqlDatabase.isOpen();
     }
     else {
-        qDebug() << "REMOTE";
+        //qDebug() << "REMOTE";
         if(isConnectedToNetwork()){
-            qDebug() << "Network OK!";
+            //qDebug() << "Network OK!";
             return sqlDatabase.isOpen();
         }
         else{
-            qDebug() << "Network ERROR!";
+            //qDebug() << "Network ERROR!";
             return false;
         }
     }
@@ -67,6 +67,6 @@ void Database::purgeDatabase()
     connection = sqlDatabase.connectionName();
     sqlDatabase.close();
     sqlDatabase = QSqlDatabase();
-    qDebug() << "+++" <<QSqlDatabase::connectionNames() << "+++";
+    //qDebug() << "+++" <<QSqlDatabase::connectionNames() << "+++";
     sqlDatabase.removeDatabase(connection);
 }

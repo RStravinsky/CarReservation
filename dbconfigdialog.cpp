@@ -84,7 +84,6 @@ void DBConfigDialog::on_runButton_clicked()
         Database::purgeDatabase();
         if(createMode){
             if(ui->cbImport->isChecked()){
-                                qDebug() << importPath;
                 if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h127.0.0.1 -P3306 -uroot -pPASSWORD -f"+importPath+"")) {
                     QMessageBox::information(this,tr("Informacja"), tr("Baza danych już istnieje."));
                     isDbExist = true;
