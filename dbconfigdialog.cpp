@@ -116,13 +116,13 @@ void DBConfigDialog::on_runButton_clicked()
                 }
             }
             else {
-                if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h" + ui->leAddress->text() + " -P" + ui->lePort->text() + " -u" + ui->leUser->text() + " -p" + ui->lePassword->text() + " -dtestsigmadb")) {
+                if(createDatabase("\"" + QDir::currentPath() + "\\\"" + "mysqlRun -h" + ui->leAddress->text() + " -P" + ui->lePort->text() + " -u" + ui->leUser->text() + " -p" + ui->lePassword->text() + " -dsigmacars")) {
                     QMessageBox::information(this,tr("Informacja"), tr("Baza danych już istnieje."));
                     isDbExist = true;
                 }
             }
         }
-        Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),"testsigmadb", ui->leUser->text(),ui->lePassword->text());
+        Database::setParameters(ui->leAddress->text(), ui->lePort->text().toInt(),"sigmacars", ui->leUser->text(),ui->lePassword->text());
         isLocal = false;
     }
 
@@ -281,7 +281,7 @@ void DBConfigDialog::on_deleteButton_clicked()
         setGrayOut(true);
 
         QSqlQuery qry;
-        qry.prepare("DROP DATABASE testsigmadb");
+        qry.prepare("DROP DATABASE sigmacars");
         if(!qry.exec())
             QMessageBox::warning(this,tr("Uwaga!"),"Usuwanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
         else {
