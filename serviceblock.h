@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QtSql>
 #include <QMessageBox>
+#include <QVector>
+#include <QListWidgetItem>
 #include <QCalendarWidget>
 #include <initializer_list>
 #include "database.h"
@@ -43,7 +45,9 @@ private:
 
     void loadList();
     QStringList nameList;
-    void loadData(const QModelIndex &index);
+    QStringList idList;
+    QVector<QListWidgetItem*> lwiVector;
+    void loadData();
     void clearWidgets();
     void setCalendarColor(QCalendarWidget *calendarWidget,QColor color);
     bool isDateCorrect();

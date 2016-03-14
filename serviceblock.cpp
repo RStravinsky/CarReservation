@@ -26,7 +26,7 @@ ServiceBlock::ServiceBlock(int idC, QWidget *parent) :
 
     // fill category combobox
     QStringList categoryList({QString("Silnik"),QString("Zawieszenie"),QString("Elektronika"),
-                             QString("Elektyka"),QString("Układ napędowy"),QString("Układ hamulcowy"),
+                             QString("Elektryka"),QString("Układ napędowy"),QString("Układ hamulcowy"),
                              QString("Układ kierowniczy"),QString("Nadwozie")});
     ui->cbCategory->addItems(categoryList);
 
@@ -45,10 +45,12 @@ bool ServiceBlock::isOpen;
 
 void ServiceBlock::on_lvServices_clicked(const QModelIndex &index)
 {
+    Q_UNUSED(index);
+
     if(Database::isOpen()) {
         serviceTable = new QSqlQueryModel(this);
-        serviceTable->setQuery(QString("SELECT * FROM service WHERE idCar = %1 ORDER BY EventDate DESC;").arg(idCar));
-        loadData(index);
+        serviceTable->setQuery(QString("SELECT * FROM service WHERE idCar = %1 AND idService = %2;").arg(idCar).arg(ui->lvServices->currentItem()->data(Qt::UserRole).toInt()));
+        loadData();
     }
     else QMessageBox::critical(this,tr("Błąd!"), tr("Utracono połączenie z bazą danych!"));
 }
@@ -78,21 +80,21 @@ bool ServiceBlock::isDateCorrect()
     return true;
 }
 
-void ServiceBlock::loadData(const QModelIndex &index)
+void ServiceBlock::loadData()
 {
     if(ui->lvServices->currentIndex().data(Qt::DisplayRole ).toString() == "Dodaj naprawę ...")
         clearWidgets();
     else {
         ui->pbDelete->setVisible(true);
-        idService = serviceTable->index(index.row()-1,0).data().toInt();
-        ui->leName->setText( serviceTable->index(index.row()-1,1).data().toString() );
-        ui->cbCategory->setCurrentText( serviceTable->index(index.row()-1,2).data().toString() );
-        ui->deEvent->setDate( serviceTable->index(index.row()-1,3).data().toDate() );
-        ui->deGuarantee->setDate( serviceTable->index(index.row()-1,4).data().toDate() );
-        ui->deBegin->setDate( serviceTable->index(index.row()-1,5).data().toDate() );
-        ui->deEnd->setDate( serviceTable->index(index.row()-1,6).data().toDate() );
-        ui->leCost->setText( serviceTable->index(index.row()-1,7).data().toString() );
-        ui->teNotes->setText( serviceTable->index(index.row()-1,8).data().toString() );
+        idService = serviceTable->index(0,0).data().toInt();
+        ui->leName->setText( serviceTable->index(0,1).data().toString() );
+        ui->cbCategory->setCurrentText( serviceTable->index(0,2).data().toString() );
+        ui->deEvent->setDate( serviceTable->index(0,3).data().toDate() );
+        ui->deGuarantee->setDate( serviceTable->index(0,4).data().toDate() );
+        ui->deBegin->setDate( serviceTable->index(0,5).data().toDate() );
+        ui->deEnd->setDate( serviceTable->index(0,6).data().toDate() );
+        ui->leCost->setText( serviceTable->index(0,7).data().toString() );
+        ui->teNotes->setText( serviceTable->index(0,8).data().toString() );
     }
 }
 
@@ -112,18 +114,25 @@ void ServiceBlock::clearWidgets()
 void ServiceBlock::updateView()
 {
     if(Database::isOpen()) {
-        nameList.clear();
+        lwiVector.clear();
         ui->lvServices->clear();
 
         serviceTable = new QSqlQueryModel(this);
         serviceTable->setQuery(QString("SELECT * FROM service WHERE idCar = %1 ORDER BY EventDate DESC;").arg(idCar));
 
         // fill repairs list
-        nameList << "Dodaj naprawę ...";
-        for(int i=0; i<serviceTable->rowCount(); ++i)
-            nameList << serviceTable->data(serviceTable->index(i,1)).toString();
-        for(auto elem: nameList)
+
+        for(int i=0; i<serviceTable->rowCount(); ++i) {
+            lwiVector.push_back(new QListWidgetItem(serviceTable->data(serviceTable->index(i,1)).toString()));
+            lwiVector.back()->setData(Qt::UserRole, serviceTable->data(serviceTable->index(i,0)).toInt());
+        }
+
+        ui->lvServices->addItem(QString("Dodaj naprawę ..."));
+
+        for(auto elem : lwiVector) {
+
             ui->lvServices->addItem(elem);
+        }
         ui->lvServices->item(0)->setSelected(true);
         ui->lvServices->setFocus();
         ui->pbDelete->setVisible(false);
@@ -158,10 +167,16 @@ void ServiceBlock::on_pbSave_clicked()
              if(!qry.exec())
                  QMessageBox::warning(this,tr("Uwaga!"),"Dodawanie nie powiodło się.\nERROR: "+qry.lastError().text()+"");
              else {
-                 QMessageBox::information(this,tr("Informacja"),tr("Dodano naprawę!"));
-                 ui->lvServices->addItem(ui->leName->text());
+
+                 QSqlQueryModel lastInserted;
+                 lastInserted.setQuery(QString("SELECT * FROM service WHERE idCar = %1 WHERE idCar = 1 AND idService = (SELECT MAX(idService) FROM service);").arg(idCar));
+                 lwiVector.push_back(new QListWidgetItem(ui->leName->text()));
+                 lwiVector.back()->setData(0, lastInserted.index(0,0).data().toInt());
+
                  clearWidgets();
                  ui->lvServices->item(0)->setSelected(true);
+                 updateView();
+                 QMessageBox::information(this,"Informacja","Dodano naprawę!");
              }
          }
 
