@@ -191,14 +191,14 @@ void DBConfigDialog::on_rbRemoteDB_toggled(bool checked)
 
 bool DBConfigDialog::writeToFile(const QString &hostname, int port, const QString &database, const QString &user, const QString &password)
 {
-    QFile initFile( QDir::currentPath()+"/init.txt" );
+    QFile initFile( QDir::currentPath()+"/init.bin" );
     if(!initFile.open(QIODevice::WriteOnly)) {
         QMessageBox::critical(this,tr("Błąd!"), tr("Nie można otworzyć pliku z kofiguracją bazy danych."));
         setGrayOut(false);
         return false;
     }
-    QTextStream out( &initFile );
-    out << hostname << ";" << QString::number(port) << ";" << database << ";" << user << ";" << password;
+    QDataStream out( &initFile );
+    out << hostname  << QString::number(port)  << database <<  user <<  password;
     initFile.close();
 
     return true;
@@ -223,7 +223,7 @@ void DBConfigDialog::setGrayOut(bool isGray)
 
 bool DBConfigDialog::readFromFile(QString &line)
 {
-    QFile initFile(QDir::currentPath()+"/init.txt");
+    QFile initFile(QDir::currentPath()+"/init.bin");
     if (!initFile.open(QIODevice::ReadOnly)) {
         QMessageBox msgBox(QMessageBox::Critical, tr("Błąd!"), tr("<font face=""Calibri"" size=""3"" color=""gray"">Nie można otworzyć pliku konfiguracji bazy danych.</font>"));
         msgBox.setStyleSheet("QMessageBox {background: white;}"
@@ -253,8 +253,10 @@ bool DBConfigDialog::readFromFile(QString &line)
         msgBox.exec();
         return false;
     }
-    QTextStream in(&initFile);
-    line = in.readLine();
+    QDataStream in(&initFile);
+    QString host,port,name,user,password;
+    in >> host >> port >> name >> user >> password;
+    line = host + ";" + port + ";" +  name + ";" + user + ";" + password;
     initFile.close();
 
     return true;
